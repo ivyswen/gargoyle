@@ -1,0 +1,75 @@
+#!/bin/sh
+debug_log=0
+
+umount_disk(){
+  killall -2 aria2c
+  sleep 3
+  swapoff -a
+  sleep 1
+  dev_name=$(mount| grep /dev/sd| awk '{ print $1; }')
+  for dev_id in $dev_name
+  do
+    umount -l ${dev_id} 
+  done
+  echo heartbeat > /sys/class/leds/hg255d\:voice/trigger
+  sleep 5
+  echo 0 > /sys/class/leds/hg255d\:voice/brightness
+}
+wifi_switch(){
+case "$(uci get wireless.@wifi-device[0].disabled)" in
+    1)
+        uci set wireless.@wifi-device[0].disabled=0
+        uci commit
+        wifi
+    ;;
+    *)
+        uci set wireless.@wifi-device[0].disabled=1
+        wifi
+    ;;
+esac
+}
+
+wps_pbc(){
+        for dir in /var/run/hostapd-*; do
+                [ -d "$dir" ] || continue
+                logger "WPS button active: $dir"
+                hostapd_cli -p "$dir" wps_pbc
+        done
+  echo heartbeat > /sys/class/leds/hg255d\:wps/trigger
+  sleep 10
+  echo 0 > /sys/class/leds/hg255d\:wps/brightness
+}
+
+pres_time(){
+  old_time=$(cat /tmp/prestime)
+  new_time=$(date +%s)
+  total_time=$(($new_time - $old_time ))
+}
+
+[ "$BUTTON" = "BTN_2" -a  "$ACTION" = "pressed" ] && echo `date +%s` > /tmp/prestime
+
+[ "$BUTTON" = "BTN_2" -a  "$ACTION" = "released" ] && {
+  pres_time
+  [ "$total_time" -lt 1 ] && wps_pbc
+  [ "$total_time" -gt 3 ] && umount_disk  > /dev/null
+  rm -rf /tmp/prestime
+}
+
+[ "$BUTTON" = "BTN_1" -a  "$ACTION" = "pressed" ] && echo `date +%s` > /tmp/prestime
+
+[ "$BUTTON" = "BTN_1" -a  "$ACTION" = "released" ] && {
+  pres_time
+  [ "$total_time" -lt 1 ] && wifi_switch
+  rm -rf /tmp/prestime
+}
+
+[ "$BUTTON" = "BTN_0" -a  "$ACTION" = "pressed" ] && echo `date +%s` > /tmp/prestime 
+
+[ "$BUTTON" = "BTN_0" -a  "$ACTION" = "released" ] && {
+  pres_time
+  [ "$total_time" -gt "4" ] && {
+    echo heartbeat > /sys/class/leds/hg255d\:power/trigger
+    mtd -r erase rootfs_data
+  }
+  rm -rf /tmp/prestime
+}

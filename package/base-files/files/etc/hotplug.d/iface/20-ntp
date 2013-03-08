@@ -1,0 +1,13 @@
+#!/bin/sh
+
+wan_exists=$(uci get network.wan 2>/dev/null)
+trigger_if="wan"
+if [ -z "$wan_exists" ] ; then
+	trigger_if="lan"
+fi
+
+if [ "$ACTION" = "ifup" ] && [ "$INTERFACE" = "$trigger_if" ] ; then
+	sleep 3
+	killall sysntpd >/dev/null 2>&1
+	/etc/init.d/sysntpd restart
+fi
