@@ -12,11 +12,10 @@
 
 <script>
 <!--
-       var direction = "download";
-       protocolMap = new Object;
+	var direction = "download";
+	protocolMap = new Object;
 <?
-       sed -e '/^#/ d' -e 's/\([^ ]*\) \(.*\)/protocolMap\["\1"\]="\2";/' /etc/l7-protocols/l7index
-
+	sed -e '/^#/ d' -e 's/\([^ ]*\) \(.*\)/protocolMap\["\1"\]="\2";/' /etc/l7-protocols/l7index
 
 	if [ -h /etc/rc.d/S50qos_gargoyle ] ; then
 		echo "var qosEnabled = true;"
@@ -30,11 +29,11 @@
 
 <form>
 	<fieldset>
-		<legend class="sectionheader">QoS (Download) -- Classification Rules</legend>
+		<legend class="sectionheader">QoS (下载) -- 分类规则</legend>
 
 		<div id='qos_enabled_container' class='nocolumn'>
 			<input type='checkbox' id='qos_enabled' onclick="setQosEnabled()" />
-			<label id='qos_enabled_label' for='qos_enabled'>Enable Quality of Service (Download Direction)</label>
+			<label id='qos_enabled_label' for='qos_enabled'>启用 QoS 服务 (下载)</label>
 		</div>
 		<div class="indent">
 			<p>Quality of Service (QoS) provides a way to control how available bandwidth is allocated.  Connections are classified into
@@ -42,13 +41,13 @@
 			in cases where you want to divide available bandwidth between competing requirements.  For example if you want
 			your VoIP phone to work correctly while downloading videos.  Another case would be if you want your bit torrents
 			throttled back when you are web surfing. 
-		  </p>
+			</p>
 		</div>
 		<div class="internal_divider"></div>
 
 		<div id='qos_rule_table_container' class="bottom_gap"></div>
 		<div>
-			<label class="leftcolumn" id="default_class_label" for="default_class">Default Service Class:</label>
+			<label class="leftcolumn" id="default_class_label" for="default_class">默认服务类:</label>
 			<select class="rightcolumn" id="default_class"></select>
 		</div>
 
@@ -69,33 +68,33 @@
 			<p>
 		</div>
 
-		<div><strong>Add New Classification Rule:</strong></div>
+		<div><strong>添加新的分类规则:</strong></div>
 		<div class="indent">
 			<div>
 				<div class='leftcolumn'>
 					<input type='checkbox'  id='use_source_ip' onclick='enableAssociatedField(this,"source_ip", "")' />
-					<label id="source_ip_label" for='source_ip'>Source IP:</label>
+					<label id="source_ip_label" for='source_ip'>来源 IP:</label>
 				</div>
 				<input class='rightcolumn' type='text' id='source_ip' onkeyup='proofreadIpRange(this)' size='17' maxlength='31' />
 			</div>
 			<div>
 				<div class='leftcolumn'>
 					<input type='checkbox'  id='use_source_port' onclick='enableAssociatedField(this,"source_port", "")'/>
-					<label id="source_port_label" for='source_port'>Source Port(s):</label>
+					<label id="source_port_label" for='source_port'>来源端口(范围):</label>
 				</div>
 				<input class='rightcolumn' type='text' id='source_port' onkeyup='proofreadPortOrPortRange(this)' size='17' maxlength='11' />
 			</div>
 			<div>
 				<div class='leftcolumn'>
 					<input type='checkbox'  id='use_dest_ip' onclick='enableAssociatedField(this,"dest_ip", "")' />
-					<label id="dest_ip_label" for='dest_ip'>Destination IP:</label>
+					<label id="dest_ip_label" for='dest_ip'>目标 IP:</label>
 				</div>
 				<input class='rightcolumn' type='text' id='dest_ip' onkeyup='proofreadIpRange(this)' size='17' maxlength='31' />
 			</div>
 			<div>
 				<div class='leftcolumn'>
 					<input type='checkbox'  id='use_dest_port' onclick='enableAssociatedField(this,"dest_port", "")'  />
-					<label id="dest_port_label" for='dest_port'>Destination Port(s):</label>
+					<label id="dest_port_label" for='dest_port'>目标端口(范围):</label>
 				</div>
 				<input class='rightcolumn' type='text' id='dest_port' onkeyup='proofreadPortOrPortRange(this)' size='17' maxlength='11' />
 			</div>
@@ -103,7 +102,7 @@
 			<div>
 				<div class='leftcolumn'>
 					<input type='checkbox'  id='use_max_pktsize' onclick='enableAssociatedField(this,"max_pktsize", "")'  />
-					<label id="max_pktsize_label" for='max_pktsize'>Maximum Packet Length:</label>
+					<label id="max_pktsize_label" for='max_pktsize'>最大包长:</label>
 				</div>
 				<input class='rightcolumn' type='text' id='max_pktsize' onkeyup='proofreadNumericRange(this,1,1500)' size='17' maxlength='4' />
 				<em>bytes</em>
@@ -111,17 +110,16 @@
 			<div>
 				<div class='leftcolumn'>
 					<input type='checkbox'  id='use_min_pktsize' onclick='enableAssociatedField(this,"min_pktsize", "")'  />
-					<label id="min_pktsize_label" for='min_pktsize'>Minimum Packet Length:</label>
+					<label id="min_pktsize_label" for='min_pktsize'>最小包长:</label>
 				</div>
 				<input class='rightcolumn' type='text' id='min_pktsize' onkeyup='proofreadNumericRange(this,1,1500)' size='17' maxlength='4' />
 				<em>bytes</em>
 			</div>
 
-
 			<div>
 				<div class='leftcolumn'>
 					<input type='checkbox'  id='use_transport_protocol' onclick='enableAssociatedField(this,"transport_protocol", "")'  />
-					<label id="transport_protocol_label" for='transport_protocol'>Transport Protocol:</label>
+					<label id="transport_protocol_label" for='transport_protocol'>传输协议:</label>
 				</div>
 				<select class='rightcolumn' id="transport_protocol"/>
 					<option value="TCP">TCP</option>
@@ -133,7 +131,7 @@
 			<div>
 				<div class='leftcolumn'>
 					<input type='checkbox'  id='use_connbytes_kb' onclick='enableAssociatedField(this,"connbytes_kb", "")'  />
-					<label id="connbytes_kb_label" for='connbytes_kb'>Connection bytes reach:</label>
+					<label id="connbytes_kb_label" for='connbytes_kb'>连接字节:</label>
 				</div>
 				<input class='rightcolumn' type='text' id='connbytes_kb' onkeyup='proofreadNumericRange(this,0,4194303)' size='17' maxlength='28' />
 				<em>kBytes</em>
@@ -142,7 +140,7 @@
 			<div>
 				<div class='leftcolumn'>
 					<input type='checkbox'  id='use_app_protocol' onclick='enableAssociatedField(this,"app_protocol", "")' />
-					<label id="app_protocol_label" for='app_protocol'>Application (Layer7) Protocol:</label>
+					<label id="app_protocol_label" for='app_protocol'>应用程序(Layer7)协议:</label>
 				</div>
 				<select class='rightcolumn' id="app_protocol">
 				<?
@@ -152,25 +150,25 @@
 			</div>
 
 			<div>
-				<label class='leftcolumn' id="classification_label" for='classification' >Set Service Class To:</label>
+				<label class='leftcolumn' id="classification_label" for='class_name' >服务类设置为:</label>
 				<select class='rightcolumn' id="classification">
 				</select>
 			</div>
 
 
 			<div id="add_rule_container">
-				<input type="button" id="add_rule_button" class="default_button" value="Add Rule" onclick="addClassificationRule()" />
+				<input type="button" id="add_rule_button" class="default_button" value="添加规则" onclick="addClassificationRule()" />
 			</div>
 	</div>
 	</fieldset>
 
 	<fieldset>
 
-		<legend class="sectionheader">QoS (Download) -- Service Classes</legend>
+		<legend class="sectionheader">QoS (下载) -- 服务类</legend>
 		<div id='qos_class_table_container' class="bottom_gap"></div>
 
 		<div>
-			<label class="leftcolumn" id="total_bandwidth_label" for="total_bandwidth">Total Download Bandwidth:</label>
+			<label class="leftcolumn" id="total_bandwidth_label" for="total_bandwidth">总 (下载) 带宽:</label>
 			<input type="text" class="rightcolumn" id="total_bandwidth" class="rightcolumn" onkeyup="proofreadNumeric(this)"  size='10' maxlength='10' />
 			<em>kbit/s</em>
 
@@ -205,10 +203,10 @@
 				<p> Specifying <em>Total Download Bandwidth</em> correctly is crucial to making QoS work.  If you are using the active congestion
 				then just set this to the maximum download speed your ISP will deliver.  If you are using a PPPoE connection check your modem's
 				webpage and set this to your DSL downlink speed. </p>
-				
+
 				<p>If you are not using the ACC then you must establish what the minimum speed your ISP will deliver is and then set this number to that.
 				In general ISPs do not provide a guaranteed minimum bandwith so it will take some experimentation and frustration on your part 
-				to arrive at a number.	One approach is to start with a number which is half of what you think it should be and then test your 
+				to arrive at a number. One approach is to start with a number which is half of what you think it should be and then test your 
 				link under full load and make sure everything works.  Then increase it in steps, testing as you go until QoS starts to break down.  
 				You also may see that after your testing QoS works for a while and then stops working.  This is because your ISP is getting 
 				overloaded due to demands from their other customers so they are no longer delivering to you the bandwidth they did during your testing.  
@@ -227,32 +225,32 @@
 		<div class="internal_divider"></div>
 
 
-		<div><strong>Add New Service Class:</strong></div>
+		<div><strong>添加新的服务类:</strong></div>
 		<div class="indent">
 
 			<div>
-				<label class='leftcolumn' id="class_name_label" for='class_name'  >Service Class Name:</label>
+				<label class='leftcolumn' id="class_name_label" for='class_name'  >服务类名称:</label>
 				<input class='rightcolumn' type='text' id='class_name' onkeyup="proofreadLengthRange(this,1,10)" size='12' maxlength='10' />
 			</div>
 
 			<div>
-				<label class='leftcolumn' id="percent_bandwidth_label" for='percent_bandwidth' >Percent Bandwidth At Capacity:</label>
+				<label class='leftcolumn' id="percent_bandwidth_label" for='percent_bandwidth' >带宽容量百分比:</label>
 				<div class='rightcolumn'>
 					<input type='text' id='percent_bandwidth' onkeyup="proofreadNumericRange(this,1,100)"  size='5' maxlength='3' />
 					<em>%</em>
 				</div>
 			</div>
 
-			<div class='nocolumn'>Bandwidth Minimum:</div>
+			<div class='nocolumn'>最小带宽:</div>
 			<div class='indent'>
 				<div class='nocolumn'>
 					<input type='radio' name="min_radio" id='min_radio1' onclick='enableAssociatedField(document.getElementById("min_radio2"),"min_bandwidth", "")' />
-					<label for='min_radio1'>No Bandwidth Minimum</label>
+					<label for='min_radio1'>不限制最小带宽</label>
 				</div>
 				<div>
 					<span class='leftcolumn'>
 						<input type='radio' name="min_radio" id="min_radio2" onclick='enableAssociatedField(document.getElementById("min_radio2"),"min_bandwidth", "")' />
-						<label id="min_bandwidth_label" for='min_radio2'>Bandwidth Minimum:</label>
+						<label id="min_bandwidth_label" for='min_radio2'>最小带宽:</label>
 					</span>
 					<span class='rightcolumn'>
 						<input type='text' class="rightcolumn" id='min_bandwidth' onkeyup="proofreadNumeric(this)"  size='10' maxlength='10' />
@@ -261,16 +259,16 @@
 				</div>
 			</div>
 
-			<div class='nocolumn'>Bandwidth Maximum:</div>
+			<div class='nocolumn'>最大带宽:</div>
 			<div class='indent'>
 				<div class='nocolumn'>
 					<input type='radio' name="max_radio" id='max_radio1' onclick='enableAssociatedField(document.getElementById("max_radio2"),"max_bandwidth", "")' />
-					<label for='max_radio1'>No Bandwidth Maximum</label>
+					<label for='max_radio1'>不限制最大带宽</label>
 				</div>
 				<div>
 					<span class='leftcolumn'>
 						<input type='radio' name="max_radio" id="max_radio2" onclick='enableAssociatedField(document.getElementById("max_radio2"),"max_bandwidth", "")' />
-						<label id="max_bandwidth_label" for='max_radio2'>Bandwidth Maximum:</label>
+						<label id="max_bandwidth_label" for='max_radio2'>最大带宽:</label>
 					</span>
 					<span class='rightcolumn'>
 						<input type='text' class="rightcolumn" id='max_bandwidth' onkeyup="proofreadNumeric(this)"  size='10' maxlength='10' />
@@ -279,39 +277,39 @@
 				</div>
 			</div>
 
-			<div class='nocolumn'>Minimize Round Trip Times (RTT):</div>
+			<div class='nocolumn'>最小往返延时(MINRTT):</div>
 			<div class='indent'>
 				<div class='nocolumn'>
 					<input type='radio' name="rtt_radio" id='rtt_radio1'/>
-					<label for='max_radio1'>Minimize RTT (ping times) when active</label>
+					<label for='max_radio1'>MINRTT条件激活(ping延时)</label>
 				</div>
 				<div>
 					<span class='leftcolumn'>
 						<input type='radio' name="rtt_radio" id="rtt_radio2" />
-						<label for='max_radio2'>Optimize WAN utilization</label>
+						<label for='max_radio2'>优化WAN使用率</label>
 					</span>
 				</div>
 			</div>
 
 			<div id="add_class_container">
-				<input type="button" id="add_class_button" class="default_button" value="Add Service Class" onclick="addServiceClass()" />
+				<input type="button" id="add_class_button" class="default_button" value="添加服务类" onclick="addServiceClass()" />
 			</div>
 		</div>
 	</fieldset>
 
 	<fieldset>
 
-		<legend class="sectionheader">QoS (Download) -- Active Congestion Control</legend>
+		<legend class="sectionheader">QoS (下载) -- 主动拥塞控制</legend>
 
 		<div id='qos_monitor_container' class='nocolumn'>
 			<input type='checkbox' id='qos_monenabled' onclick="setQosEnabled()"/>
-			<label id='qos_monenabled_label' for='qos_monenabled'>Enable active congestions control (Download Direction)</label>
+			<label id='qos_monenabled_label' for='qos_monenabled'>启用主动拥塞控制 (下载)</label>
 		</div>
 
 		<div>
 			<span class='indent'>
 				<input type='checkbox' id='use_ptarget_ip' onclick='enableAssociatedField(this, "ptarget_ip", currentWanGateway)'/>&nbsp;&nbsp;
-				<label for='ptarget_ip' id='ptarget_ip_label'>Use non-standard ping target:</label>
+				<label for='ptarget_ip' id='ptarget_ip_label'>使用自定义ping目标:</label>
 				<input type='text' name='ptarget_ip' id='ptarget_ip' onkeyup='proofreadIpRange(this)' size='17' maxlength='31' /> 
 			</span>
 		</div>
@@ -319,7 +317,7 @@
 		<div>
 			<span class='indent'>
 				<input type='checkbox' id='use_auto_pinglimit' onclick='enableAssociatedField(this, "pinglimit", 85)'/>&nbsp;&nbsp;
-				<label for='pinglimit' id='pinglimit_label'>Use custom ping limit:</label>
+				<label for='pinglimit' id='pinglimit_label'>使用自定义ping延时:</label>
 				<input type='text' name='pinglimit' id='pinglimit' onkeyup='proofreadNumericRange(this, 10, 250)' size='4' maxlength='4' /> 
 			</span>
 		</div>
@@ -352,7 +350,7 @@
 
 		<div class="indent">
 		<table>
-		<tr><td><strong>Congestion Control Status</strong></td></tr>
+              <tr><td><strong>拥塞控制状态</strong></td></tr>
 		<tr><td><span id='qstate'></span></td></tr>
 		<tr><td><span id='qllimit'></span></td></tr>
 		<tr><td><span id='qollimit'></span></td></tr>
@@ -384,16 +382,13 @@
 				</table>
 			</span>
 			<a onclick='setDescriptionVisibility("qos_down_4")'  id="qos_down_4_ref" href="#qos_down_4">Hide Text</a>
-
 		</div>
-
 
 	</fieldset>
 
-
 	<div id="bottom_button_container">
-		<input type='button' value='Save Changes' id="save_button" class="bottom_button" onclick='saveChanges()' />
-		<input type='button' value='Reset' id="reset_button" class="bottom_button" onclick='resetData()'/>
+		<input type='button' value='保存设置' id="save_button" class="bottom_button" onclick='saveChanges()' />
+		<input type='button' value='重设' id="reset_button" class="bottom_button" onclick='resetData()'/>
 	</div>
 	<span id="update_container" >Please wait while new settings are applied. . .</span>
 </form>
@@ -405,7 +400,6 @@
 	resetData();
 //-->
 </script>
-
 
 <?
 	gargoyle_header_footer -f -s "firewall" -p "qosdownload"

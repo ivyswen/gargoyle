@@ -7,12 +7,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=aria2
-PKG_VERSION:=1.15.1
+PKG_VERSION:=1.16.5
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.bz2
 PKG_SOURCE_URL:=@SF/aria2
-PKG_MD5SUM:=a749a1f7cfe03a7518630d2310267c42
+#PKG_MD5SUM:=a749a1f7cfe03a7518630d2310267c42
+PKG_MD5SUM:=aa632bc2bf7f63bacd1495654d04bfb0
 PKG_INSTALL:=1
 
 include $(INCLUDE_DIR)/package.mk
@@ -50,6 +51,7 @@ CONFIGURE_VARS += \
 	ZLIB_LIBS="-L$(STAGING_DIR)/usr/lib"
 
 define Package/aria2/install
+	$(CP) ./files/* $(1)/
 	$(INSTALL_DIR) $(1)/usr/bin
 	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/bin/aria2c $(1)/usr/bin
 endef

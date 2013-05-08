@@ -172,6 +172,12 @@ tl-wr2543n)
 	ucidef_set_led_usbdev "usb" "USB" "tp-link:green:usb" "1-1"
 	;;
 
+mc-mw4530r)
+	ucidef_set_led_usbdev "usb" "USB" "mw4530r:green:usb" "1-1"
+	ucidef_set_led_wlan "wlan2g" "WLAN2G" "mw4530r:green:wlan2g" "phy0tpt"
+	ucidef_set_led_wlan "wlan5g" "WLAN5G" "mw4530r:green:wlan5g" "phy1tpt"
+	;;
+
 wrt160nl)
 	ucidef_set_led_wlan "wlan" "WLAN" "wrt160nl:blue:wlan" "phy0tpt"
 	;;

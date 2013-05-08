@@ -9,7 +9,6 @@
 	gargoyle_header_footer -h -s "status" -p "webmon" -c "internal.css" -j "webmon.js table.js" -n webmon_gargoyle gargoyle
 ?>
 
-
 <script>
 <!--
 <?
@@ -24,56 +23,54 @@
 //-->
 </script>
 
-
 <form>
 	<fieldset>
-		<legend class="sectionheader">Web Monitor Preferences</legend>
+		<legend class="sectionheader">网站监视器首选项</legend>
 		<div>
 			<input type='checkbox' id='webmon_enabled' onclick="setWebmonEnabled()" />
-			<label id='webmon_enabled_label' for='webmon_enabled'>Enable Web Usage Monitor</label>
+			<label id='webmon_enabled_label' for='webmon_enabled'>启用网站监视器</label>
 		</div>
 		<div class="indent">
 			<div>
-				<label class='leftcolumn' for='num_domains' id='num_domains_label'>Number of Sites to Save:</label>
+				<label class='leftcolumn' for='num_domains' id='num_domains_label'>访问地址保存数量:</label>
 				<input type='text' class='rightcolumn' id='num_domains' onkeyup='proofreadNumericRange(this,1,9999)' size='6' maxlength='4' />
 			</div>
 			<div>
-				<label class='leftcolumn' for='num_searches' id='num_searches_label'>Number of Searches to Save:</label>
+				<label class='leftcolumn' for='num_searches' id='num_searches_label'>搜索请求保存数量:</label>
 				<input type='text' class='rightcolumn' id='num_searches' onkeyup='proofreadNumericRange(this,1,9999)' size='6' maxlength='4' />
 			</div>
 			<div>
 				<select id="include_exclude" onchange="setIncludeExclude()">
-					<option value="all">Monitor All Hosts</option>
-					<option value="include">Monitor Only Hosts Below</option>
-					<option value="exclude">Exclude Hosts Below From Monitoring</option>
+					<option value="all">监视所有主机</option>
+					<option value="include">仅监视下列主机</option>
+					<option value="exclude">监视排除下列以外的主机</option>
 				</select>
 			</div>
 			<div class='indent' id="add_ip_container">
 				<div>
 					<input type='text' id='add_ip' onkeyup='proofreadMultipleIps(this)' size='30' />
-					<input type="button" class="default_button" id="add_ip_button" value="Add" onclick="addAddressesToTable(document, 'add_ip', 'ip_table_container', 'ip_table', false, 3, 1, 250)" />
+					<input type="button" class="default_button" id="add_ip_button" value="添加" onclick="addAddressesToTable(document, 'add_ip', 'ip_table_container', 'ip_table', false, 3, 1, 250)" />
 					<br/>
-					<em>Specify IP or IP Range</em>
+					<em>指定一个IP或IP范围</em>
 				</div>
 				<div id="ip_table_container"></div>
 			</div>
 		</div>
 
-		
 		<div class="internal_divider"></div>
 
 		<div id="bottom_button_container">
-			<input type='button' value='Save Changes' id="save_button" class="default_button" onclick='saveChanges()' />
-			<input type='button' value='Reset' id="reset_button" class="default_button" onclick='resetData()'/>
-			<input type='button' value='Clear History' id="clear_history" class="default_button" onclick='clearHistory()'/>
+			<input type='button' value='保存设置' id="save_button" class="default_button" onclick='saveChanges()' />
+			<input type='button' value='重设' id="reset_button" class="default_button" onclick='resetData()'/>
+			<input type='button' value='清空历史记录' id="clear_history" class="default_button" onclick='clearHistory()'/>
 		</div>
 	</fieldset>
 	<fieldset>
-		<legend class="sectionheader">Recently Visited Sites</legend>
+		<legend class="sectionheader">最近访问地址</legend>
 		<div>
 			<select id="domain_host_display" onchange="updateMonitorTable()">
-				<option value="hostname">Display Hostnames</option>
-				<option value="ip">Display Host IPs</option>
+				<option value="hostname">显示主机名</option>
+				<option value="ip">显示主机IP</option>
 			</select>
 		</div>
 
@@ -81,31 +78,30 @@
 	</fieldset>
 
 	<fieldset>
-		<legend class="sectionheader">Recent Web Searches</legend>
+		<legend class="sectionheader">最近搜索请求</legend>
 		<div>
 			<select id="search_host_display" onchange="updateMonitorTable()">
-				<option value="hostname">Display Hostnames</option>
-				<option value="ip">Display Host IPs</option>
+				<option value="hostname">显示主机名</option>
+				<option value="ip">显示主机IP</option>
 			</select>
 		</div>
 
 		<div id="webmon_search_table_container"></div>
 	</fieldset>
 
-
 	<fieldset id="download_web_usage_data" >
-		<legend class="sectionheader">Download Web Usage Data</legend>
+		<legend class="sectionheader">导出监视统计数据</legend>
 		<div>
-			<span style='text-decoration:underline'>Data is comma separated:</span>
+			<span style='text-decoration:underline'>数据使用逗号分隔:</span>
 			<br/>
-			<em>[Time of Last Visit],[Local IP],[Domain Visted/Search Request]</em>
+			<em>[最后访问时间],[本地 IP],[域名访问/搜索请求]</em>
 			<br/>
 		</div>
 		<div>
 			<center>
-				<input type='button' id='download_domain_button' class='big_button' value='Visited Sites' onclick='window.location="webmon_domains.csv";' />
+				<input type='button' id='download_domain_button' class='big_button' value='导出访问地址' onclick='window.location="webmon_domains.csv";' />
 				&nbsp;&nbsp;
-				<input type='button' id='download_search_button' class='big_button' value='Search Requests' onclick='window.location="webmon_searches.csv";' />
+				<input type='button' id='download_search_button' class='big_button' value='导出搜索请求' onclick='window.location="webmon_searches.csv";' />
 			</center>
 		</div>
 	</fieldset>
@@ -113,13 +109,11 @@
 
 <!-- <br /><textarea style="margin-left:20px;" rows=30 cols=60 id='output'></textarea> -->
 
-
 <script>
 <!--
 	resetData();
 //-->
 </script>
-
 
 <?
 	gargoyle_header_footer -f -s "status" -p "webmon"

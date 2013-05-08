@@ -9,7 +9,6 @@
 	gargoyle_header_footer -h -s "system" -p "update" -c "internal.css" -j "update.js" 
 ?>
 
-
 <script>
 <!--
 <?
@@ -25,30 +24,38 @@
 	else
 		echo "var platform=\"x86\";"
 	fi
+
+	gargoyle_version=$(cat data/gargoyle_version.txt)
+	echo "var gargoyleVersion=\"$gargoyle_version\""
 ?>
 //-->
 </script>
 
-
 <fieldset id="upgrade_section">
-	<legend class="sectionheader">Upgrade Firmware</legend>
+	<legend class="sectionheader">升级固件</legend>
 	<div>
 		<div>
-			<p>By default upgrading your firmware will completely erase your current configuration.
-		      	It is <em>strongly</em> recommended that you <a href="backup.sh">back up</a> your current 
-			configuration before performing an upgrade.</p>
+			<p>升级固件默认不保留当前配置.
+		      	<em>强烈</em>建议您<a href="backup.sh">备份</a>当前配置, 
+			再执行固件升级.</p>
 
 			<p>You can attempt to preserve your old settings by ticking <em>Attempt to Preserve Settings</em> below. Be
 			aware that this can potentially lead to problems if the new version is significantly newer than the old version, 
 			but for small, incremental differences this will likely work. It is always best to keep a backup just in case.
 		</div>
-		
+
+		<div class="internal_divider"></div>
+
+		<div>
+			<span class='leftcolumn'>Current Gargoyle Version:</span><span id="gargoyle_version" class='rightcolumn'></span>
+		</div>
+
 		<div class="internal_divider"></div>
 
 		<form id='upgrade_form' enctype="multipart/form-data" method="post" action="utility/do_upgrade.sh" target="do_upgrade">
 
 			<div id="upgrade_file1_container">
-				<label id="upgrade_label" class='leftcolumn' for="upgrade_file">Select Firmware File:</label>
+				<label id="upgrade_label" class='leftcolumn' for="upgrade_file">选择固件文件:</label>
 				<input class='rightcolumn' type="file" id="upgrade_file" name="upgrade_file" />
 				<br/>
 				<em><span id="upgrade_text" class="rightcolumnonly"></span></em>
@@ -56,7 +63,7 @@
 			<div id="upgrade_preserve_container">
 				<span class="rightcolumnonly">
 					<input type="checkbox" id="upgrade_preserve" name="upgrade_preserve" style="padding:0;margin:0px;vertical-align:middle;overflow:hidden;" />
-					<label id="upgrade_preserve_label" for="upgrade_preserve" style="vertical-align:middle">Attempt to Preserve Settings</label>
+					<label id="upgrade_preserve_label" for="upgrade_preserve" style="vertical-align:middle">尝试保留设置</label>
 				</span>
 			</div>
 
@@ -65,7 +72,7 @@
 		</form>
 	</div>
 	<div>
-		<input id="upgrade_button" type='button' class="default_button" value="Upgrade Now" onclick="doUpgrade()" style="margin-left:0px;"/>
+		<input id="upgrade_button" type='button' class="default_button" value="立即升级" onclick="doUpgrade()" style="margin-left:0px;"/>
 	</div>
 
 	<iframe id="do_upgrade" name="do_upgrade" src="#" style="display:none"></iframe> 
@@ -75,8 +82,6 @@
 	setUpgradeFormat();
 //-->
 </script>
-
-
 
 <?
 	gargoyle_header_footer -f -s "system" -p "update" 

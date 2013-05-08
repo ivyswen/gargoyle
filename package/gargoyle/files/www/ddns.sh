@@ -13,7 +13,6 @@
 <script>
 <!--
 <?
-	
 	echo "providerData = new Array();"
 	awk '{gsub(/"/,"'\''"); print "providerData.push(\""$0"\");" ;}' /etc/ddns_providers.conf
 
@@ -29,13 +28,13 @@
 
 <form>
 	<fieldset>
-		<legend class="sectionheader">Dynamic DNS Services</legend>
+		<legend class="sectionheader">动态DNS服务</legend>
 
-		<span id="add_ddns_label"><p>Add Dynamic DNS Service:</p></span>
+		<span id="add_ddns_label"><p>添加动态DNS服务:</p></span>	
 
 		<div>
 			<div class="indent">
-				<label class='leftcolumn' for='ddns_provider' id='ddns_provider_label'>Service Provider:</label>
+				<label class='leftcolumn' for='ddns_provider' id='ddns_provider_label'>服务提供商:</label>
 				<select class='rightcolumn' id="ddns_provider" onchange="setProvider()"></select>
 			</div>
 		</div>
@@ -44,23 +43,22 @@
 
 		</div>
 
-
 		<div>
 			<div class='indent'>
-				<label class='leftcolumn' for='ddns_check' id='ddns_check_label'>Check Interval:</label>
+				<label class='leftcolumn' for='ddns_check' id='ddns_check_label'>检查间隔:</label>
 				<input type='text' class='rightcolumn' id='ddns_check'  size='8' onkeyup='proofreadNumeric(this)'/>
-				<em>minutes</em>
+				<em>分钟</em>
 			</div>
 			<div class='indent'>
-				<label class='leftcolumn' for='ddns_force' id='ddns_force_label'>Force Update Interval:</label>
+				<label class='leftcolumn' for='ddns_force' id='ddns_force_label'>强制更新间隔:</label>
 				<input type='text' class='rightcolumn' id='ddns_force'  size='8' onkeyup='proofreadNumeric(this)'/>
-				<em>days</em>
+				<em>天</em>
 			</div>
-			
+
 			<div class='indent'>
-				<input type="button" id="add_service_button" class="default_button" value="Add DDNS Service" onclick="addDdnsService()" />
+				<input type="button" id="add_service_button" class="default_button" value="添加动态DNS服务" onclick="addDdnsService()" />
 			</div>
-			
+
 			<div class='indent'>
 				<span id='ddns_1_txt'>
 					<p>
@@ -82,16 +80,15 @@
 
 		<div id='internal_divider1' class='internal_divider'></div>
 
-		<span id="add_ddns_label"><p>Dynamic DNS Services:</p></span>	
+		<span id="add_ddns_label"><p>已启用的动态域名解析:</p></span>	
 
 		<div id="ddns_table_container"></div>
 
 	</fieldset>
 	<div id="bottom_button_container">
-		<input type='button' value='Save Changes' id="save_button" class="bottom_button" onclick='saveChanges()' />
-		<input type='button' value='Reset' id="reset_button" class="bottom_button" onclick='resetData()'/>
+		<input type='button' value='保存设置' id="save_button" class="bottom_button" onclick='saveChanges()' />
+		<input type='button' value='重设' id="reset_button" class="bottom_button" onclick='resetData()'/>
 	</div>
-
 
 	<span id="update_container" >Please wait while new settings are applied. . .</span>
 </form>
@@ -103,7 +100,6 @@
 	resetData();
 //-->
 </script>
-
 
 <?
 	gargoyle_header_footer -f -s "connection" -p "dyndns"

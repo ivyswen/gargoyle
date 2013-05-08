@@ -16,68 +16,60 @@
 //-->
 </script>
 
-
-
 <form>
 	<fieldset>
-		<legend class="sectionheader">Access Restrictions</legend>
+		<legend class="sectionheader">访问限制</legend>
 
-		<span id="add_rule_label" style="text-decoration:underline" >New Restriction Rule:</span>
+		<span id="add_rule_label" style="text-decoration:underline" >新的限制规则:</span>
 
 		<div>
 			<?
-		       sed -e '/<L7OPTIONS>/,$ d' templates/restriction_template
-		       sed -e '/^#/ d'  -e "s/\([^ ]* \)\(.*\)/<option value='\1'>\2<\/option>/" /etc/l7-protocols/l7index
-		       sed -e '1,/<L7OPTIONS>/ d' templates/restriction_template
-                     ?>
+			sed -e '/<L7OPTIONS>/,$ d' templates/restriction_template
+			sed -e '/^#/ d'  -e "s/\([^ ]* \)\(.*\)/<option value='\1'>\2<\/option>/" /etc/l7-protocols/l7index
+			sed -e '1,/<L7OPTIONS>/ d' templates/restriction_template
+			?>
+
 			<div>
-				<input type="button" id="add_restriction_button" class="default_button" value="Add New Rule" onclick='addNewRule("restriction_rule", "rule_")' />
+				<input type="button" id="add_restriction_button" class="default_button" value="添加新规则" onclick='addNewRule("restriction_rule", "rule_")' />
 			</div>
 		</div>
 
-
 		<div id='internal_divider1' class='internal_divider'></div>
 
-
-
-		<span id="current_rule_label" style="text-decoration:underline" >Current Restrictions:</span>
+		<span id="current_rule_label" style="text-decoration:underline" >已启用限制:</span>
 
 		<div id="rule_table_container"></div>
 
 	</fieldset>
 
 		<fieldset>
-		<legend class="sectionheader">Exceptions (White List)</legend>
+		<legend class="sectionheader">例外 (白名单)</legend>
 
-		<span id="add_exception_label" style="text-decoration:underline" >New Exception:</span>
+		<span id="add_exception_label" style="text-decoration:underline" >新的例外规则:</span>
 
 		<div>
 			<?
-		       sed -e '/<L7OPTIONS>/,$ d' templates/whitelist_template
-		       sed -e '/^#/ d'  -e "s/\([^ ]* \)\(.*\)/<option value='\1\2'>\2<\/option>/" /etc/l7-protocols/l7index
-		       sed -e '1,/<L7OPTIONS>/ d' templates/whitelist_template
-		       ?>
+			sed -e '/<L7OPTIONS>/,$ d' templates/whitelist_template
+			sed -e '/^#/ d'  -e "s/\([^ ]* \)\(.*\)/<option value='\1\2'>\2<\/option>/" /etc/l7-protocols/l7index
+			sed -e '1,/<L7OPTIONS>/ d' templates/whitelist_template
+			?>
 
 			<div>
-				<input type="button" id="add_restriction_button" class="default_button" value="Add New Rule" onclick='addNewRule("whitelist_rule", "exception_")' />
+				<input type="button" id="add_restriction_button" class="default_button" value="添加新规则" onclick='addNewRule("whitelist_rule", "exception_")' />
 			</div>
 		</div>
 
-
 		<div id='internal_divider1' class='internal_divider'></div>
 
-
-
-		<span id="current_exceptions_label" style="text-decoration:underline" >Current Exceptions:</span>
+		<span id="current_exceptions_label" style="text-decoration:underline" >已启用例外:</span>
 
 		<div id="exception_table_container"></div>
 
 	</fieldset>
 	<div id="bottom_button_container">
-		<input type='button' value='Save Changes' id="save_button" class="bottom_button" onclick='saveChanges()' />
-		<input type='button' value='Reset' id="reset_button" class="bottom_button" onclick='resetData()'/>
+		<input type='button' value='保存设置' id="save_button" class="bottom_button" onclick='saveChanges()' />
+		<input type='button' value='重设' id="reset_button" class="bottom_button" onclick='resetData()'/>
 	</div>
-
 
 	<span id="update_container" >Please wait while new settings are applied. . .</span>
 </form>
@@ -89,7 +81,6 @@
 	resetData();
 //-->
 </script>
-
 
 <?
 	gargoyle_header_footer -f -s "firewall" -p "restriction"

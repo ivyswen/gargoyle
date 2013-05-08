@@ -1,0 +1,47 @@
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/ericpaulbishop/gargoyle.git/!svn/ver/3378/package/gargoyle/files/www/templates
+END
+restriction_template
+K 25
+svn:wc:ra_dav:version-url
+V 100
+/ericpaulbishop/gargoyle.git/!svn/ver/3378/package/gargoyle/files/www/templates/restriction_template
+END
+single_forward_template
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/ericpaulbishop/gargoyle.git/!svn/ver/3378/package/gargoyle/files/www/templates/single_forward_template
+END
+static_route_template
+K 25
+svn:wc:ra_dav:version-url
+V 101
+/ericpaulbishop/gargoyle.git/!svn/ver/3378/package/gargoyle/files/www/templates/static_route_template
+END
+quotas_template
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/ericpaulbishop/gargoyle.git/!svn/ver/3378/package/gargoyle/files/www/templates/quotas_template
+END
+whitelist_template
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/ericpaulbishop/gargoyle.git/!svn/ver/3378/package/gargoyle/files/www/templates/whitelist_template
+END
+multi_forward_template
+K 25
+svn:wc:ra_dav:version-url
+V 102
+/ericpaulbishop/gargoyle.git/!svn/ver/3378/package/gargoyle/files/www/templates/multi_forward_template
+END
+static_ip_template
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/ericpaulbishop/gargoyle.git/!svn/ver/3378/package/gargoyle/files/www/templates/static_ip_template
+END

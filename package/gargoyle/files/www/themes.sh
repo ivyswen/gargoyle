@@ -24,7 +24,7 @@
 
 <form>
 	<fieldset>
-		<legend class="sectionheader">Themes manager</legend>
+		<legend class="sectionheader">主题管理器</legend>
 		<div class='indent'>
 		<div id="themes_table_container"></div>
 		</div>

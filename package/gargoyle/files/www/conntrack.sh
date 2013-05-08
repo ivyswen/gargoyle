@@ -30,52 +30,47 @@
 
 <form>
 	<fieldset>
-		<legend class="sectionheader">Current Connections</legend>
+		<legend class="sectionheader">当前连接</legend>
 
 		<div>
-			<label for="refresh_rate" class="narrowleftcolumn">Refresh Rate:</label>
+			<label for="refresh_rate" class="narrowleftcolumn">刷新频率:</label>
 			<select id="refresh_rate" class="rightcolumn" >
-				<option value="2000">2 Seconds</option>
-				<option value="10000">10 Seconds</option>
-				<option value="30000">30 Seconds</option>
-				<option value="60000">60 Seconds</option>
-				<option value="never">Never</option>
+				<option value="2000">2 秒</option>
+				<option value="10000">10 秒</option>
+				<option value="30000">30 秒</option>
+				<option value="60000">60 秒</option>
+				<option value="never">不刷新</option>
 			</select>
 		</div>
 		<div>
-			<label for="bw_units" class="narrowleftcolumn" onchange="updateConnectionTable()">Bandwidth Units:</label>
+			<label for="bw_units" class="narrowleftcolumn" onchange="updateConnectionTable()">带宽单位:</label>
 			<select id="bw_units" class="rightcolumn">
-				<option value="mixed">Auto (Mixed)</option>
+				<option value="mixed">自动(混合)</option>
 				<option value="KBytes">KBytes</option>
 				<option value="MBytes">MBytes</option>
 				<option value="GBytes">GBytes</option>
 			</select>
 		</div>
 		<div>
-			<label for="host_display" class="narrowleftcolumn" onchange="updateConnectionTable()">Host Display:</label>
+			<label for="host_display" class="narrowleftcolumn" onchange="updateConnectionTable()">主机名显示:</label>
 			<select id="host_display" class="rightcolumn">
-				<option value="hostname">Display Hostnames</option>
-				<option value="ip">Display Host IPs</option>
+				<option value="hostname">显示主机名</option>
+				<option value="ip">显示主机IP</option>
 			</select>
 		</div>
 
-
 		<div id="connection_table_container"></div>
 		<div style="width:375px">
-			<p>Connections between local hosts and the router are not displayed.</p>
+			<p>不显示本地主机和路由器之间的连接.</p>
 		</div>
 	</fieldset>
 </form>
-
-
-
 
 <script>
 <!--
 	initializeConnectionTable();
 //-->
 </script>
-
 
 <?
 	gargoyle_header_footer -f -s "status" -p "connections"

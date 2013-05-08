@@ -147,6 +147,7 @@ platform_check_image() {
 		platform_check_image_openmesh "$magic_long" "$1" && return 0
 		return 1
 		;;
+	mc-mw4530r | \
 	tl-mr11u | \
 	tl-mr3020 | \
 	tl-mr3040 | \

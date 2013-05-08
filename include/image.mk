@@ -17,8 +17,8 @@ override MAKEFLAGS=
 override MAKE:=$(SUBMAKE)
 KDIR=$(KERNEL_BUILD_DIR)
 
-IMG_PREFIX:=$(IMAGE_TEST_VERSION)-openwrt-$(BOARD)$(if $(SUBTARGET),-$(SUBTARGET))
 #IMG_PREFIX:=openwrt-$(BOARD)$(if $(SUBTARGET),-$(SUBTARGET))
+IMG_PREFIX:=$(IMAGE_TEST_VERSION)-openwrt-$(BOARD)$(if $(SUBTARGET),-$(SUBTARGET))
 
 ifneq ($(CONFIG_BIG_ENDIAN),)
   JFFS2OPTS     :=  --pad --big-endian --squash -v

@@ -43,6 +43,17 @@ DVG3810BN)
 	ucidef_add_switch_vlan "eth1" "1" "0 1 2 3 4 5t"
 	;;
 
+RG100A-AA)
+	ucidef_set_interfaces_lan_wan "eth0.1" "eth0.2"
+    uci batch <<EOF
+set network.eth0=switch
+set network.eth0.reset='1'
+set network.eth0.enable_vlan='1'
+EOF
+	ucidef_add_switch_vlan "eth0" "1" "0 1 2 5t"
+	ucidef_add_switch_vlan "eth0" "2" "3 5t"
+	;;
+
 *)
 	ucidef_set_interfaces_lan_wan "eth1" "eth0"
 	;;

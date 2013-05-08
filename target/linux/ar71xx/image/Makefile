@@ -887,6 +887,8 @@ $(eval $(call SingleProfile,TPLINK-LZMA,$(fs_64kraw),TLWDR4310V1,tl-wdr4310-v1,T
 
 $(eval $(call SingleProfile,UBDEV,$(fs_64k),UBDEV01,ubdev01,UBNT-UF,ttyS0,115200,XM,XM,ar7240))
 
+$(eval $(call SingleProfile,TPLINK-LZMA,$(fs_64kraw),MCMW4530R,mc-mw4530r,MC-MW4530R,ttyS0,115200,0x45300001,1,8Mlzma))
+
 $(eval $(call SingleProfile,UBNT,$(fs_64k),UBNTRS,ubnt-rs,UBNT-RS,ttyS0,115200,RS,RSx,ar7100))
 $(eval $(call SingleProfile,UBNT,$(fs_64k),UBNTRSPRO,ubnt-rspro,UBNT-RSPRO,ttyS0,115200,RSPRO,RSPRO,ar7100pro))
 $(eval $(call SingleProfile,UBNT,$(fs_64k),UBNTLSSR71,ubnt-ls-sr71,UBNT-LS-SR71,ttyS0,115200,LS-SR71,LS-SR71,ar7100))

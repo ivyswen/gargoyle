@@ -34,6 +34,16 @@ define Package/block-mount/description
   device.
 endef
 
+define Package/block-mount-allsupport
+  $(call Package/block-mount/Default)
+  TITLE:= mounting support uuid ntfs-3g ext..
+  DEPENDS:= +blkid +swap-utils +libext2fs +e2fsprogs +ntfs-3g +fdisk +uuidgen +tune2fs
+endef
+
+define Package/block-mount-allsupport/description
+ block-mount package add blkid swap-utils libext2fs e2fsprogs ntfs-3g fdisk uuidgen tune2fs package
+endef
+
 define Package/block-mount/config
 	source "$(SOURCE)/Config.in"
 endef
@@ -44,6 +54,11 @@ endef
 define Package/block-mount/conffiles
 /etc/config/fstab
 endef
+
+define Package/block-mount-allsupport/install
+
+endef
+
 
 define Package/block-mount/install
 	$(INSTALL_DIR) $(1)/etc/init.d
@@ -65,6 +80,9 @@ define Package/block-mount/install
 	$(INSTALL_DATA) ./files/60_pivot_usb_root $(1)/lib/preinit/
 	echo "extroot_settle_time=\"$(CONFIG_EXTROOT_SETTLETIME)\"" >$(1)/lib/preinit/00_extroot.conf
 	$(INSTALL_DIR) $(1)/overlay
+	$(INSTALL_DIR) 	$(1)/usr/bin
+	$(INSTALL_BIN) ./files/disk_info $(1)/usr/bin/disk_info
 endef
 
 $(eval $(call BuildPackage,block-mount))
+$(eval $(call BuildPackage,block-mount-allsupport))

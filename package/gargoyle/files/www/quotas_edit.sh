@@ -23,13 +23,12 @@
 </script>
 
 <fieldset id="edit_container">
-	<legend class="sectionheader">Edit Quota</legend>
+	<legend class="sectionheader">编辑配额</legend>
 
 	<? cat templates/quotas_template ?>
 
 </fieldset>
 <div id="bottom_button_container"></div>
-
 
 </body>
 </html>

@@ -1,0 +1,93 @@
+Index: b/arch/mips/bcm63xx/boards/board_bcm963xx.c
+===================================================================
+--- a/arch/mips/bcm63xx/boards/board_bcm963xx.c
++++ b/arch/mips/bcm63xx/boards/board_bcm963xx.c
+@@ -2697,6 +2697,80 @@
+ 		},
+ 	},
+ };
++
++static struct board_info __initdata board_RG100A_AA = {
++	.name				= "RG100A-AA",
++	.expected_cpu_id		= 0x6358,
++
++	.has_uart0			= 1,
++	.has_enet1			= 1,
++	.has_pci			= 1,
++
++	.enet1 = {
++		.force_speed_100	= 1,
++		.force_duplex_full	= 1,
++	},
++
++	.has_ohci0 = 1,
++	.has_pccard = 1,
++	.has_ehci0 = 1,
++
++	.leds = {
++		{
++			.name		= "rg100a-aa:green:adsl",
++			.gpio		= 22,
++			.active_low	= 1,
++		},
++		{
++			.name		= "rg100a-aa:green:inet",
++			.gpio		= 8,
++			.active_low	= 1,
++		},
++		{
++			.name		= "rg100a-aa:green:wps",
++			.gpio		= 24,
++			.active_low	= 1,
++		},
++		{
++			.name		= "rg100a-aa:green:usb",
++			.gpio		= 0,
++			.active_low	= 1,
++		},
++		{
++			.name		= "rg100a-aa:green:power",
++			.gpio		= 4,
++			.active_low	= 0,
++			.default_trigger = "default-on",
++		},
++	},
++	.buttons = {
++		{
++			.desc	= "reset",
++			.gpio	= 36,
++			.active_low = 1,
++			.type	= EV_KEY,
++			.code	= KEY_RESTART,
++			.debounce_interval = BCM963XX_KEYS_DEBOUNCE_INTERVAL,
++		},
++		{
++			.desc	= "wps",
++			.gpio	= 37,
++			.active_low = 1,
++			.type	= EV_KEY,
++			.code	= KEY_WPS_BUTTON,
++			.debounce_interval = BCM963XX_KEYS_DEBOUNCE_INTERVAL,
++		},
++		{
++			.desc	= "wlan",
++			.gpio	= 34,
++			.active_low = 1,
++			.type	= EV_KEY,
++			.code	= KEY_WLAN,
++			.debounce_interval = BCM963XX_KEYS_DEBOUNCE_INTERVAL,
++		},
++	},
++};
++
+ #endif
+ 
+ #ifdef CONFIG_BCM63XX_CPU_6362
+@@ -2990,6 +3064,7 @@
+ 	&board_HW553,
+ 	&board_spw303v,
+ 	&board_DVAG3810BN,
++	&board_RG100A_AA,
+ #endif
+ 
+ #ifdef CONFIG_BCM63XX_CPU_6362

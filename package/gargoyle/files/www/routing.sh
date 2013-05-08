@@ -20,7 +20,6 @@
 	echo "var routingData = new Array();"
 	route | awk ' {print "routingData.push(\""$0"\");"};'
 
-
 	if [ -e /lib/wifi/broadcom.sh ] ; then
 		echo "var wirelessDriver=\"broadcom\";"
 	else
@@ -32,31 +31,29 @@
 	fi
 ?>
 
-
 //-->
 </script>
 
-
 <form>
 	<fieldset>
-		<legend class="sectionheader">Active Routes</legend>
+		<legend class="sectionheader">活动路由</legend>
 		<div id="active_route_table_container"></div>
 	</fieldset>
 
 	<fieldset>
-		<legend class="sectionheader">Static Routes</legend>
+		<legend class="sectionheader">静态路由</legend>
 
 		<div id='static_route_add_heading_container'>
-			<label class='nocolumn' id='staticroute_add_heading_label' style='text-decoration:underline'>Add Static Route:</label>
+			<label class='nocolumn' id='staticroute_add_heading_label' style='text-decoration:underline'>添加静态路由:</label>
 		</div>
 		<div class='bottom_gap'>
 			<div id='static_route_add_container'>
 				<? cat templates/static_route_template ?>
 			</div>
 		</div>
-		
+
 		<div id='static_route_table_heading_container'>
-			<span class='nocolumn'>Current Static Routes:</span>
+			<span class='nocolumn'>已启用的静态路由:</span>
 		</div>
 		<div class='indent'>
 			<div id='static_route_table_container' class="bottom_gap"></div>
@@ -67,29 +64,21 @@
 		<input type='text' value='firefox3_bug' />
 	</div>
 
-
 	<div id="bottom_button_container">
-		<input type='button' value='Save Changes' id="save_button" class="bottom_button"  onclick='saveChanges()' />
-		<input type='button' value='Reset' id="reset_button" class="bottom_button"  onclick='resetData()'/>
+		<input type='button' value='保存设置' id="save_button" class="bottom_button"  onclick='saveChanges()' />
+		<input type='button' value='重设' id="reset_button" class="bottom_button"  onclick='resetData()'/>
 	</div>
 	<span id="update_container" >Please wait while new settings are applied. . .</span>
 </form>
 <iframe id="reboot_test" onload="reloadPage()" style="display:none" ></iframe>
 
-
-
-
 <!-- <br /><textarea style="margin-left:20px;" rows=30 cols=60 id='output'></textarea> -->
-
-
-
 
 <script>
 <!--
 	resetData();
 //-->
 </script>
-
 
 <?
 	gargoyle_header_footer -f -s "connection" -p "routing"

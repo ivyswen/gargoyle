@@ -1,6 +1,6 @@
 #!/usr/bin/haserl
 <?
-	# This program is copyright � 2008-2012 Eric Bishop and is distributed under the terms of the GNU GPL
+	# This program is copyright © 2008-2012 Eric Bishop and is distributed under the terms of the GNU GPL
 	# version 2.0 with a special clarification/exception that permits adapting the program to
 	# configure proprietary "back end" software provided that all modifications to the web interface
 	# itself remain covered by the GPL.
@@ -9,7 +9,7 @@
 	gargoyle_header_footer -m  -c "internal.css" -j "usb_storage.js table.js" network
 ?>
 <fieldset id="edit_container">
-	<legend class="sectionheader">Edit Shared Disk</legend>
+	<legend class="sectionheader">编辑共享磁盘</legend>
 
 <?
 	cat templates/usb_storage_template
@@ -17,7 +17,6 @@
 
 </fieldset>
 <div id="bottom_button_container"></div>
-
 
 </body>
 </html>

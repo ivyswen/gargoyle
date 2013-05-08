@@ -3,9 +3,63 @@
 # Copyright (C) 2010 Vertical Communications
 # This is free software, licensed under the GNU General Public License v2.
 # See /LICENSE for more information.
-#
+# Modified By RA
 
 . /lib/functions/block.sh
+
+set_devices(){
+	set_section=$(uci show fstab | grep "$get_uuid" | awk -F "." '{print $2}')
+	old_device=$(uci get fstab.${set_section}.device)
+	[ "$old_device" != "/dev/$device" ]&&{
+		uci set fstab.${set_section}.device="/dev/$device"
+		uci commit fstab
+	}
+}
+
+set_fstab(){
+
+	isext4=$(blkid | grep "/dev/$device" | grep -ci ext4)
+	isext3=$(blkid | grep "/dev/$device" | grep -ci ext3)
+	isntfs=$(blkid | grep "/dev/$device" | grep -ci ntfs)
+	isvfat=$(blkid | grep "/dev/$device" | grep -ci vfat)
+
+	if [ "$isntfs" -ge 1 ] ; then
+		my_fstype='ntfs'
+	elif [ "$isvfat" -ge 1 ] ; then
+		my_fstype='vfat'
+	elif [ "$isext3" -ge 1 ] ; then
+		my_fstype='ext3'
+	elif [ "$isext4" -ge 1 ] ; then
+		my_fstype='ext4'
+	fi
+
+	[ ! -z "$my_fstype" ] && {
+		
+		n=$(uci show fstab | grep "fstab.@mount" | grep -c "=mount")
+		m=$((n+1))
+
+		uci add fstab mount
+		uci set fstab.@mount[$n]="mount"
+		uci set fstab.@mount[$n].enabled=1
+		uci set fstab.@mount[$n].device="/dev/$device"
+		uci set fstab.@mount[$n].uuid="${get_uuid}"
+		uci set fstab.@mount[$n].target="/mnt/sda${m}"
+		uci set fstab.@mount[$n].fstype="$my_fstype"
+
+		case "$my_fstype" in
+			'ext3')
+				uci set fstab.@mount[$n].options="noatime,barrier=0,data=writeback,commit=60";;
+			'ext4')
+				uci set fstab.@mount[$n].options="noatime,journal_async_commit,nodelalloc,data=writeback,barrier=0,commit=60";;
+			'ntfs')
+				uci set fstab.@mount[$n].options="noatime,nls=utf8";;
+			'vfat')
+				uci set fstab.@mount[$n].options="utf8=1,umask=0000,dmask=0000,fmask=0000";;
+		esac
+
+		uci commit fstab
+	}
+}
 
 blkdev=`dirname $DEVPATH`
 if [ `basename $blkdev` != "block" ]; then
@@ -15,7 +69,12 @@ if [ `basename $blkdev` != "block" ]; then
 
     case "$ACTION" in
 	add)
-
+		get_uuid=`blkid | grep "/dev/${device}" | awk -F "UUID=" '{print $2}'| awk -F "\"" '{print $2}'`
+		[ -n "$get_uuid" ] && {
+			have_uuid=$(uci show fstab | grep -c "$get_uuid")
+			[ "$have_uuid" = "0" ] && set_fstab
+			[ "$have_uuid" != "0" ] && set_devices
+		}
 		local from_fstab
 		local anon_mount
 		local anon_swap
@@ -35,6 +94,7 @@ if [ `basename $blkdev` != "block" ]; then
     		mds_mount_target="$2"
 			mds_mount_device="$3"
 			mds_mount_fstype="$4"
+			mds_mount_options="$5"
 			mds_mount_enabled="$6"
 	    }
 
@@ -50,8 +110,14 @@ if [ `basename $blkdev` != "block" ]; then
 			use_device="$mds_mount_device"
 			[ "$mds_mount_enabled" -eq 1 ] && {
 				if [ -n "$mds_mount_target" ]; then
-					grep -q "/dev/$device" /proc/swaps || grep -q "/dev/$device" /proc/mounts || {
-						( mkdir -p "$mds_mount_target" && mount "$mds_mount_target" ) 2>&1 | tee /proc/self/fd/2 | logger -t 'fstab'
+					grep -q "/dev/$device" /proc/mounts || {
+						mkdir -p "$mds_mount_target"
+						case "$mds_mount_fstype" in
+							'ntfs')
+								mount.ntfs-3g -o "$mds_mount_options" /dev/$device $mds_mount_target 2>&1 | tee /proc/self/fd/2 | logger -t 'fstab';;
+							*)
+								mount -t "$mds_mount_fstype" -o "$mds_mount_options" /dev/$device $mds_mount_target 2>&1 | tee /proc/self/fd/2 | logger -t 'fstab';;
+						esac										
 					}
 				else
 					logger -t 'fstab' "Mount enabled for $mds_mount_device but it doesn't have a defined mountpoint (target)"
@@ -68,8 +134,8 @@ if [ `basename $blkdev` != "block" ]; then
 				use_device="$sds_swap_device"
 			}
 		}
-		
-		grep -q "/dev/$device" /proc/swaps || grep -q "/dev/$device" /proc/mounts || {
+
+		grep -q "/dev/$device" /proc/mounts || {
 			[ "$anon_mount" -eq 1 -a -z "$use_device" ] && {
 				case "$device" in
 					mtdblock*) ;;
@@ -88,4 +154,3 @@ if [ `basename $blkdev` != "block" ]; then
     esac	
 
 fi
-

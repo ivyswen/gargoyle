@@ -9,17 +9,16 @@
 	gargoyle_header_footer -m  -c "internal.css" -j "restrictions.js table.js"
 ?>
 <fieldset id="edit_container">
-	<legend class="sectionheader">Edit Exception Rule</legend>
+	<legend class="sectionheader">编辑例外规则</legend>
 
 	<?
-         sed -e '/<L7OPTIONS>/,$ d' templates/whitelist_template
-         sed -e '/^#/ d' -e "s/\([^ ]* \)\(.*\)/<option value='\1'>\2<\/option>/" /etc/l7-protocols/l7index
-         sed -e '1,/<L7OPTIONS>/ d' templates/whitelist_template
-  ?>
+	sed -e '/<L7OPTIONS>/,$ d' templates/whitelist_template
+	sed -e '/^#/ d' -e "s/\([^ ]* \)\(.*\)/<option value='\1'>\2<\/option>/" /etc/l7-protocols/l7index
+	sed -e '1,/<L7OPTIONS>/ d' templates/whitelist_template
+	?>
 
 </fieldset>
 <div id="bottom_button_container"></div>
-
 
 </body>
 </html>

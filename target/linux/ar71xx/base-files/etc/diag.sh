@@ -146,6 +146,9 @@ get_status_led() {
 	tl-wr2543n)
 		status_led="tp-link:green:wps"
 		;;
+	mc-mw4530r)
+		status_led="mw4530r:green:system"
+		;;
 	unifi)
 		status_led="ubnt:green:dome"
 		;;

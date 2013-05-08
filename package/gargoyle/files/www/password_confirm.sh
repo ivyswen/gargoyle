@@ -9,7 +9,7 @@
 	gargoyle_header_footer -m  -c "internal.css"
 ?>
 <fieldset>
-	<legend class="sectionheader">Confirm Password</legend>
+	<legend class="sectionheader">确认密码</legend>
 
 	<div style="clear:both;display:block">
 		<span class="nocolumn" id="confirm_text"></span>

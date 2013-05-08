@@ -19,36 +19,36 @@
 </script>
 
 <fieldset>
-	<legend class="sectionheader">Reboot</legend>
-	<center><input type='button' value='Reboot Now' id="reboot_button" class="big_button" onclick='reboot()' /></center>
+	<legend class="sectionheader">重启</legend>
+	<center><input type='button' value='立即重启' id="reboot_button" class="big_button" onclick='reboot()' /></center>
 
 </fieldset>
 <fieldset>
-	<legend class="sectionheader">Scheduled Reboot</legend>
+	<legend class="sectionheader">定时重启</legend>
 	<select class="leftcolumn" id="sched_reboot" onchange="setVisibility()">
-		<option value="none">No Scheduled Reboot</option>
-		<option value="scheduled">Reboot Scheduled</option>
+		<option value="none">关闭定时重启</option>
+		<option value="scheduled">定时重启</option>
 	</select>
 	<br/>
 
 	<div id="schedule_reboot_container" class="indent">
 		<div>
-			<label class="narrowleftcolumn" for="reboot_interval">Router Will Reboot:</label>
+			<label class="narrowleftcolumn">路由器将重启在:</label>
 			<select class="widerightcolumn" id="reboot_interval" onchange="setVisibility()">
-				<option value="day">Every Day</option>
-				<option value="week">Every Week</option>
-				<option value="month">Every Month</option>
+				<option value="day">每天</option>
+				<option value="week">每周</option>
+				<option value="month">每月</option>
 			</select>
 		</div>
 
 		<div id="reboot_day_container">
-			<label class='narrowleftcolumn' id="reboot_day_label" for='reboot_day'>Reboot Day:</label>
+			<label class='narrowleftcolumn' id="reboot_day_label" for='reboot_day'>重启日期:</label>
 			<select class="widerightcolumn" id='reboot_day' style='width:125px'></select>
 		</div>
 
 		<div id="reboot_hour_container">
-			<label class="narrowleftcolumn" id="reboot_hour_label" for='reboot_hour'>Reboot Hour:</label>
-	
+			<label class="narrowleftcolumn" id="reboot_hour_label" for='reboot_hour'>重启时间:</label>
+
 			<select class="widerightcolumn" id='reboot_hour' style='width:125px'>
 				<option value="0">12:00 AM</option>
 				<option value="1">01:00 AM</option>
@@ -79,8 +79,8 @@
 	</div>
 </fieldset>
 <div id="bottom_button_container">
-	<input type='button' value='Save Changes' id="save_button" class="bottom_button"  onclick='saveChanges()' />
-	<input type='button' value='Reset' id="reset_button" class="bottom_button"  onclick='resetData()'/>
+	<input type='button' value='保存设置' id="save_button" class="bottom_button"  onclick='saveChanges()' />
+	<input type='button' value='重设' id="reset_button" class="bottom_button"  onclick='resetData()'/>
 </div>
 
 <iframe id="reboot_test" onload="reloadPage()" style="display:none" ></iframe>

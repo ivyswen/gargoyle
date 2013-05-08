@@ -16,36 +16,33 @@
 ?>
 </script>
 
-
 <form>
 	<fieldset>
-		<legend class="sectionheader">Identification</legend>
+		<legend class="sectionheader">名称</legend>
 		<div>
-			<label class='narrowleftcolumn' for='hostname' id='hostname_label'>Hostname:</label>
+			<label class='narrowleftcolumn' for='hostname' id='hostname_label'>主机名:</label>
 			<input type='text' class='rightcolumn' onkeyup='proofreadLengthRange(this,1,999)' id='hostname' size='35' maxlength='25' />
 		</div>
 		<div id="domain_container">
-			<label class='narrowleftcolumn' for='domain' id='domain_label'>Domain:</label>
+			<label class='narrowleftcolumn' for='domain' id='domain_label'>域:</label>
 			<input type='text' class='rightcolumn' onkeyup='proofreadLengthRange(this,1,999)' id='domain' size='35' maxlength='100' />
 		</div>
-	
+
 	</fieldset>
 	<div id="bottom_button_container">
-		<input type='button' value='Save Changes' id="save_button" class="bottom_button" onclick='saveChanges()' />
-		<input type='button' value='Reset' id="reset_button" class="bottom_button" onclick='resetData()'/>
+		<input type='button' value='保存设置' id="save_button" class="bottom_button" onclick='saveChanges()' />
+		<input type='button' value='重设' id="reset_button" class="bottom_button" onclick='resetData()'/>
 	</div>
 	<span id="update_container" >Please wait while new settings are applied. . .</span>
 </form>
 
 <!-- <br /><textarea style="margin-left:20px;" rows=30 cols=60 id='output'></textarea> -->
 
-
 <script>
 <!--
 	resetData();
 //-->
 </script>
-
 
 <?
 	gargoyle_header_footer -f -s "system" -p "ident"

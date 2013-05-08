@@ -132,6 +132,9 @@ tplink_board_detect() {
 	"431000"*)
 		model="TP-Link TL-WDR4310"
 		;;
+	"453000"*)
+		model="Mercury MW4530R"
+		;;
 	*)
 		hwver=""
 		;;
@@ -384,6 +387,9 @@ ar71xx_board_detect() {
 	*"TL-MR11U")
 		name="tl-mr11u"
 		;;
+	*MW4530R)
+		name="mc-mw4530r"
+		;;
 	*UniFi)
 		name="unifi"
 		;;
@@ -447,7 +453,7 @@ ar71xx_board_detect() {
 	esac
 
 	case "$machine" in
-	*TL-WR* | *TL-WA* | *TL-MR*)
+	*TL-WR* | *TL-WA* | *TL-MR* | Mercury*MW* )
 		tplink_board_detect "$machine"
 		;;
 	esac

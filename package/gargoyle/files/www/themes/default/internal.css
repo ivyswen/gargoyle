@@ -1271,12 +1271,14 @@ td.wifi_table_column_4
 {
 	border-top:1px solid black;
 	border-bottom:1px solid black;
+	text-align: right;
 }
 td.wifi_table_column_5
 {
 	border-right:1px solid black;
 	border-top:1px solid black;
 	border-bottom:1px solid black;
+	text-align: right;
 }
 
 td.active_table_column_1
@@ -1418,4 +1420,23 @@ td.bandwidth_distribution_table_column_7
 
 }
 
-
+td.bandwidth_table_column_1
+{
+	text-align:right;
+	border:1px solid black;
+}
+td.bandwidth_table_column_2
+{
+	text-align:right;
+	border:1px solid black;
+}
+td.bandwidth_table_column_3
+{
+	text-align:right;
+	border:1px solid black;
+}
+td.bandwidth_table_column_4
+{
+	text-align:right;
+	border:1px solid black;
+}

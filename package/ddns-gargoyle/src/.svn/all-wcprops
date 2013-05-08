@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/ericpaulbishop/gargoyle.git/!svn/ver/3378/package/ddns-gargoyle/src
+END
+check_local_ip_urls.c
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/ericpaulbishop/gargoyle.git/!svn/ver/3378/package/ddns-gargoyle/src/check_local_ip_urls.c
+END
+Makefile
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/ericpaulbishop/gargoyle.git/!svn/ver/3378/package/ddns-gargoyle/src/Makefile
+END
+ddns_updater.c
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/ericpaulbishop/gargoyle.git/!svn/ver/3378/package/ddns-gargoyle/src/ddns_updater.c
+END

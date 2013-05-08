@@ -1,4 +1,4 @@
-OFFICIAL_VERSION:=1.5.X (Built 20130306-0357 git@94308d0)
+OFFICIAL_VERSION:=1.5.X (Built 20130329-0202 git@58ca084)
 include $(TOPDIR)/rules.mk
 include $(INCLUDE_DIR)/kernel.mk
 

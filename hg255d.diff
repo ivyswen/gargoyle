@@ -1,0 +1,616 @@
+--- downloaded/attitude_adjustment-36156/target/linux/ramips/base-files/etc/diag.sh	2013-04-03 11:00:59.000000000 +0800
++++ custom-src/target/linux/ramips/base-files/etc/diag.sh	2013-03-06 16:40:11.000000000 +0800
+@@ -54,6 +54,9 @@
+ 	fonera20n)
+ 		status_led="fonera20n:green:power"
+ 		;;
++	hg255d)
++		status_led="hg255d:power"
++		;;
+ 	all0239-3g|\
+ 	hw550-3g)
+ 		status_led="hw550-3g:green:status"
+--- downloaded/attitude_adjustment-36156/target/linux/ramips/base-files/etc/hotplug.d/firmware/10-rt2x00-eeprom	2013-04-03 11:00:59.000000000 +0800
++++ custom-src/target/linux/ramips/base-files/etc/hotplug.d/firmware/10-rt2x00-eeprom	2013-03-06 16:41:23.000000000 +0800
+@@ -64,6 +64,7 @@
+ 	dir-620-a1 | \
+ 	esr-9753 | \
+ 	fonera20n | \
++	hg255d | \
+ 	freestation5 | \
+ 	hw550-3g | \
+ 	mofi3500-3gn | \
+--- downloaded/attitude_adjustment-36156/target/linux/ramips/base-files/etc/uci-defaults/hg255d	1970-01-01 08:00:00.000000000 +0800
++++ custom-src/target/linux/ramips/base-files/etc/uci-defaults/hg255d	2013-03-06 16:42:46.000000000 +0800
+@@ -0,0 +1,39 @@
++#!/bin/sh
++#
++# Copyright (C) 2011 OpenWrt.org
++#
++
++hg255d_set_leds() {
++	uci batch <<EOF
++set system.usb_led=led
++set system.usb_led.name='USB'
++set system.usb_led.sysfs='hg255d:usb'
++set system.usb_led.trigger='usbdev'
++set system.usb_led.dev='1-1'
++set system.usb_led.interval='50'
++
++set system.wlan_led=led
++set system.wlan_led.name='WLAN'
++set system.wlan_led.sysfs='hg255d:wlan'
++set system.wlan_led.trigger='netdev'
++set system.wlan_led.dev='wlan0'
++set system.wlan_led.mode='link tx rx'
++
++set system.internet_led=led
++set system.internet_led.name='INTERNET'
++set system.internet_led.sysfs='hg255d:internet'
++set system.internet_led.trigger='netdev'
++set system.internet_led.dev='eth0.2'
++set system.internet_led.mode='tx rx'
++
++commit system
++EOF
++}
++
++. /lib/ramips.sh
++
++board=$(ramips_board_name)
++
++if [ "${board}" == "hg255d" ]; then
++	hg255d_set_leds
++fi
+--- downloaded/attitude_adjustment-36156/target/linux/ramips/base-files/etc/uci-defaults/network	2013-04-03 11:00:59.000000000 +0800
++++ custom-src/target/linux/ramips/base-files/etc/uci-defaults/network	2013-03-06 16:43:31.000000000 +0800
+@@ -156,6 +156,7 @@
+ 		wan_mac=$(/usr/sbin/maccalc add "$lan_mac" 5)
+ 		;;
+ 
++	 hg255d | \
+ 	fonera20n)
+ 		lan_mac=$(ramips_get_mac_binary factory 40)
+ 		wan_mac=$(/usr/sbin/maccalc add "$lan_mac" 1)
+--- downloaded/attitude_adjustment-36156/target/linux/ramips/base-files/lib/preinit/06_set_iface_mac	2013-04-03 11:00:59.000000000 +0800
++++ custom-src/target/linux/ramips/base-files/lib/preinit/06_set_iface_mac	2013-03-06 16:44:10.000000000 +0800
+@@ -47,6 +47,7 @@
+ 	carambola |\
+ 	dir-615-h1 |\
+ 	fonera20n |\
++	hg255d |\
+ 	hw550-3g |\
+ 	nbg-419n |\
+ 	omni-emb |\
+--- downloaded/attitude_adjustment-36156/target/linux/ramips/base-files/lib/ramips.sh	2013-04-03 11:00:59.000000000 +0800
++++ custom-src/target/linux/ramips/base-files/lib/ramips.sh	2013-03-06 16:44:58.000000000 +0800
+@@ -113,6 +113,9 @@
+ 	*"La Fonera 2.0N")
+ 		name="fonera20n"
+ 		;;
++	*"HuaWei HG255D")
++		name="hg255d"
++		;;
+ 	*"MoFi Network MOFI3500-3GN")
+ 		name="mofi3500-3gn"
+ 		;;
+--- downloaded/attitude_adjustment-36156/target/linux/ramips/base-files/lib/upgrade/platform.sh	2013-04-03 11:00:59.000000000 +0800
++++ custom-src/target/linux/ramips/base-files/lib/upgrade/platform.sh	2013-03-06 16:45:23.000000000 +0800
+@@ -29,6 +29,7 @@
+ 	dap-1350 | \
+ 	esr-9753 | \
+ 	fonera20n | \
++	hg255d | \
+ 	freestation5 | \
+ 	hw550-3g | \
+ 	mofi3500-3gn | \
+--- downloaded/attitude_adjustment-36156/target/linux/ramips/files/arch/mips/include/asm/mach-ralink/machine.h	2013-04-03 11:01:00.000000000 +0800
++++ custom-src/target/linux/ramips/files/arch/mips/include/asm/mach-ralink/machine.h	2013-03-06 15:01:50.000000000 +0800
+@@ -43,6 +43,7 @@
+ 	RAMIPS_MACH_ESR_9753,		/* Senao / EnGenius ESR-9753*/
+ 	RAMIPS_MACH_F5D8235_V2,         /* Belkin F5D8235 v2 */
+ 	RAMIPS_MACH_FONERA20N,		/* La Fonera 2.0N */
++	RAMIPS_MACH_HG255D,		/* HuaWei HG255D */
+ 	RAMIPS_MACH_FREESTATION5,	/* ARC Freestation5 */
+ 	RAMIPS_MACH_HW550_3G,		/* Aztech HW550-3G */
+ 	RAMIPS_MACH_MOFI3500_3GN,	/* MoFi Network MOFI3500-3GN */
+--- downloaded/attitude_adjustment-36156/target/linux/ramips/files/arch/mips/include/asm/mach-ralink/rt305x_regs.h	2013-04-03 11:01:00.000000000 +0800
++++ custom-src/target/linux/ramips/files/arch/mips/include/asm/mach-ralink/rt305x_regs.h	2013-03-06 15:02:20.000000000 +0800
+@@ -44,7 +44,7 @@
+ #define RT305X_UART1_SIZE	0x100
+ #define RT305X_SPI_SIZE		0x100
+ #define RT305X_FLASH1_SIZE	(16 * 1024 * 1024)
+-#define RT305X_FLASH0_SIZE	(8 * 1024 * 1024)
++#define RT305X_FLASH0_SIZE	(16 * 1024 * 1024)
+ 
+ #define RT3352_EHCI_BASE	0x101c0000
+ #define RT3352_EHCI_SIZE	0x1000
+--- downloaded/attitude_adjustment-36156/target/linux/ramips/files/arch/mips/ralink/rt305x/Kconfig	2013-04-03 11:01:00.000000000 +0800
++++ custom-src/target/linux/ramips/files/arch/mips/ralink/rt305x/Kconfig	2013-03-06 14:59:41.000000000 +0800
+@@ -96,6 +96,11 @@
+ 	select RALINK_DEV_GPIO_BUTTONS
+ 	select RALINK_DEV_GPIO_LEDS
+ 
++config RT305X_MACH_HG255D
++	bool "HuaWei HG255D board support"
++	select RALINK_DEV_GPIO_BUTTONS
++	select RALINK_DEV_GPIO_LEDS
++
+ config RT305X_MACH_FREESTATION5
+ 	bool "ARC FreeStation5"
+ 
+--- downloaded/attitude_adjustment-36156/target/linux/ramips/files/arch/mips/ralink/rt305x/Makefile	2013-04-03 11:01:00.000000000 +0800
++++ custom-src/target/linux/ramips/files/arch/mips/ralink/rt305x/Makefile	2013-03-06 15:00:57.000000000 +0800
+@@ -23,6 +23,7 @@
+ obj-$(CONFIG_RT305X_MACH_ESR_9753)	+= mach-esr-9753.o
+ obj-$(CONFIG_RT305X_MACH_F5D8235_V2)    += mach-f5d8235-v2.o
+ obj-$(CONFIG_RT305X_MACH_FONERA20N)	+= mach-fonera20n.o
++obj-$(CONFIG_RT305X_MACH_HG255D)	+= mach-hg255d.o
+ obj-$(CONFIG_RT305X_MACH_FREESTATION5)  += mach-freestation5.o
+ obj-$(CONFIG_RT305X_MACH_HW550_3G)	+= mach-hw550-3g.o
+ obj-$(CONFIG_RT305X_MACH_MOFI3500_3GN)	+= mach-mofi3500-3gn.o
+--- downloaded/attitude_adjustment-36156/target/linux/ramips/files/arch/mips/ralink/rt305x/devices.c	2013-04-03 11:01:00.000000000 +0800
++++ custom-src/target/linux/ramips/files/arch/mips/ralink/rt305x/devices.c	2013-03-06 16:47:11.000000000 +0800
+@@ -395,6 +395,18 @@
+ 	.stop_hw	= rt3352_usb_host_stop,
+ };
+ 
++/*
++ * map the gpio
++ */
++static struct resource gpiodev_resource = {
++	.start			= 0xFFFFFFFF,
++};
++
++void __init rt305x_register_gpiodev(void)
++{
++	platform_device_register_simple("GPIODEV", 0, &gpiodev_resource, 1);
++}
++
+ static u64 rt3352_ohci_dmamask = DMA_BIT_MASK(32);
+ static struct platform_device rt3352_ohci_device = {
+ 	.name		= "rt3883-ohci",
+--- downloaded/attitude_adjustment-36156/target/linux/ramips/files/arch/mips/ralink/rt305x/mach-hg255d.c	1970-01-01 08:00:00.000000000 +0800
++++ custom-src/target/linux/ramips/files/arch/mips/ralink/rt305x/mach-hg255d.c	2013-03-06 19:17:23.000000000 +0800
+@@ -0,0 +1,243 @@
++/*
++ *  HuaWei HG255D board support by lintel
++ *
++ *  Copyright (C) 2012 lintel<lintel.huang@gmail.com>
++ *  Copyright (C) 2012 Rui Shen<shenrui01@gmail.com>
++ *  This program is free software; you can redistribute it and/or modify it
++ *  under the terms of the GNU General Public License version 2 as published
++ *  by the Free Software Foundation.
++ */
++
++#include <linux/init.h>
++#include <linux/platform_device.h>
++#include <linux/mtd/mtd.h>
++#include <linux/mtd/partitions.h>
++#include <linux/mtd/physmap.h>
++#include <linux/leds.h>
++#include <linux/gpio_keys.h>
++#include <linux/input.h>
++
++#include <asm/mach-ralink/machine.h>
++#include <asm/mach-ralink/dev-gpio-buttons.h>
++#include <asm/mach-ralink/dev-gpio-leds.h>
++#include <asm/mach-ralink/rt305x.h>
++#include <asm/mach-ralink/rt305x_regs.h>
++
++#include "devices.h"
++
++#define HG255D_MTD_PARTITIONS	3  // 1 bootform 0x20000 ,2 bootform 0x40000,3 bootform 0x80000
++/*
++ Note:
++ GPIO [6:3] is share with SPI interface,so,if use for gpio,must disable the SPI.
++ see datasheet Page NO.37.
++ */
++#define HG255D_GPIO_BUTTON_RESET	4 
++#define HG255D_GPIO_BUTTON_WPS		10
++#define HG255D_GPIO_BUTTON_WLAN		0
++
++#define HG255D_GPIO_LED_POWER		8
++#define HG255D_GPIO_LED_USB		9
++#define HG255D_GPIO_LED_INTERNET	13
++#define HG255D_GPIO_LED_WLAN		14
++#define HG255D_GPIO_LED_WPS		12
++#define HG255D_GPIO_LED_VOICE		5
++
++#define HG255D_KEYS_POLL_INTERVAL	10	/* msecs */
++#define HG255D_KEYS_DEBOUNCE_INTERVAL (3 * HG255D_KEYS_POLL_INTERVAL)
++
++#define SZ_128K				0x020000
++#define SZ_1M				0x100000
++#define BLOCK_SZ_128K			SZ_128K
++#define FLASH_SIZE			BLOCK_SZ_128K*128
++
++#ifdef CONFIG_MTD_PARTITIONS
++#if (HG255D_MTD_PARTITIONS == 1)
++static struct mtd_partition hg255d_partitions[] = {
++
++	{
++		.name	= "u-boot",
++		.offset	= 0,
++		.size	= 0x020000,
++//		.mask_flags = MTD_WRITEABLE,
++	}, {
++		.name	= "kernel",
++		.offset	= 0x0020000,
++		.size	= 0x0100000,
++	}, {
++		.name	= "rootfs",
++		.offset	= 0x0120000,
++		.size	= 0x06e0000,
++	}, {
++		.name	= "firmware",
++		.offset	= 0x0020000,
++		.size	= 0x07e0000,
++	}, {
++		.name	= "factory",
++		.offset	= 0x0fa0000,
++		.size	= 0x0020000,
++//		.mask_flags = MTD_WRITEABLE,
++	}, {
++		.name	= "fullflash",
++		.offset	= 0x000000,
++		.size	= 0x01000000,
++	}
++};
++#elif (HG255D_MTD_PARTITIONS == 2)
++static struct mtd_partition hg255d_partitions[] = {
++
++	
++	{
++		.name	= "u-boot",
++		.offset	= 0,
++		.size	= 0x040000,
++//		.mask_flags = MTD_WRITEABLE,
++	}, {
++		.name	= "kernel",
++		.offset	= 0x040000,
++		.size	= 0x100000,
++	}, {
++		.name	= "rootfs",
++		.offset	= 0x140000,
++		.size	= 0x600000,
++	}, {
++		.name	= "firmware",
++		.offset	= 0x040000,
++		.size	= 0xe60000,
++	}, {
++		.name	= "factory",
++		.offset	= 0x0fa0000,
++		.size	= 0x0020000,
++//		.mask_flags = MTD_WRITEABLE,
++	}, {
++		.name	= "fullflash",
++		.offset	= 0x000000,
++		.size	= 0xfa0000,
++	
++	} 
++
++};
++
++#elif (HG255D_MTD_PARTITIONS == 3)
++static struct mtd_partition hg255d_partitions[] = {
++
++	{
++		.name	= "u-boot",
++		.offset	= 0,
++		.size	= SZ_128K * 2,
++	}, {
++		.name	= "u-boot-env",
++		.offset	= SZ_128K * 2,
++		.size	= SZ_128K,
++	}, {
++		.name	= "factory",
++		.offset	= SZ_128K * 3,
++		.size	= SZ_128K,
++	}, {
++		.name	= "kernel",
++		.offset	= SZ_128K * 4,
++		.size	= SZ_1M,
++	}, {
++		.name	= "rootfs",
++		.offset	= SZ_1M + SZ_128K * 4,
++		.size	= FLASH_SIZE - (SZ_1M + SZ_128K * 4), 
++	}, {
++		.name	= "firmware",
++		.offset	= SZ_128K * 4,
++		.size	= FLASH_SIZE - (SZ_128K * 4), 
++	}, {
++		.name	= "fullflash",
++		.offset	= 0x000000,
++		.size	= FLASH_SIZE,
++	}
++};
++
++#endif /* CONFIG_MTD_PARTITIONS */
++#endif /* CONFIG_MTD_PARTITIONS */
++
++static struct physmap_flash_data hg255d_flash_data = {
++#ifdef CONFIG_MTD_PARTITIONS
++	.nr_parts	= ARRAY_SIZE(hg255d_partitions),
++	.parts		= hg255d_partitions,
++#endif
++};
++
++static struct gpio_led hg255d_leds_gpio[] __initdata = {
++   	{
++		.name		= "hg255d:power",
++		.gpio		= HG255D_GPIO_LED_POWER,
++		.active_low	= 1,
++		.default_trigger= "default-on",
++	}, {
++		.name		= "hg255d:internet",
++		.gpio		= HG255D_GPIO_LED_INTERNET,
++		.active_low	= 1,
++	}, {
++		.name		= "hg255d:wlan",
++		.gpio		= HG255D_GPIO_LED_WLAN,
++		.active_low	= 1,
++	}, {
++		.name		= "hg255d:usb",
++		.gpio		= HG255D_GPIO_LED_USB,
++		.active_low	= 1,
++	}, {
++		.name		= "hg255d:wps",
++		.gpio		= HG255D_GPIO_LED_WPS,
++		.active_low	= 1,
++	}, {
++		.name		= "hg255d:voice",
++		.gpio		= HG255D_GPIO_LED_VOICE,
++		.active_low	= 1,
++	}
++};
++
++
++static struct gpio_keys_button hg255d_gpio_buttons[] __initdata = {
++	{
++		.desc		= "reset",
++		.type		= EV_KEY,
++		.code		= BTN_0,
++		.gpio		= HG255D_GPIO_BUTTON_RESET,
++		.active_low	= 1,
++		.debounce_interval      = HG255D_KEYS_DEBOUNCE_INTERVAL,
++	}, {
++		.desc		= "wlan",
++		.type		= EV_KEY,
++		.code		= BTN_1,
++		.gpio		= HG255D_GPIO_BUTTON_WLAN,
++		.active_low	= 1,
++		.debounce_interval      = HG255D_KEYS_DEBOUNCE_INTERVAL,
++
++	}, {
++		.desc		= "wps",
++		.type		= EV_KEY,
++		.code		= BTN_2,
++		.gpio		= HG255D_GPIO_BUTTON_WPS,
++		.active_low	= 1,
++		.debounce_interval      = HG255D_KEYS_DEBOUNCE_INTERVAL,
++
++	}
++		
++};
++
++static void __init hg255d_setup(void)
++{
++	rt305x_gpio_init(RT305X_GPIO_MODE_GPIO << RT305X_GPIO_MODE_UART0_SHIFT | RT305X_GPIO_MODE_I2C | RT305X_GPIO_MODE_SPI);
++	
++	rt305x_register_flash(0);
++
++	ramips_register_gpio_leds(-1, ARRAY_SIZE(hg255d_leds_gpio),
++				  hg255d_leds_gpio);
++	ramips_register_gpio_buttons(-1, HG255D_KEYS_POLL_INTERVAL,
++				     ARRAY_SIZE(hg255d_gpio_buttons),
++				     hg255d_gpio_buttons);
++
++	rt305x_esw_data.vlan_config = RT305X_ESW_VLAN_CONFIG_WLLLL;
++	rt305x_register_ethernet();
++	rt305x_register_wifi();
++	rt305x_register_wdt();
++	rt305x_register_usb();
++//	rt305x_register_gpiodev();
++}
++
++MIPS_MACHINE(RAMIPS_MACH_HG255D, "HG255D", "HuaWei HG255D",
++	     hg255d_setup);
+--- downloaded/attitude_adjustment-36156/target/linux/ramips/files/drivers/net/ethernet/ramips/ramips_esw.c	2013-04-03 11:01:00.000000000 +0800
++++ custom-src/target/linux/ramips/files/drivers/net/ethernet/ramips/ramips_esw.c	2013-03-06 16:48:16.000000000 +0800
+@@ -538,7 +538,7 @@
+ 			untag     |= esw->ports[i].untag     << i;
+ 			pvid       = esw->ports[i].pvid;
+ 		} else {
+-			int x = esw->alt_vlan_disable ? 0 : 1;
++			int x = esw->alt_vlan_disable ? 1 : 0;
+ 			doubletag |= x << i;
+ 			en_vlan   |= x << i;
+ 			untag     |= x << i;
+--- downloaded/attitude_adjustment-36156/target/linux/ramips/image/Makefile	2013-04-03 11:01:02.000000000 +0800
++++ custom-src/target/linux/ramips/image/Makefile	2013-03-06 14:59:19.000000000 +0800
+@@ -141,6 +141,17 @@
+ 	$(call MkCombineduImage,$(1),$(2),$(call mkcmdline,$(3),$(4),$(5)) $(call mkmtd/$(6),$(mtdlayout_8M)),$(kernel_size_8M),$(rootfs_size_8M),$(7))
+ endef
+ 
++mtdlayout_16M=256k(u-boot)ro,128k(u-boot-env)ro,128k(factory)ro,1024k(kernel),14848k(rootfs),15872k@0x80000(firmware),16384k@0x0(fullflash)
++	kernel_size_16M=1048576
++	rootfs_size_16M=15204352
++	define BuildFirmware/GENERIC_16M
++	$(call BuildFirmware/Generic,$(1),$(2),$(call mkcmdline,$(3),$(4),$(5)) $(call mkmtd/$(6),$(mtdlayout_16M)),$(kernel_size_16M),$(rootfs_size_16M))
++endef
++
++	define BuildFirmware/GENERIC_16M/initramfs
++	$(call BuildFirmware/Generic/initramfs,$(1),$(2),$(call mkcmdline,$(3),$(4),$(5)) $(call mkmtd/$(6),$(mtdlayout_16M)))
++endef
++
+ mtdlayout_edimax_3g6200n=192k(u-boot)ro,64k(u-boot-env)ro,64k(factory)ro,896k(kernel),2752k(rootfs),128k@0x3e0000(cimage)ro,3648k@0x50000(firmware)
+ define BuildFirmware/3G6200N
+ 	$(call BuildFirmware/Generic,$(1),$(2),$(call mkcmdline,$(3),$(4),$(5)) $(call mkmtd/$(6),$(mtdlayout_edimax_3g6200n)),917504,2818048)
+@@ -259,6 +270,10 @@
+ 	$(call BuildFirmware/GENERIC_8M/initramfs,$(1),fonera20n,FONERA20N,ttyS1,57600,phys)
+ endef
+ 
++define BuildFirmware/HG255D
++	$(call BuildFirmware/GENERIC_16M,$(1),hg255d,HG255D,ttyS1,57600,phys)
++endef
++
+ mtdlayout_nw718=192k(u-boot)ro,128k(config)ro,64k(factory)ro,896k(kernel),2816k(rootfs),3712k@0x60000(firmware)
+ kernel_size_nw718=917504
+ rootfs_size_nw718=2883584
+@@ -493,6 +508,10 @@
+ 	$(call Image/Build/Template/$(fs_squash)/$(1),FONERA20N)
+ endef
+ 
++define Image/Build/Profile/HG255D
++	$(call Image/Build/Template/$(fs_squash)/$(1),HG255D)
++endef
++
+ define Image/Build/Profile/FREESTATION5
+ 	$(call Image/Build/Template/$(fs_squash)/$(1),GENERIC_8M,freestation5,FREESTATION5,ttyS1,115200,phys)
+ endef
+@@ -604,6 +623,7 @@
+ 	$(call Image/Build/Profile/F5D8235V2,$(1))
+ 	$(call Image/Build/Profile/RTN10PLUS,$(1))
+ 	$(call Image/Build/Profile/FONERA20N,$(1))
++	$(call Image/Build/Profile/HG255D,$(1))
+ 	$(call Image/Build/Profile/FREESTATION5,$(1))
+ 	$(call Image/Build/Profile/HW5503G,$(1))
+ 	$(call Image/Build/Profile/MOFI35003GN,$(1))
+--- downloaded/attitude_adjustment-36156/target/linux/ramips/rt305x/config-3.3	2013-04-03 11:00:59.000000000 +0800
++++ custom-src/target/linux/ramips/rt305x/config-3.3	2013-03-06 15:01:13.000000000 +0800
+@@ -99,6 +99,7 @@
+ CONFIG_RT305X_MACH_ESR_9753=y
+ CONFIG_RT305X_MACH_F5D8235_V2=y
+ CONFIG_RT305X_MACH_FONERA20N=y
++CONFIG_RT305X_MACH_HG255D=y
+ CONFIG_RT305X_MACH_FREESTATION5=y
+ CONFIG_RT305X_MACH_HW550_3G=y
+ CONFIG_RT305X_MACH_MOFI3500_3GN=y
+--- downloaded/attitude_adjustment-36156/target/linux/ramips/rt305x/profiles/hg255d.mk	1970-01-01 08:00:00.000000000 +0800
++++ custom-src/target/linux/ramips/rt305x/profiles/hg255d.mk	2013-03-06 19:18:49.000000000 +0800
+@@ -0,0 +1,16 @@
++#
++# Copyright (C) 2010 OpenWrt.org
++#
++# This is free software, licensed under the GNU General Public License v2.
++# See /LICENSE for more information.
++#
++
++define Profile/HG255D
++	NAME:=HG255D Profile
++	PACKAGES:=kmod-leds-gpio kmod-ledtrig-usbdev kmod-rt2800-pci wpad kmod-usb-rt305x-dwc_otg kmod-usb2 kmod-usb-storage
++endef
++
++define Profile/HG255D/Description
++	HG255D package set compatible with most boards.
++endef
++$(eval $(call Profile,HG255D))
+--- downloaded/attitude_adjustment-36156/package/hostapd/Makefile	2013-04-03 11:01:04.000000000 +0800
++++ custom-src/package/hostapd/Makefile	2013-03-06 16:33:15.000000000 +0800
+@@ -304,7 +304,7 @@
+   define Package/hostapd-utils/install
+ 	$(INSTALL_DIR) $(1)/usr/sbin $(1)/etc/hotplug.d/button
+ 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/hostapd/hostapd_cli $(1)/usr/sbin/
+-	$(INSTALL_DATA) ./files/wps-hotplug.sh $(1)/etc/hotplug.d/button/50-wps
++	#$(INSTALL_DATA) ./files/wps-hotplug.sh $(1)/etc/hotplug.d/button/50-wps
+   endef
+ endif
+ 
+--- downloaded/attitude_adjustment-36156/target/linux/ramips/base-files/etc/hotplug.d/button/00-button	1970-01-01 08:00:00.000000000 +0800
++++ custom-src/target/linux/ramips/base-files/etc/hotplug.d/button/00-button	2013-03-29 10:05:18.000000000 +0800
+@@ -0,0 +1,75 @@
++#!/bin/sh
++debug_log=0
++
++umount_disk(){
++  killall -2 aria2c
++  sleep 3
++  swapoff -a
++  sleep 1
++  dev_name=$(mount| grep /dev/sd| awk '{ print $1; }')
++  for dev_id in $dev_name
++  do
++    umount -l ${dev_id} 
++  done
++  echo heartbeat > /sys/class/leds/hg255d\:voice/trigger
++  sleep 5
++  echo 0 > /sys/class/leds/hg255d\:voice/brightness
++}
++wifi_switch(){
++case "$(uci get wireless.@wifi-device[0].disabled)" in
++    1)
++        uci set wireless.@wifi-device[0].disabled=0
++        uci commit
++        wifi
++    ;;
++    *)
++        uci set wireless.@wifi-device[0].disabled=1
++        wifi
++    ;;
++esac
++}
++
++wps_pbc(){
++        for dir in /var/run/hostapd-*; do
++                [ -d "$dir" ] || continue
++                logger "WPS button active: $dir"
++                hostapd_cli -p "$dir" wps_pbc
++        done
++  echo heartbeat > /sys/class/leds/hg255d\:wps/trigger
++  sleep 10
++  echo 0 > /sys/class/leds/hg255d\:wps/brightness
++}
++
++pres_time(){
++  old_time=$(cat /tmp/prestime)
++  new_time=$(date +%s)
++  total_time=$(($new_time - $old_time ))
++}
++
++[ "$BUTTON" = "BTN_2" -a  "$ACTION" = "pressed" ] && echo `date +%s` > /tmp/prestime
++
++[ "$BUTTON" = "BTN_2" -a  "$ACTION" = "released" ] && {
++  pres_time
++  [ "$total_time" -lt 1 ] && wps_pbc
++  [ "$total_time" -gt 3 ] && umount_disk  > /dev/null
++  rm -rf /tmp/prestime
++}
++
++[ "$BUTTON" = "BTN_1" -a  "$ACTION" = "pressed" ] && echo `date +%s` > /tmp/prestime
++
++[ "$BUTTON" = "BTN_1" -a  "$ACTION" = "released" ] && {
++  pres_time
++  [ "$total_time" -lt 1 ] && wifi_switch
++  rm -rf /tmp/prestime
++}
++
++[ "$BUTTON" = "BTN_0" -a  "$ACTION" = "pressed" ] && echo `date +%s` > /tmp/prestime 
++
++[ "$BUTTON" = "BTN_0" -a  "$ACTION" = "released" ] && {
++  pres_time
++  [ "$total_time" -gt "4" ] && {
++    echo heartbeat > /sys/class/leds/hg255d\:power/trigger
++    mtd -r erase rootfs_data
++  }
++  rm -rf /tmp/prestime
++}
+\ 文件尾没有 newline 字符
+--- downloaded/attitude_adjustment-36156/package/mac80211/files/lib/wifi/mac80211.sh	2013-04-03 11:01:08.000000000 +0800
++++ custom-src/package/mac80211/files/lib/wifi/mac80211.sh	2013-03-06 16:38:14.000000000 +0800
+@@ -585,13 +585,13 @@
+ 	option hwmode	11${mode_11n}${mode_band}
+ $ht_capab
+ 	# REMOVE THIS LINE TO ENABLE WIFI:
+-	option disabled 1
++	option disabled 0
+ 
+ config wifi-iface
+ 	option device   radio$devidx
+ 	option network  lan
+ 	option mode     ap
+-	option ssid     OpenWrt
++	option ssid     E_Home
+ 	option encryption none
+ 
+ EOF

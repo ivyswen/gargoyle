@@ -79,6 +79,16 @@ define Image/Build/RG100A
 		--image-offset $(4) --info1 "-$(call Image/LimitName16,$(5))" --info2 $(1)
 endef
 
+define Image/Build/RG100AAA
+	# Generate the tagged image
+	$(STAGING_DIR_HOST)/bin/imagetag -i $(KDIR)/vmlinux.lzma.cfe -f $(KDIR)/root.$(1) \
+		--output $(BIN_DIR)/openwrt-$(5)-$(1)-cfe.bin \
+		--boardid $(2) --chipid $(3) --entry $(LOADADDR) \
+		--load-addr $(LOADADDR) --block-size 0x20000 \
+		--image-offset $(4) --info1 "+$(call Image/LimitName16,$(5))" --info2 $(1)
+endef
+
+
 define Image/Build/RedBoot
 	cp $(KDIR)/vmlinux.elf $(BIN_DIR)/openwrt-$(1)-vmlinux.elf
 	gzip -9 -c $(KDIR)/vmlinux > $(KDIR)/vmlinux.bin.gz
@@ -248,6 +258,7 @@ endif
 
 	# RG100A,DB120 etc.
 	$(call Image/Build/RG100A,$(1),96358VW2,6358,0x20000,RG100A_DB120)
+	$(call Image/Build/RG100AAA,$(1),96358VW2,6358,0x20000,RG100A-AA)
 
 	# Telsey CPVA642-type (e.g. CPA-ZNTE60T)
 	$(call Image/Build/CFE,$(1),CPVA642,6358,CPA-ZNTE60T,,--signature "Telsey Tlc",--signature2 "99.99.999",--second-image-flag "0")

@@ -56,53 +56,50 @@ for (etherIndex in etherData)
 //-->
 </script>
 
-
 <form>
 	<fieldset>
 		<legend class="sectionheader">DHCP</legend>
 
-
 		<div id='dhcp_enabled_container'>
 			<div class='nocolumn'>
 				<input type='checkbox' id='dhcp_enabled' onclick="setEnabled(this.checked)" />
-				<label id='dhcp_enabled_label' for='dhcp_enabled'>LAN DHCP Server Enabled</label>
+				<label id='dhcp_enabled_label' for='dhcp_enabled'>启用 LAN DHCP 服务</label>
 			</div>
 		</div>
 
-
 		<div id='dhcp_range_container'>
-			<label class='nocolumn' for='dhcp_start'>DHCP range:</label>
+			<label class='nocolumn' for='dhcp_start'>DHCP 地址池:</label>
 		</div>
 		<div id='dhcp_start_container' class='indent'>
-			<label class='leftcolumn' for='dhcp_start' id='dhcp_start_label'>Start:</label>
+			<label class='leftcolumn' for='dhcp_start' id='dhcp_start_label'>起始地址:</label>
 			<span class='rightcolumn'><? echo -n "$subnet" ?></span>
 			<input type='text' class='rightcolumn' id='dhcp_start' onkeyup='proofreadNumeric(this)' size='5' maxlength='3' />
 		</div>
 		<div id='dhcp_end_container' class='indent'>
-			<label class='leftcolumn' for='dhcp_end' id='dhcp_end_label'>End:</label>
+			<label class='leftcolumn' for='dhcp_end' id='dhcp_end_label'>结束地址:</label>
 			<span class='rightcolumn'><? echo -n "$subnet" ?></span>
 			<input type='text' class='rightcolumn' id='dhcp_end' onkeyup='proofreadNumeric(this)' size='5' maxlength='3' />
 		</div>
 		<div id='dhcp_lease_container'>
-			<label class='leftcolumn' for='dhcp_lease' id='dhcp_lease_label'>Lease Time:</label>
+			<label class='leftcolumn' for='dhcp_lease' id='dhcp_lease_label'>租约时间:</label>
 			<input type='text' class='rightcolumnindent' onkeyup='proofreadNumeric(this)' id='dhcp_lease' size='5' maxlength='4' />
-			<em>(hours)</em>
+			<em>(小时)</em>
 		</div>
 
 	</fieldset>
 
 	<fieldset>
-		<legend class="sectionheader">Static IPs</legend>
+		<legend class="sectionheader">静态 IP</legend>
 
 		<div id='block_mismatches_container'>
 			<div class='nocolumn'>
 				<input type='checkbox' id='block_mismatches' />
-				<label id='block_mismatch_label' for='block_mismatches'>Block MAC addresses assigned a static IP that connect from a different IP</label>
+				<label id='block_mismatch_label' for='block_mismatches'>禁止已绑定MAC地址的主机使用不同的IP连接(ARP绑定)</label>
 			</div>
 		</div>
 
 		<div id='staticip_add_heading_container'>
-			<label class='nocolumn' id='staticip_add_heading_label' style='text-decoration:underline'>Add Static IP Address:</label>
+			<label class='nocolumn' id='staticip_add_heading_label' style='text-decoration:underline'>添加静态IP地址:</label>
 		</div>
 		<div class='bottom_gap'>
 			<div id='staticip_add_container'>
@@ -110,13 +107,13 @@ for (etherIndex in etherData)
 			</div>
 			<div>
 				<select id="static_from_connected" onchange="staticFromConnected()" >
-					<option value="none">Select Hostname/MAC From Currently Connected Hosts</option>
+					<option value="none"从当前已连接的主机中选择主机名/MAC</option>
 				</select>
 			</div>
 		</div>
-		
+
 		<div id='staticip_table_heading_container'>
-			<span class='nocolumn'>Assigned Static IP Addresses:</span>
+			<span class='nocolumn'>已分配的静态IP地址:</span>
 		</div>
 		<div class='indent'>
 			<div id='staticip_table_container' class="bottom_gap"></div>
@@ -127,26 +124,19 @@ for (etherIndex in etherData)
 		<input type='text' value='firefox3_bug' />
 	</div>
 
-
 	<div id="bottom_button_container">
-		<input type='button' value='Save Changes' id="save_button" class="bottom_button"  onclick='saveChanges()' />
-		<input type='button' value='Reset' id="reset_button" class="bottom_button"  onclick='resetData()'/>
+		<input type='button' value='保存设置' id="save_button" class="bottom_button"  onclick='saveChanges()' />
+		<input type='button' value='重设' id="reset_button" class="bottom_button"  onclick='resetData()'/>
 	</div>
 </form>
 
-
-
 <!-- <br /><textarea style="margin-left:20px;" rows=30 cols=60 id='output'></textarea> -->
-
-
-
 
 <script>
 <!--
 	resetData();
 //-->
 </script>
-
 
 <?
 	gargoyle_header_footer -f -s "connection" -p "dhcp"

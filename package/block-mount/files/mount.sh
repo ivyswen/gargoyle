@@ -31,41 +31,33 @@ config_mount_by_section() {
 		
 		found_device="$(libmount_find_device_by_id "$uuid" "$label" "$device" "$cfgdevice")"
 		if [ -n "$found_device" ]; then
-			if [ "$find_rootfs" != "1" ] || ( [ "$is_rootfs" -eq 1 ] || [ "$target" = "/" ] || [ "$target" = "/overlay" ] ); then
+			if [ -z "$find_rootfs" ] || [ "$find_rootfs" -eq 0 ] || [ "$is_rootfs" -eq 1 ]; then
 				[ "$enabled_fsck" -eq 1 ] && {
 					grep -q "$found_device" /proc/swaps || grep -q "$found_device" /proc/mounts || {
 						libmount_fsck "$found_device" "$fstype" "$enabled_fsck"
 					}
 				}								
 	
-				if [ "$find_rootfs" = "1" ]; then
-				    if [ "$is_rootfs" -eq 1 ]; then
+				[ "$is_rootfs" -eq 1 ] && [ "$find_rootfs" -eq 1 ] && {
 					target=/overlay
-				    elif [ "$target" = "/" ]; then
-					target=/rom
-				    fi
-				else
-				    if [ "$is_rootfs" -eq 1 ] || [ "$target" = "/overlay" ]; then
-					target=/tmp/overlay-disabled
-				    elif [ "$target" = "/" ] || [ "$target" = "/rom" ]; then
-					target="/tmp/whole_root-disabled"
-				    fi
-				fi
+				}
 				
 				config_create_mount_fstab_entry "$found_device" "$target" "$fstype" "$options" "$enabled" 
-				grep -q "$found_device" /proc/swaps || grep -q "$found_device" /proc/mounts || {
-					[ "$enabled" -eq 1 ] && mkdir -p "$target" && mount "$target" 2>&1 | tee /proc/self/fd/2 | logger -t 'fstab'
+				grep -q "$found_device" /proc/mounts || {
+					[ "$enabled" -eq 1 ] && mkdir -p "$target" && {
+						case "$fstype" in
+							'ntfs')
+								mount.ntfs-3g -o "$options" $found_device $target 2>&1 | tee /proc/self/fd/2 | logger -t 'fstab';;
+							*)	
+								mount -t "$fstype" -o "$options" $found_device $target 2>&1 | tee /proc/self/fd/2 | logger -t 'fstab';;
+						esac
+					}
 				}
 				
 			fi
 		fi
-		[ "$find_rootfs" = "1" ] && {
-		    [ "$target" = "/overlay" ] && {
+		[ "$is_rootfs" -eq 1 ] && [ "$find_rootfs" -eq 1 ] && {
 			rootfs_found=1
-		    }
-		    [ "$target" = "/rom" ] && {
-			rootfs_found=1
-		    }
 		}
 		return 0	
 	}

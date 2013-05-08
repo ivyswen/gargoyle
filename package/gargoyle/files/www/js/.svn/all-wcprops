@@ -1,0 +1,185 @@
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/ericpaulbishop/gargoyle.git/!svn/ver/3378/package/gargoyle/files/www/js
+END
+bandwidth.js
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/ericpaulbishop/gargoyle.git/!svn/ver/3378/package/gargoyle/files/www/js/bandwidth.js
+END
+bdist.js
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/ericpaulbishop/gargoyle.git/!svn/ver/3378/package/gargoyle/files/www/js/bdist.js
+END
+backup.js
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/ericpaulbishop/gargoyle.git/!svn/ver/3378/package/gargoyle/files/www/js/backup.js
+END
+overview.js
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/ericpaulbishop/gargoyle.git/!svn/ver/3378/package/gargoyle/files/www/js/overview.js
+END
+port_forwarding.js
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/ericpaulbishop/gargoyle.git/!svn/ver/3378/package/gargoyle/files/www/js/port_forwarding.js
+END
+login.js
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/ericpaulbishop/gargoyle.git/!svn/ver/3378/package/gargoyle/files/www/js/login.js
+END
+firstboot.js
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/ericpaulbishop/gargoyle.git/!svn/ver/3378/package/gargoyle/files/www/js/firstboot.js
+END
+quotas.js
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/ericpaulbishop/gargoyle.git/!svn/ver/3378/package/gargoyle/files/www/js/quotas.js
+END
+quota_usage.js
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/ericpaulbishop/gargoyle.git/!svn/ver/3378/package/gargoyle/files/www/js/quota_usage.js
+END
+dhcp.js
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/ericpaulbishop/gargoyle.git/!svn/ver/3378/package/gargoyle/files/www/js/dhcp.js
+END
+connlimits.js
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/ericpaulbishop/gargoyle.git/!svn/ver/3378/package/gargoyle/files/www/js/connlimits.js
+END
+plugins.js
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/ericpaulbishop/gargoyle.git/!svn/ver/3378/package/gargoyle/files/www/js/plugins.js
+END
+basic.js
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/ericpaulbishop/gargoyle.git/!svn/ver/3378/package/gargoyle/files/www/js/basic.js
+END
+conntrack.js
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/ericpaulbishop/gargoyle.git/!svn/ver/3378/package/gargoyle/files/www/js/conntrack.js
+END
+update.js
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/ericpaulbishop/gargoyle.git/!svn/ver/3378/package/gargoyle/files/www/js/update.js
+END
+themes.js
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/ericpaulbishop/gargoyle.git/!svn/ver/3378/package/gargoyle/files/www/js/themes.js
+END
+routing.js
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/ericpaulbishop/gargoyle.git/!svn/ver/3378/package/gargoyle/files/www/js/routing.js
+END
+table.js
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/ericpaulbishop/gargoyle.git/!svn/ver/3378/package/gargoyle/files/www/js/table.js
+END
+webmon.js
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/ericpaulbishop/gargoyle.git/!svn/ver/3378/package/gargoyle/files/www/js/webmon.js
+END
+ddns.js
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/ericpaulbishop/gargoyle.git/!svn/ver/3378/package/gargoyle/files/www/js/ddns.js
+END
+common.js
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/ericpaulbishop/gargoyle.git/!svn/ver/3378/package/gargoyle/files/www/js/common.js
+END
+restrictions.js
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/ericpaulbishop/gargoyle.git/!svn/ver/3378/package/gargoyle/files/www/js/restrictions.js
+END
+identification.js
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/ericpaulbishop/gargoyle.git/!svn/ver/3378/package/gargoyle/files/www/js/identification.js
+END
+reboot.js
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/ericpaulbishop/gargoyle.git/!svn/ver/3378/package/gargoyle/files/www/js/reboot.js
+END
+time.js
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/ericpaulbishop/gargoyle.git/!svn/ver/3378/package/gargoyle/files/www/js/time.js
+END
+hosts.js
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/ericpaulbishop/gargoyle.git/!svn/ver/3378/package/gargoyle/files/www/js/hosts.js
+END
+access.js
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/ericpaulbishop/gargoyle.git/!svn/ver/3378/package/gargoyle/files/www/js/access.js
+END
+qos_distribution.js
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/ericpaulbishop/gargoyle.git/!svn/ver/3378/package/gargoyle/files/www/js/qos_distribution.js
+END
+wol.js
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/ericpaulbishop/gargoyle.git/!svn/ver/3378/package/gargoyle/files/www/js/wol.js
+END
+qos.js
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/ericpaulbishop/gargoyle.git/!svn/ver/3378/package/gargoyle/files/www/js/qos.js
+END

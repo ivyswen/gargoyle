@@ -32,7 +32,7 @@ var arpLines;
 </script>
 
 <fieldset id="wol_data">
-	<legend class="sectionheader">Wake on LAN</legend>
+	<legend class="sectionheader">网络唤醒</legend>
 
 	<div id="wol_table_container"></div>
 

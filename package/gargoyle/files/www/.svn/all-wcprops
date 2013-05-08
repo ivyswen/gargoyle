@@ -1,0 +1,317 @@
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/ericpaulbishop/gargoyle.git/!svn/ver/3384/package/gargoyle/files/www
+END
+qos_upload.sh
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/ericpaulbishop/gargoyle.git/!svn/ver/3384/package/gargoyle/files/www/qos_upload.sh
+END
+whitelist_edit_rule.sh
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/ericpaulbishop/gargoyle.git/!svn/ver/3378/package/gargoyle/files/www/whitelist_edit_rule.sh
+END
+logout.sh
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/ericpaulbishop/gargoyle.git/!svn/ver/3378/package/gargoyle/files/www/logout.sh
+END
+about.sh
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/ericpaulbishop/gargoyle.git/!svn/ver/3378/package/gargoyle/files/www/about.sh
+END
+static_route_edit.sh
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/ericpaulbishop/gargoyle.git/!svn/ver/3378/package/gargoyle/files/www/static_route_edit.sh
+END
+quotas.sh
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/ericpaulbishop/gargoyle.git/!svn/ver/3378/package/gargoyle/files/www/quotas.sh
+END
+quota_usage.sh
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/ericpaulbishop/gargoyle.git/!svn/ver/3378/package/gargoyle/files/www/quota_usage.sh
+END
+dhcp.sh
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/ericpaulbishop/gargoyle.git/!svn/ver/3378/package/gargoyle/files/www/dhcp.sh
+END
+plugins.sh
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/ericpaulbishop/gargoyle.git/!svn/ver/3378/package/gargoyle/files/www/plugins.sh
+END
+quotas_edit.sh
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/ericpaulbishop/gargoyle.git/!svn/ver/3378/package/gargoyle/files/www/quotas_edit.sh
+END
+conntrack.sh
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/ericpaulbishop/gargoyle.git/!svn/ver/3378/package/gargoyle/files/www/conntrack.sh
+END
+webmon_domains.csv
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/ericpaulbishop/gargoyle.git/!svn/ver/3378/package/gargoyle/files/www/webmon_domains.csv
+END
+multi_forward_edit.sh
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/ericpaulbishop/gargoyle.git/!svn/ver/3378/package/gargoyle/files/www/multi_forward_edit.sh
+END
+static_ip_edit.sh
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/ericpaulbishop/gargoyle.git/!svn/ver/3378/package/gargoyle/files/www/static_ip_edit.sh
+END
+webmon_searches.csv
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/ericpaulbishop/gargoyle.git/!svn/ver/3378/package/gargoyle/files/www/webmon_searches.csv
+END
+bandwidth.csv
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/ericpaulbishop/gargoyle.git/!svn/ver/3378/package/gargoyle/files/www/bandwidth.csv
+END
+routing.sh
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/ericpaulbishop/gargoyle.git/!svn/ver/3378/package/gargoyle/files/www/routing.sh
+END
+dump_backup_tarball.sh
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/ericpaulbishop/gargoyle.git/!svn/ver/3378/package/gargoyle/files/www/dump_backup_tarball.sh
+END
+qos_edit_class.sh
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/ericpaulbishop/gargoyle.git/!svn/ver/3378/package/gargoyle/files/www/qos_edit_class.sh
+END
+time.sh
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/ericpaulbishop/gargoyle.git/!svn/ver/3378/package/gargoyle/files/www/time.sh
+END
+hosts.sh
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/ericpaulbishop/gargoyle.git/!svn/ver/3378/package/gargoyle/files/www/hosts.sh
+END
+wol.sh
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/ericpaulbishop/gargoyle.git/!svn/ver/3378/package/gargoyle/files/www/wol.sh
+END
+pie.svg
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/ericpaulbishop/gargoyle.git/!svn/ver/3378/package/gargoyle/files/www/pie.svg
+END
+backup.sh
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/ericpaulbishop/gargoyle.git/!svn/ver/3378/package/gargoyle/files/www/backup.sh
+END
+basic_edit_mac.sh
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/ericpaulbishop/gargoyle.git/!svn/ver/3378/package/gargoyle/files/www/basic_edit_mac.sh
+END
+overview.sh
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/ericpaulbishop/gargoyle.git/!svn/ver/3378/package/gargoyle/files/www/overview.sh
+END
+port_forwarding.sh
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/ericpaulbishop/gargoyle.git/!svn/ver/3378/package/gargoyle/files/www/port_forwarding.sh
+END
+login.sh
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/ericpaulbishop/gargoyle.git/!svn/ver/3378/package/gargoyle/files/www/login.sh
+END
+single_forward_edit.sh
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/ericpaulbishop/gargoyle.git/!svn/ver/3378/package/gargoyle/files/www/single_forward_edit.sh
+END
+firstboot.sh
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/ericpaulbishop/gargoyle.git/!svn/ver/3378/package/gargoyle/files/www/firstboot.sh
+END
+multi_pie.svg
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/ericpaulbishop/gargoyle.git/!svn/ver/3378/package/gargoyle/files/www/multi_pie.svg
+END
+ddns_edit_service.sh
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/ericpaulbishop/gargoyle.git/!svn/ver/3378/package/gargoyle/files/www/ddns_edit_service.sh
+END
+password_confirm.sh
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/ericpaulbishop/gargoyle.git/!svn/ver/3378/package/gargoyle/files/www/password_confirm.sh
+END
+no_ajax.sh
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/ericpaulbishop/gargoyle.git/!svn/ver/3378/package/gargoyle/files/www/no_ajax.sh
+END
+connlimits.sh
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/ericpaulbishop/gargoyle.git/!svn/ver/3378/package/gargoyle/files/www/connlimits.sh
+END
+basic.sh
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/ericpaulbishop/gargoyle.git/!svn/ver/3378/package/gargoyle/files/www/basic.sh
+END
+update.sh
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/ericpaulbishop/gargoyle.git/!svn/ver/3378/package/gargoyle/files/www/update.sh
+END
+themes.sh
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/ericpaulbishop/gargoyle.git/!svn/ver/3378/package/gargoyle/files/www/themes.sh
+END
+webmon.sh
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/ericpaulbishop/gargoyle.git/!svn/ver/3378/package/gargoyle/files/www/webmon.sh
+END
+ddns.sh
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/ericpaulbishop/gargoyle.git/!svn/ver/3378/package/gargoyle/files/www/ddns.sh
+END
+qos_download.sh
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/ericpaulbishop/gargoyle.git/!svn/ver/3384/package/gargoyle/files/www/qos_download.sh
+END
+identification.sh
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/ericpaulbishop/gargoyle.git/!svn/ver/3378/package/gargoyle/files/www/identification.sh
+END
+bandwidth.svg
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/ericpaulbishop/gargoyle.git/!svn/ver/3378/package/gargoyle/files/www/bandwidth.svg
+END
+reboot.sh
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/ericpaulbishop/gargoyle.git/!svn/ver/3378/package/gargoyle/files/www/reboot.sh
+END
+qos_edit_rule.sh
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/ericpaulbishop/gargoyle.git/!svn/ver/3384/package/gargoyle/files/www/qos_edit_rule.sh
+END
+qos_distribution.sh
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/ericpaulbishop/gargoyle.git/!svn/ver/3378/package/gargoyle/files/www/qos_distribution.sh
+END
+access.sh
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/ericpaulbishop/gargoyle.git/!svn/ver/3378/package/gargoyle/files/www/access.sh
+END
+restriction_edit_rule.sh
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/ericpaulbishop/gargoyle.git/!svn/ver/3378/package/gargoyle/files/www/restriction_edit_rule.sh
+END
+bandwidth_distribution.sh
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/ericpaulbishop/gargoyle.git/!svn/ver/3378/package/gargoyle/files/www/bandwidth_distribution.sh
+END
+bandwidth_expand.sh
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/ericpaulbishop/gargoyle.git/!svn/ver/3378/package/gargoyle/files/www/bandwidth_expand.sh
+END
+bandwidth.sh
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/ericpaulbishop/gargoyle.git/!svn/ver/3378/package/gargoyle/files/www/bandwidth.sh
+END
+restriction.sh
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/ericpaulbishop/gargoyle.git/!svn/ver/3378/package/gargoyle/files/www/restriction.sh
+END

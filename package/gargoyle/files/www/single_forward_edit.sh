@@ -9,13 +9,12 @@
 	gargoyle_header_footer -m  -c "internal.css" -j "port_forwarding.js table.js"
 ?>
 <fieldset id="edit_container">
-	<legend class="sectionheader">Edit Port Forward</legend>
+	<legend class="sectionheader">编辑单独端口转发</legend>
 
 	<? cat templates/single_forward_template ?>
 
 </fieldset>
 <div id="bottom_button_container"></div>
-
 
 </body>
 </html>

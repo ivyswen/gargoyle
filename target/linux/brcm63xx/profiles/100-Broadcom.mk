@@ -15,3 +15,13 @@ define Profile/Broadcom/Description
 endef
 $(eval $(call Profile,Broadcom))
 
+define Profile/BroadcomUSB
+  NAME:=Broadcom WiFi with USB ports
+  PACKAGES:=kmod-b43 wpad-mini kmod-usb2 kmod-usb-ohci
+endef
+
+define Profile/Broadcom/Description
+	Package set compatible with hardware using Broadcom WiFi cards
+	and usb ports
+endef
+$(eval $(call Profile,BroadcomUSB))

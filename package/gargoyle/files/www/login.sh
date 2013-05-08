@@ -5,7 +5,7 @@
 	# configure proprietary "back end" software provided that all modifications to the web interface
 	# itself remain covered by the GPL.
 	# See http://gargoyle-router.com/faq.html#qfoss for more information
-	
+
 	valid=$( eval $( gargoyle_session_validator -c "$COOKIE_hash" -e "$COOKIE_exp" -a "$HTTP_USER_AGENT" -i "$REMOTE_ADDR" -t $(uci get gargoyle.global.session_timeout) -b "$COOKIE_browser_time" ) | grep "Set-Cookie" )
 	require=$(uci get gargoyle.global.require_web_password)
 	if [ "$require" = "0" ] ; then
@@ -24,7 +24,7 @@
 	fi
 
 	web_root=$(uci get gargoyle.global.web_root 2>/dev/null)
-	
+
 	js="login.js"
 	if [ -d "$web_root/hooks/login" ] ; then
 		sh_hooks=$(ls "$web_root/hooks/login/"*.sh | sort )
@@ -75,15 +75,13 @@ var passInvalid = false;
 		current_time=$(echo $current_time | sed "s/UTC/UTC-$timezone_is_utc/g" | sed 's/\-\-/+/g')
 	fi
 	echo "var currentTime = \"$current_time\";"
-	
+
 ?>
 //-->
 </script>
-	
-
 
 <fieldset>
-	<legend class="sectionheader">Login</legend>
+	<legend class="sectionheader">登录</legend>
 	<span class="leftcolumn" >
 		<p>
 			<strong>
@@ -93,26 +91,24 @@ var passInvalid = false;
 	</span>
 
 	<div>
-		<label class="leftcolumn" for='password' id='password_label'>Enter Admin Password:</label>
+		<label class="leftcolumn" for='password' id='password_label'>输入管理员密码:</label>
 		<input class="rightcolumn" type='password' onkeyup='proofreadLengthRange(this,1,999)' onkeydown='checkKey(event)' id='password' size='25' />
 	</div>
 	<div>
-		<span class="leftcolumn"><input class="default_button" type="button" value="Login" onclick="doLogin()" /></span>
+		<span class="leftcolumn"><input class="default_button" type="button" value="登录" onclick="doLogin()" /></span>
 	</div>
-	
+
 </fieldset>
 <fieldset id="local_quotas" style="display:none">
-	<legend class="sectionheader">Your Quota</legend>
+	<legend class="sectionheader">您的配额</legend>
 </fieldset>
 
-
-
 <fieldset id="global_quotas" style="display:none">
-	<legend class="sectionheader">Entire Network Quota</legend>
+	<legend class="sectionheader">全部流量配额</legend>
 </fieldset>
 
 <fieldset id="current_time" style="display:block">
-	<legend class="sectionheader">Current Date & Time</legend>
+	<legend class="sectionheader">当前日期 & 时间</legend>
 	<div class="nocolumn" id="current_time_date"></div>
 </fieldset>
 
@@ -128,7 +124,6 @@ var passInvalid = false;
 	setStatusAndQuotas();
 //-->
 </script>
-
 
 <?
 	gargoyle_header_footer -f

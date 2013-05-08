@@ -9,13 +9,12 @@
 	gargoyle_header_footer -m  -c "internal.css" -j "dhcp.js table.js"
 ?>
 <fieldset id="edit_container">
-	<legend class="sectionheader">Edit Static IP</legend>
+	<legend class="sectionheader">编辑静态IP</legend>
 
 	<? cat templates/static_ip_template ?>
 
 </fieldset>
 <div id="bottom_button_container"></div>
-
 
 </body>
 </html>

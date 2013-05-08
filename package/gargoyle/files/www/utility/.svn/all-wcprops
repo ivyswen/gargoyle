@@ -1,0 +1,59 @@
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/ericpaulbishop/gargoyle.git/!svn/ver/3378/package/gargoyle/files/www/utility
+END
+do_restore_original.sh
+K 25
+svn:wc:ra_dav:version-url
+V 100
+/ericpaulbishop/gargoyle.git/!svn/ver/3378/package/gargoyle/files/www/utility/do_restore_original.sh
+END
+do_upgrade.sh
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/ericpaulbishop/gargoyle.git/!svn/ver/3378/package/gargoyle/files/www/utility/do_upgrade.sh
+END
+reboot_test.sh
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/ericpaulbishop/gargoyle.git/!svn/ver/3378/package/gargoyle/files/www/utility/reboot_test.sh
+END
+get_password_cookie.sh
+K 25
+svn:wc:ra_dav:version-url
+V 100
+/ericpaulbishop/gargoyle.git/!svn/ver/3378/package/gargoyle/files/www/utility/get_password_cookie.sh
+END
+scan_3gdevices.sh
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/ericpaulbishop/gargoyle.git/!svn/ver/3378/package/gargoyle/files/www/utility/scan_3gdevices.sh
+END
+scan_wifi.sh
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/ericpaulbishop/gargoyle.git/!svn/ver/3378/package/gargoyle/files/www/utility/scan_wifi.sh
+END
+load_bandwidth.sh
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/ericpaulbishop/gargoyle.git/!svn/ver/3378/package/gargoyle/files/www/utility/load_bandwidth.sh
+END
+do_restore.sh
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/ericpaulbishop/gargoyle.git/!svn/ver/3378/package/gargoyle/files/www/utility/do_restore.sh
+END
+run_commands.sh
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/ericpaulbishop/gargoyle.git/!svn/ver/3378/package/gargoyle/files/www/utility/run_commands.sh
+END

@@ -1,6 +1,6 @@
 #!/usr/bin/haserl
 <?
-	# This program is copyright © 2008-2010 Eric Bishop and is distributed under the terms of the GNU GPL
+	# This program is copyright ?2008-2010 Eric Bishop and is distributed under the terms of the GNU GPL 
 	# version 2.0 with a special clarification/exception that permits adapting the program to
 	# configure proprietary "back end" software provided that all modifications to the web interface
 	# itself remain covered by the GPL.
@@ -8,7 +8,6 @@
 	eval $( gargoyle_session_validator -c "$COOKIE_hash" -e "$COOKIE_exp" -a "$HTTP_USER_AGENT" -i "$REMOTE_ADDR" -r "login.sh" -t $(uci get gargoyle.global.session_timeout) -b "$COOKIE_browser_time"  )
 	gargoyle_header_footer -h -s "status" -p "bdist" -c "internal.css" -j "table.js bdist.js" -n -i gargoyle
 ?>
-
 
 <script>
 <!--
@@ -28,51 +27,45 @@
 //-->
 </script>
 
-
 <form>
 
 	<fieldset>
-		<legend class="sectionheader">Bandwidth Distribution Display Options</legend>
-	
-
+		<legend class="sectionheader">流量分布图显示选项</legend>
 
 		<div>
-			<label class="leftcolumn" for='time_frame' id='time_frame_label'>Distribution Time Frame:</label>
+			<label class="leftcolumn" for='time_frame' id='time_frame_label'>分布图周期:</label>
 			<select class="rightcolumn" id="time_frame" onchange="resetTimeFrame()">
-				<option value="bdist1">Minutes</option>
-				<option value="bdist2">Quarter Hours</option>
-				<option value="bdist3">Hours</option>
-				<option value="bdist4">Days</option>
-				<option value="bdist5">Months</option>
+				<option value="bdist1">分钟</option>
+				<option value="bdist2">15分钟</option>
+				<option value="bdist3">小时</option>
+				<option value="bdist4">天</option>
+				<option value="bdist5">月</option>
 			</select>
 		</div>
 
 		<div>
-			<label class="leftcolumn" for='time_interval' id='time_interval_label'>Distribution Interval:</label>
+			<label class="leftcolumn" for='time_interval' id='time_interval_label'>历史分布图:</label>
 			<select class="rightcolumn" id="time_interval" onchange="resetDisplayInterval()"></select>
 		</div>
 
 		<div>
-			<label class="leftcolumn" for='host_display' id='time_interval_label'>Host Display:</label>
+			<label class="leftcolumn" for='host_display' id='time_interval_label'>主机显示:</label>
 			<select class="rightcolumn" id="host_display" onchange="resetTimeFrame()">
-				<option value="hostname">Display Hostnames</option>
-				<option value="ip">Display Host IPs</option>
+				<option value="hostname">显示主机名</option>
+				<option value="ip">显示主机IP</option>
 			</select>
 		</div>
 
 	</fieldset>
-	
-	<div class="plot_header">Bandwidth Distribution:</div>
+
+	<div class="plot_header">流量分布图:</div>
 	<div><embed id="pie_chart" style="margin-left:10px; width:525px; height:525px;" src="multi_pie.svg"  type='image/svg+xml' pluginspage='http://www.adobe.com/svg/viewer/install/'></embed></div>
 	<fieldset>
-		<legend class="sectionheader">Bandwidth Distribution Table</legend>
-		<div id="bandwidth_distribution_table_container"></div>	
+		<legend class="sectionheader">流量分布表</legend>
+		<div id="bandwidth_distribution_table_container"></div>
 	</fieldset>
-	
+
 </form>
-
-
-
 
 <!-- <br /><textarea style="margin-left:20px;" rows=30 cols=60 id='output'></textarea> -->
 
@@ -81,8 +74,6 @@
 	initializePlotsAndTable();
 //-->
 </script>
-
-
 
 <?
 	gargoyle_header_footer -f -s "status" -p "bdist"  
