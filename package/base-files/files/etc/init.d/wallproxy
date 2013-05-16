@@ -1,0 +1,21 @@
+#!/bin/sh /etc/rc.common
+
+START=99
+
+start() {
+        if [ $(ps -ef | grep '/etc/wallproxy/startup.py' | grep -v 'grep' | wc -l) -eq 1 ];
+        then
+                echo WallProxy already running...
+                exit 0
+        else
+        [ -d /etc/wallproxy ] || {
+                cp -a -f /etc/wallproxy /etc
+        }
+        screen -d -m /etc/wallproxy/startup
+        fi
+}
+
+stop() {
+        kill -9 $(ps -ax|grep '/etc/wallproxy/startup'|grep -v 'grep'|awk '{print$1}')
+        screen -wipe
+}

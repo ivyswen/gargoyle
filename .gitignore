@@ -1,7 +1,7 @@
 *.o
 .DS_Store
 .*.swp
-.pc
+/.pc
 /env
 /dl
 /.config
