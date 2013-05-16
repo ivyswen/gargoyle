@@ -9,7 +9,7 @@
 	gargoyle_header_footer -m  -c "internal.css" -j "port_forwarding.js table.js"
 ?>
 <fieldset id="edit_container">
-	<legend class="sectionheader">编辑单独端口转发</legend>
+	<legend class="sectionheader">Edit Port Forward</legend>
 
 	<? cat templates/single_forward_template ?>
 

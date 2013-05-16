@@ -27,9 +27,9 @@
 </script>
 
 	<fieldset>
-		<legend class="sectionheader">USB打印机</legend>
+		<legend class="sectionheader">Attached USB Printers</legend>
 		<div id="no_printer_div">
-			<p><em>当前没有USB打印机连接到路由器.</em></p>
+			<p><em>No USB printers are currently attached to the router.</em></p>
 		</div>
 		<div id="printer_found_div">
 

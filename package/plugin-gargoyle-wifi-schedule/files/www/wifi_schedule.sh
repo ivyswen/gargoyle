@@ -17,7 +17,7 @@
 	echo "var weekly_time=\"`date \"+%w-%H-%M\"`\";"
 		
 	echo "var wifi_status = new Array();"
-	iwconfig 2>&1 | grep -v 'wireless' | sed '/^$/d' | awk -F'\n' '{print "wifi_status.push(\""$0"\");" }'
+	iwconfig 2>&1 | grep -v 'wireless' | sed '/^$/d;s/"//g' | awk -F'\n' '{print "wifi_status.push(\""$0"\");" }'
 
 ?>
 
@@ -43,44 +43,44 @@ for (tab_idx in cron_data) {
 </style>
 
 <fieldset id="wifi_schedule">
+	<legend class="sectionheader">WiFi Schedule</legend>
 	<div id='wlan_stat'>
-		<label class='leftcolumn'>无线连接状态:</label>
+		<label class='leftcolumn'>Wireless radio(s) status:</label>
 		<span class='rightcolumn' id='wlan_status'></span>
 	</div>
 	
 	<div id='wifi_action' style="margin-top:15px">
-		<label class='leftcolumn' style="margin-top:5px">停止/启动 无线连接</label>
+		<label class='leftcolumn' style="margin-top:5px">Stop/Start wireless radios(s)</label>
 		<span class='rightcolumn'>
-			<input type='button' class='default_button' id='wifi_up_button' value="启动无线" onclick='GetWifiUpdate("up")'/>
-			<input type='button' class='default_button' id='wifi_down_button' value="停止无线" onclick='GetWifiUpdate("down")'/>
+			<input type='button' class='default_button' id='wifi_up_button' value="Start Wireless" onclick='GetWifiUpdate("up")'/>
+			<input type='button' class='default_button' id='wifi_down_button' value="Stop Wireless" onclick='GetWifiUpdate("down")'/>
 		</span>
 	</div>
 
 	<div class="internal_divider"></div>
 
-	<legend class="sectionheader">WiFi 计划</legend>
-	<select id='timer_mode' onchange='SetTimerMode(this.value)'>
-		<option selected value='0'>禁用定时</option>
-		<option value='1'>每天</option>
-		<option value='3'>周末+周六/日</option>
-		<option value='7'>每周</option>
-	</select>
-
-	<br/>
-	<br/>
-
-	<div id="div_timer_increment" style="display:none;">
-		<label>Timer increment:</label>
-		<select id='timer_increment' onchange='SetTimerIncrement(this)'>
-			<option value='5'>5 分钟</option>
-			<option value='10'>10 分钟</option>
-			<option selected value='15'>15 分钟</option>
-			<option value='30'>30 分钟</option>
-			<option value='60'>60 分钟</option>
+	<div>
+		<label for="timer_mode" class="narrowleftcolumn">Timer Period:</label>
+		<select id="timer_mode" class="rightcolumn" onchange="SetTimerMode(this.value)">
+			<option selected="" value="0">Disable timer</option>
+			<option value="1">Daily</option>
+			<option value="3">Weekday + Sat/Sun</option>
+			<option value="7">Weekly</option>
 		</select>
+		<br />
+		<br />
+		<div id="div_timer_increment" style="display:none;">
+			<label for="timer_increment" class="narrowleftcolumn">Timer increment:</label>
+			<select id="timer_increment" onchange="SetTimerIncrement(this)">
+				<option value="5">5 minutes</option>
+				<option value="10">10 minutes</option>
+				<option selected="" value="15">15 minutes</option>
+				<option value="30">30 minutes</option>
+				<option value="60">60 minutes</option>
+			</select>
+		</div>
 	</div>
 	
-  	<!-- This is the 5+1+1 or weekly table -->
   	<div id="tabs">
 		<ul id="tab_ulist">
 		  <li id="tab_li_1" style="display:none;"></li>
@@ -122,8 +122,8 @@ for (tab_idx in cron_data) {
 </fieldset>
 
 <div id="bottom_button_container">
-	<input type='button' value='保存设置' id="save_button" class="bottom_button" onclick='saveChanges()' />
-	<input type='button' value='重设' id="reset_button" class="bottom_button" onclick='SetTimerMode(0)'/>
+	<input type='button' value='Save Changes' id="save_button" class="bottom_button" onclick='saveChanges()' />
+	<input type='button' value='Reset' id="reset_button" class="bottom_button" onclick='SetTimerMode(0)'/>
 </div>
 
 <script>

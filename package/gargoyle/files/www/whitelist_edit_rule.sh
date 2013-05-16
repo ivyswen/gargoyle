@@ -9,7 +9,7 @@
 	gargoyle_header_footer -m  -c "internal.css" -j "restrictions.js table.js"
 ?>
 <fieldset id="edit_container">
-	<legend class="sectionheader">编辑例外规则</legend>
+	<legend class="sectionheader">Edit Exception Rule</legend>
 
 	<?
 	sed -e '/<L7OPTIONS>/,$ d' templates/whitelist_template

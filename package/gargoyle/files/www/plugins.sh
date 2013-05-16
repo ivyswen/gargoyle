@@ -27,11 +27,10 @@
 		echo "dest plugin_root /plugin_root" >>/etc/opkg.conf
 	fi
 
-	opkg_defs=$(opkg-more --packages-matching /^plugin\-gargoyle/  --install-destination --required-size --required-depends --description --version --will-fit plugin_root --javascript 2>/dev/null)
-	if [ -z "$opkg_defs" ] ; then
-		opkg-more --packages not_a_real_package --will-fit root --javascript
-	else
-		printf "%s\n" "$opkg_defs" 
+	pkg_info=$(gpkg info -v 'Install-Destination,Required-Size,Required-Depends,Description,Will-Fit,User-Installed' -d plugin_root -o 'js' -r /^plugin\-gargoyle/)
+	gpkg dest-info -o 'js'
+	if [ -n "$pkg_info" ] ; then
+		printf "%s\n" "$pkg_info" 
 	fi
 
 	echo "var pluginSources = [];"
@@ -46,53 +45,53 @@
 <form>
 
 	<fieldset id="plugin_options">
-		<legend class="sectionheader">插件选项</legend>
+		<legend class="sectionheader">Plugin Options</legend>
 
 		<div>
-			<span class="narrowleftcolumn">插件路径:</span>
+			<span class="narrowleftcolumn">Plugin Root:</span>
 			<span id="plugin_root_static" class="widerightcolumn">/plugin_root</span>
 			<input type="text" id="plugin_root_text" class="widerightcolumn" style="display:none" />
 		</div>
 		<div>
-			<span id="plugin_root_drive_static" class="widerightcolumnonly">Root Drive</span>
+			<span id="plugin_root_drive_static" class="widerightcolumnonly" for="plugin_root_drive_select">Root Drive</span>
 			<select id="plugin_root_drive_select" class="widerightcolumnonly" onchange="updatePluginRootDisplay()" style="display:none"></select>
 		</div>
 		<div id="plugin_root_change_container" style="display:none" >
 			<span class="widerightcolumnonly" >
-				<input type="button" class="default_button" value="更改插件路径" onclick="changePluginRoot()" />
+				<input type="button" class="default_button" value="Change Plugin Root" onclick="changePluginRoot()" />
 			</span>
 		</div>
 		<br/>
 
 		<div>
-			<span class="leftcolumn">插件来源:</span>
+			<span class="leftcolumn">Plugin Sources:</span>
 		</div>
 		<div id="package_source_table_container" style="margin-left:5px;" ></div>
 		<div class="indent">
 			<div>
-				<label class="narrowleftcolumn" for="add_source_name">添加名称:</label>
+				<label class="narrowleftcolumn" for="add_source_name">Add Name:</label>
 				<input type="text" class="widerightcolumn" id="add_source_name" onkeyup="proofreadSourceName(this)" style="width:325px;"/>
 			</div>
 			<div>
-				<label class="narrowleftcolumn" for="add_source_url">添加URL:</label>
+				<label class="narrowleftcolumn" for="add_source_url">Add URL:</label>
 				<input type="text" class="widerightcolumn" id="add_source_url" style="width:325px;"/>
 			</div>
 
-			<span class="leftcolumn"><input type="button" class="default_button" id="add_source_button" value="添加插件来源" onclick="addPluginSource()" /></span>
+			<span class="leftcolumn"><input type="button" class="default_button" id="add_source_button" value="Add Plugin Source" onclick="addPluginSource()" /></span>
 
 		</div>
 	</fieldset>
 
 	<fieldset id="plugin_list">
-		<legend class="sectionheader">插件列表</legend>
+		<legend class="sectionheader">Plugin List</legend>
 		<div>
 			<div id="packages_table_container" style="margin-left:5px" ></div>
 		</div>
 		<div id="no_packages" style='display:none;'>
-			没有发现软件包. 刷新插件列表.
+			Packages not found. Refresh plugins list.
 		</div>
 		<div id="bottom_button_container">
-			<input type='button' value='刷新插件' id="update_button" class="bottom_button" onclick='updatePackagesList()' />
+			<input type='button' value='Refresh Plugins' id="update_button" class="bottom_button" onclick='updatePackagesList()' />
 		</div>
 	</fieldset>
 

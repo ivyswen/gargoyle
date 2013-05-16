@@ -23,7 +23,7 @@
 </script>
 
 <fieldset id="edit_container">
-	<legend class="sectionheader">编辑配额</legend>
+	<legend class="sectionheader">Edit Quota</legend>
 
 	<? cat templates/quotas_template ?>
 

@@ -6,4 +6,60 @@
  * itself remain covered by the GPL. 
  * See http://gargoyle-router.com/faq.html#qfoss for more information
  *
- */function createUseButton(){var e=createInput("button");return e.value="Select",e.className="default_button",e.onclick=useTheme,e}function resetData(){var e=["Theme","",""],t=new Array,n=uciOriginal.get("gargoyle","global","theme"),r="";for(idx=0;idx<themes.length;idx++)r=themes[idx]==n?"*":"",t.push([themes[idx],r,createUseButton()]);var i=createTable(e,t,"themes_table",!1,!1),s=document.getElementById("themes_table_container");s.firstChild!=null&&s.removeChild(s.firstChild),s.appendChild(i)}function useTheme(e,t){var e=this.parentNode.parentNode,n=e.firstChild.firstChild.data,r=[];r.push('uci set gargoyle.global.theme="'+n+'"'),r.push("uci commit"),r.push("sleep 1"),commands=r.join("\n");var i=getParameterDefinition("commands",commands)+"&"+getParameterDefinition("hash",document.cookie.replace(/^.*hash=/,"").replace(/[\t ;]+.*$/,""));setControlsEnabled(!1,!0,"Please wait...");var s=function(e){e.readyState==4&&(setControlsEnabled(!0),location.reload(!0))};runAjax("POST","utility/run_commands.sh",i,s)};
+ */
+
+function createUseButton()
+{
+	var useButton = createInput("button");
+	useButton.value = "Select";
+	useButton.className="default_button";
+	useButton.onclick = useTheme;
+	return useButton;
+}
+
+function resetData()
+{
+	var columnNames = ['Theme', '', ''];
+	var TableData = new Array();
+	var theme = uciOriginal.get("gargoyle", "global", "theme");
+	var current = "";
+
+	for (idx=0; idx < themes.length; idx++)
+	{
+		current = (themes[idx] == theme) ? "*" : "";
+		TableData.push([ themes[idx], current, createUseButton() ]);
+	}
+
+	var Table = createTable(columnNames, TableData, "themes_table", false, false);
+	var tableContainer = document.getElementById('themes_table_container');
+	if(tableContainer.firstChild != null)
+	{
+		tableContainer.removeChild(tableContainer.firstChild);
+	}
+	tableContainer.appendChild(Table);
+}
+
+function useTheme(row, action)
+{
+	var row = this.parentNode.parentNode;
+	var theme = row.firstChild.firstChild.data;
+
+	var cmd = [];
+	cmd.push("uci set gargoyle.global.theme=\"" + theme + "\"");
+	cmd.push("uci commit");
+	cmd.push("sleep 1");
+
+	commands = cmd.join("\n");
+	var param = getParameterDefinition("commands", commands) + "&" + getParameterDefinition("hash", document.cookie.replace(/^.*hash=/,"").replace(/[\t ;]+.*$/, ""));
+	setControlsEnabled(false, true, "Please wait...");
+
+	var stateChangeFunction = function(req)
+	{
+		if(req.readyState == 4)
+		{
+			setControlsEnabled(true);
+			location.reload(true);
+		}
+	}
+	runAjax("POST", "utility/run_commands.sh", param, stateChangeFunction);
+}

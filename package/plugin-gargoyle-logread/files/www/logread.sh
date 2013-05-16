@@ -11,12 +11,12 @@
 ?>
 
 <fieldset id="logread">
-	<legend class="sectionheader">系统日志</legend>
+	<legend class="sectionheader">System Logs</legend>
 	<textarea style="width:100%" rows=30 id='output'></textarea>
 </fieldset>
 
 <div id="bottom_button_container">
-	<input type='button' value='刷新' id="refresh_button" class="bottom_button" onclick='resetData()' />
+	<input type='button' value='Refresh' id="refresh_button" class="bottom_button" onclick='resetData()' />
 </div>
 
 <script>

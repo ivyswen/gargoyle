@@ -42,24 +42,24 @@
 
 <form>
 	<fieldset>
-		<legend class="sectionheader">时间</legend>
+		<legend class="sectionheader">Time</legend>
 
 		<div>
-			<label id='current_time_label' for='timezone'>当前日期 &amp; 时间:&nbsp;&nbsp;&nbsp;&nbsp;</label>
+			<label id='current_time_label' for='current_time'>Current Date &amp; Time:&nbsp;&nbsp;&nbsp;&nbsp;</label>
 			<span id="current_time"></span>
 		</div>
 
 		<div class="internal_divider"></div>
 
 		<div>
-			<label class='nocolumn' id='timezone_label' for='timezone'>时区:</label>
+			<label class='nocolumn' id='timezone_label' for='timezone'>Time Zone:</label>
 		</div>
 		<div class="indent">
 			<div><select class='nocolumn' id='timezone' onchange="timezoneChanged()"></select></div>
 		</div>
 
 		<div>
-			<label class='nocolumn' id='timezone_label' for='timezone'>日期格式:</label>
+			<label class='nocolumn' id='timezone_label' for='date_format'>Date Format:</label>
 		</div>
 		<div class="indent">
 			<div>
@@ -75,7 +75,7 @@
 		</div>
 
 		<div>
-			<label class='leftcolumn' id='region_label' for='region'>NTP服务器:</label>
+			<label class='leftcolumn' id='region_label' for='region'>NTP Servers:</label>
 			<div class="indent">
 				<div>
 					<select class='leftcolumn' id='region' onchange='updateServerList()'>
@@ -99,8 +99,8 @@
 		</div>
 	</fieldset>
 	<div id="bottom_button_container">
-		<input type='button' value='保存设置' id="save_button" class="bottom_button" onclick='saveChanges()' />
-		<input type='button' value='重设' id="reset_button" class="bottom_button" onclick='resetData()'/>
+		<input type='button' value='Save Changes' id="save_button" class="bottom_button" onclick='saveChanges()' />
+		<input type='button' value='Reset' id="reset_button" class="bottom_button" onclick='resetData()'/>
 	</div>
 	<span id="update_container" >Please wait while new settings are applied. . .</span>
 </form>

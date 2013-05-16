@@ -28,11 +28,11 @@
 
 <form>
 	<fieldset>
-		<legend class="sectionheader">QoS (上传) -- 分类规则</legend>
+		<legend class="sectionheader">QoS (Upload) -- Classification Rules</legend>
 
 		<div id='qos_enabled_container' class='nocolumn'>
 			<input type='checkbox' id='qos_enabled' onclick="setQosEnabled()" />
-			<label id='qos_enabled_label' for='qos_enabled'>启用 QoS 服务 (上传)</label>
+			<label id='qos_enabled_label' for='qos_enabled'>Enable Quality of Service (Upload Direction)</label>
 		</div>
 
 		<div class="indent">
@@ -46,7 +46,7 @@
 
 		<div id='qos_rule_table_container' class="bottom_gap"></div>
 		<div>
-			<label class="leftcolumn" id="default_class_label" for="default_class">默认服务类:</label>
+			<label class="leftcolumn" id="default_class_label" for="default_class">Default Service Class:</label>
 			<select class="rightcolumn" id="default_class"></select>
 		</div>
 
@@ -67,33 +67,33 @@
 			<p>
 		</div>
 
-		<div><strong>添加新的分类规则:</strong></div>
+		<div><strong>Add New Classification Rule:</strong></div>
 		<div class="indent">
 			<div>
 				<div class='leftcolumn'>
 					<input type='checkbox'  id='use_source_ip' onclick='enableAssociatedField(this,"source_ip", "")' />
-					<label id="source_ip_label" for='source_ip'>来源 IP:</label>
+					<label id="source_ip_label" for='source_ip'>Source IP:</label>
 				</div>
 				<input class='rightcolumn' type='text' id='source_ip' onkeyup='proofreadIpRange(this)' size='17' maxlength='31' />
 			</div>
 			<div>
 				<div class='leftcolumn'>
 					<input type='checkbox'  id='use_source_port' onclick='enableAssociatedField(this,"source_port", "")'/>
-					<label id="source_port_label" for='source_port'>来源端口(范围):</label>
+					<label id="source_port_label" for='source_port'>Source Port(s):</label>
 				</div>
 				<input class='rightcolumn' type='text' id='source_port' onkeyup='proofreadPortOrPortRange(this)' size='17' maxlength='11' />
 			</div>
 			<div>
 				<div class='leftcolumn'>
 					<input type='checkbox'  id='use_dest_ip' onclick='enableAssociatedField(this,"dest_ip", "")' />
-					<label id="dest_ip_label" for='dest_ip'>目标 IP:</label>
+					<label id="dest_ip_label" for='dest_ip'>Destination IP:</label>
 				</div>
 				<input class='rightcolumn' type='text' id='dest_ip' onkeyup='proofreadIpRange(this)' size='17' maxlength='31' />
 			</div>
 			<div>
 				<div class='leftcolumn'>
 					<input type='checkbox'  id='use_dest_port' onclick='enableAssociatedField(this,"dest_port", "")'  />
-					<label id="dest_port_label" for='dest_port'>目标端口(范围):</label>
+					<label id="dest_port_label" for='dest_port'>Destination Port(s):</label>
 				</div>
 				<input class='rightcolumn' type='text' id='dest_port' onkeyup='proofreadPortOrPortRange(this)' size='17' maxlength='11' />
 			</div>
@@ -101,7 +101,7 @@
 			<div>
 				<div class='leftcolumn'>
 					<input type='checkbox'  id='use_max_pktsize' onclick='enableAssociatedField(this,"max_pktsize", "")'  />
-					<label id="max_pktsize_label" for='max_pktsize'>最大包长:</label>
+					<label id="max_pktsize_label" for='max_pktsize'>Maximum Packet Length:</label>
 				</div>
 				<input class='rightcolumn' type='text' id='max_pktsize' onkeyup='proofreadNumericRange(this,1,1500)' size='17' maxlength='4' />
 				<em>bytes</em>
@@ -109,7 +109,7 @@
 			<div>
 				<div class='leftcolumn'>
 					<input type='checkbox'  id='use_min_pktsize' onclick='enableAssociatedField(this,"min_pktsize", "")'  />
-					<label id="min_pktsize_label" for='min_pktsize'>最小包长:</label>
+					<label id="min_pktsize_label" for='min_pktsize'>Minimum Packet Length:</label>
 				</div>
 				<input class='rightcolumn' type='text' id='min_pktsize' onkeyup='proofreadNumericRange(this,1,1500)' size='17' maxlength='4' />
 				<em>bytes</em>
@@ -119,7 +119,7 @@
 			<div>
 				<div class='leftcolumn'>
 					<input type='checkbox'  id='use_transport_protocol' onclick='enableAssociatedField(this,"transport_protocol", "")'  />
-					<label id="transport_protocol_label" for='transport_protocol'>传输协议:</label>
+					<label id="transport_protocol_label" for='transport_protocol'>Transport Protocol:</label>
 				</div>
 				<select class='rightcolumn' id="transport_protocol"/>
 					<option value="TCP">TCP</option>
@@ -132,7 +132,7 @@
 			<div>
 				<div class='leftcolumn'>
 					<input type='checkbox'  id='use_connbytes_kb' onclick='enableAssociatedField(this,"connbytes_kb", "")'  />
-					<label id="connbytes_kb_label" for='connbytes_kb'>连接字节:</label>
+					<label id="connbytes_kb_label" for='connbytes_kb'>Connection bytes reach:</label>
 				</div>
 				<input class='rightcolumn' type='text' id='connbytes_kb' onkeyup='proofreadNumericRange(this,0,4194303)' size='17' maxlength='28' />
 				<em>kBytes</em>
@@ -141,7 +141,7 @@
 			<div>
 				<div class='leftcolumn'>
 					<input type='checkbox'  id='use_app_protocol' onclick='enableAssociatedField(this,"app_protocol", "")' />
-					<label id="app_protocol_label" for='app_protocol'>应用程序(Layer7)协议:</label>
+					<label id="app_protocol_label" for='app_protocol'>Application (Layer7) Protocol:</label>
 				</div>
 				<select class='rightcolumn' id="app_protocol">
 				<?
@@ -151,24 +151,24 @@
 			</div>
 
 			<div>
-				<label class='leftcolumn' id="classification_label" for='class_name' >服务类设置为:</label>
+				<label class='leftcolumn' id="classification_label" for='classification' >Set Service Class To:</label>
 				<select class='rightcolumn' id="classification">
 				</select>
 			</div>
 
 			<div id="add_rule_container">
-				<input type="button" id="add_rule_button" class="default_button" value="添加规则" onclick="addClassificationRule()" />
+				<input type="button" id="add_rule_button" class="default_button" value="Add Rule" onclick="addClassificationRule()" />
 			</div>
 	</div>
 	</fieldset>
 
 	<fieldset>
 
-		<legend class="sectionheader">QoS (上传) -- 服务类</legend>
+		<legend class="sectionheader">QoS (Upload) -- Service Classes</legend>
 		<div id='qos_class_table_container' class="bottom_gap"></div>
 
 		<div>
-			<label class="leftcolumn" id="total_bandwidth_label" for="total_bandwidth">总 (上传) 带宽:</label>
+			<label class="leftcolumn" id="total_bandwidth_label" for="total_bandwidth">Total (Upload) Bandwidth:</label>
 			<input type="text" class="rightcolumn" id="total_bandwidth" class="rightcolumn" onkeyup="proofreadNumeric(this)"  size='10' maxlength='10' />
 			<em>kbit/s</em>
 
@@ -203,32 +203,31 @@
 
 		<div class="internal_divider"></div>
 
-
-		<div><strong>添加新的服务类:</strong></div>
+		<div><strong>Add New Service Class:</strong></div>
 		<div class="indent">
 
 			<div>
-				<label class='leftcolumn' id="class_name_label" for='class_name'  >服务类名称:</label>
+				<label class='leftcolumn' id="class_name_label" for='class_name'  >Service Class Name:</label>
 				<input class='rightcolumn' type='text' id='class_name' onkeyup="proofreadLengthRange(this,1,10)" size='12' maxlength='10' />
 			</div>
 
 			<div>
-				<label class='leftcolumn' id="percent_bandwidth_label" for='percent_bandwidth' >带宽容量百分比:</label>
+				<label class='leftcolumn' id="percent_bandwidth_label" for='percent_bandwidth' >Percent Bandwidth At Capacity:</label>
 				<div class='rightcolumn'>
 					<input type='text' id='percent_bandwidth' onkeyup="proofreadNumericRange(this,1,100)"  size='5' maxlength='3' />
 					<em>%</em>
 				</div>
 			</div>
-			<div class='nocolumn'>最小带宽:</div>
+			<div class='nocolumn'>Bandwidth Minimum:</div>
 			<div class='indent'>
 				<div class='nocolumn'>
 					<input type='radio' name="min_radio" id='min_radio1' onclick='enableAssociatedField(document.getElementById("min_radio2"),"min_bandwidth", "")' />
-					<label for='min_radio1'>不限制最小带宽</label>
+					<label for='min_radio1'>No Bandwidth Minimum</label>
 				</div>
 				<div>
 					<span class='leftcolumn'>
 						<input type='radio' name="min_radio" id="min_radio2" onclick='enableAssociatedField(document.getElementById("min_radio2"),"min_bandwidth", "")' />
-						<label id="min_bandwidth_label" for='min_radio2'>最小带宽:</label>
+						<label id="min_bandwidth_label" for='min_radio2'>Bandwidth Minimum:</label>
 					</span>
 					<span class='rightcolumn'>
 						<input type='text' class="rightcolumn" id='min_bandwidth' onkeyup="proofreadNumeric(this)"  size='10' maxlength='10' />
@@ -237,16 +236,16 @@
 				</div>
 			</div>
 
-			<div class='nocolumn'>最大带宽:</div>
+			<div class='nocolumn'>Bandwidth Maximum:</div>
 			<div class='indent'>
 				<div class='nocolumn'>
 					<input type='radio' name="max_radio" id='max_radio1' onclick='enableAssociatedField(document.getElementById("max_radio2"),"max_bandwidth", "")' />
-					<label for='max_radio1'>不限制最大带宽</label>
+					<label for='max_radio1'>No Bandwidth Maximum</label>
 				</div>
 				<div>
 					<span class='leftcolumn'>
 						<input type='radio' name="max_radio" id="max_radio2" onclick='enableAssociatedField(document.getElementById("max_radio2"),"max_bandwidth", "")' />
-						<label id="max_bandwidth_label" for='max_radio2'>最大带宽:</label>
+						<label id="max_bandwidth_label" for='max_radio2'>Bandwidth Maximum:</label>
 					</span>
 					<span class='rightcolumn'>
 						<input type='text' class="rightcolumn" id='max_bandwidth' onkeyup="proofreadNumeric(this)"  size='10' maxlength='10' />
@@ -256,14 +255,14 @@
 			</div>
 
 			<div id="add_class_container">
-				<input type="button" id="add_class_button" class="default_button" value="添加服务类" onclick="addServiceClass()" />
+				<input type="button" id="add_class_button" class="default_button" value="Add Service Class" onclick="addServiceClass()" />
 			</div>
 		</div>
 	</fieldset>
 
 	<div id="bottom_button_container">
-		<input type='button' value='保存设置' id="save_button" class="bottom_button" onclick='saveChanges()' />
-		<input type='button' value='重设' id="reset_button" class="bottom_button" onclick='resetData()'/>
+		<input type='button' value='Save Changes' id="save_button" class="bottom_button" onclick='saveChanges()' />
+		<input type='button' value='Reset' id="reset_button" class="bottom_button" onclick='resetData()'/>
 	</div>
 	<span id="update_container" >Please wait while new settings are applied. . .</span>
 </form>

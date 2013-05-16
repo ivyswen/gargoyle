@@ -36,15 +36,15 @@
 
 <form>
 	<fieldset>
-		<legend class="sectionheader">活动路由</legend>
+		<legend class="sectionheader">Active Routes</legend>
 		<div id="active_route_table_container"></div>
 	</fieldset>
 
 	<fieldset>
-		<legend class="sectionheader">静态路由</legend>
+		<legend class="sectionheader">Static Routes</legend>
 
 		<div id='static_route_add_heading_container'>
-			<label class='nocolumn' id='staticroute_add_heading_label' style='text-decoration:underline'>添加静态路由:</label>
+			<label class='nocolumn' id='staticroute_add_heading_label' style='text-decoration:underline'>Add Static Route:</label>
 		</div>
 		<div class='bottom_gap'>
 			<div id='static_route_add_container'>
@@ -53,7 +53,7 @@
 		</div>
 
 		<div id='static_route_table_heading_container'>
-			<span class='nocolumn'>已启用的静态路由:</span>
+			<span class='nocolumn'>Current Static Routes:</span>
 		</div>
 		<div class='indent'>
 			<div id='static_route_table_container' class="bottom_gap"></div>
@@ -65,8 +65,8 @@
 	</div>
 
 	<div id="bottom_button_container">
-		<input type='button' value='保存设置' id="save_button" class="bottom_button"  onclick='saveChanges()' />
-		<input type='button' value='重设' id="reset_button" class="bottom_button"  onclick='resetData()'/>
+		<input type='button' value='Save Changes' id="save_button" class="bottom_button"  onclick='saveChanges()' />
+		<input type='button' value='Reset' id="reset_button" class="bottom_button"  onclick='resetData()'/>
 	</div>
 	<span id="update_container" >Please wait while new settings are applied. . .</span>
 </form>
