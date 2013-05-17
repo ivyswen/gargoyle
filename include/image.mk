@@ -10,7 +10,7 @@ include $(INCLUDE_DIR)/prereq.mk
 include $(INCLUDE_DIR)/kernel.mk
 include $(INCLUDE_DIR)/host.mk
 
-IMAGE_TEST_VERSION:=$(shell date +%m%d)
+IMAGE_TEST_VERSION:=$(shell date +%F-%H%M)
 
 .NOTPARALLEL:
 override MAKEFLAGS=
