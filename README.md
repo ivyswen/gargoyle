@@ -12,3 +12,4 @@ gargoyle for HG255D
 2013-5-17
 
 1.解决make menuconfig时有些包重复的问题。
+2.修正石像鬼web界面model显示错误。
