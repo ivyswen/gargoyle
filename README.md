@@ -1,6 +1,7 @@
 #石像鬼路由固件 [Gargoyle-Router](http://gargoyle-router.com)
 
 ![gargoyle](https://secure.gravatar.com/avatar/bb56a0491ab33229aeca30b5c4bfc65a?s=420&d=https://a248.e.akamai.net/assets.github.com%2Fimages%2Fgravatars%2Fgravatar-org-420.png)
+
 Gargoyle（石像鬼）是一个为常用的小型路由器开发的固件，它比原厂固件提供更先进的服务质量和带宽监测工具。
 基于GPL，提供完整的全套路由功能，强悍的流量监控，带宽管理和QoS功能。
 
