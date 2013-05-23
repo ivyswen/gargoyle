@@ -1,0 +1,42 @@
+diff -uNr busybox-1.19.4-old/libbb/printable_string.c busybox-1.19.4-new/libbb/printable_string.c
+--- busybox-1.19.4-old/libbb/printable_string.c	2012-02-05 03:24:55.000000000 +0800
++++ busybox-1.19.4-new/libbb/printable_string.c	2012-11-15 15:27:13.000000000 +0800
+@@ -31,8 +31,6 @@
+ 		}
+ 		if (c < ' ')
+ 			break;
+-		if (c >= 0x7f)
+-			break;
+ 		s++;
+ 	}
+ 
+@@ -45,7 +43,7 @@
+ 			unsigned char c = *d;
+ 			if (c == '\0')
+ 				break;
+-			if (c < ' ' || c >= 0x7f)
++			if (c < ' ')
+ 				*d = '?';
+ 			d++;
+ 		}
+diff -uNr busybox-1.19.4-old/libbb/unicode.c busybox-1.19.4-new/libbb/unicode.c
+--- busybox-1.19.4-old/libbb/unicode.c	2012-02-05 03:24:55.000000000 +0800
++++ busybox-1.19.4-new/libbb/unicode.c	2013-05-23 21:52:49.291961251 +0800
+@@ -999,7 +999,7 @@
+ 					while ((int)--width >= 0);
+ 					break;
+ 				}
+-				*d++ = (c >= ' ' && c < 0x7f) ? c : '?';
++				*d++ = (c >= ' '/* && c < 0x7f */) ? c : '?';
+ 				src++;
+ 			}
+ 			*d = '\0';
+@@ -1007,7 +1007,7 @@
+ 			d = dst = xstrndup(src, width);
+ 			while (*d) {
+ 				unsigned char c = *d;
+-				if (c < ' ' || c >= 0x7f)
++				if (c < ' '/* || c >= 0x7f */)
+ 					*d = '?';
+ 				d++;
+ 			}
