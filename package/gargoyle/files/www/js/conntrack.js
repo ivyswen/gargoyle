@@ -1,7 +1,220 @@
 /*
- * This program is copyright ï¿½ 2008 Eric Bishop and is distributed under the terms of the GNU GPL
+ * This program is copyright © 2008 Eric Bishop and is distributed under the terms of the GNU GPL
  * version 2.0 with a special clarification/exception that permits adapting the program to
  * configure proprietary "back end" software provided that all modifications to the web interface
  * itself remain covered by the GPL.
  * See http://gargoyle-router.com/faq.html#qfoss for more information
- */function initializeConnectionTable(){httpsPort=uciOriginal.get("httpd_gargoyle","server","https_port"),httpPort=uciOriginal.get("httpd_gargoyle","server","http_port"),setSelectedValue("host_display","hostname"),remoteHttpsPort="",remoteHttpPort="";var e=uciOriginal.getAllSectionsOfType("firewall","remote_accept"),t=0;for(t=0;t<e.length;t++){var n=e[t],r=uciOriginal.get("firewall",n,"local_port"),i=uciOriginal.get("firewall",n,"remote_port"),s=uciOriginal.get("firewall",n,"proto").toLowerCase(),o=uciOriginal.get("firewall",n,"zone").toLowerCase();(o=="wan"||o=="")&&(s=="tcp"||s=="")&&(i=i==""?r:i,r==httpsPort&&r!=""?remoteHttpsPort=i:r==httpPort&&r!=""&&(remoteHttpPort=i))}var u=0;for(u=0;u<qosMarkList.length;u++){var a=parseInt(qosMarkList[u][3].toLowerCase());qosUpMask=qosMarkList[u][0]=="upload"?a:qosUpMask,qosDownMask=qosMarkList[u][0]=="download"?a:qosDownMask,markToQosClass[parseInt(qosMarkList[u][2])]=qosMarkList[u][1]}updateInProgress=!1,timeSinceUpdate=-5e3,setInterval("checkForRefresh()",500)}function checkForRefresh(){timeSinceUpdate+=500,refreshRate=getSelectedValue("refresh_rate"),refreshRate=refreshRate=="never"?timeSinceUpdate+500:refreshRate;if(timeSinceUpdate<0||timeSinceUpdate>=refreshRate)timeSinceUpdate=0,updateConnectionTable()}function getHostDisplay(e){var t=getSelectedValue("host_display"),n=e;return t=="hostname"&&ipToHostname[e]!=null&&(n=ipToHostname[e],n=n.length<25?n:n.substr(0,22)+"..."),n}function updateConnectionTable(){if(!updateInProgress){updateInProgress=!0;var e="cat /proc/net/nf_conntrack",t=getParameterDefinition("commands",e)+"&"+getParameterDefinition("hash",document.cookie.replace(/^.*hash=/,"").replace(/[\t ;]+.*$/,"")),n=function(e){if(e.readyState==4){var t=getSelectedValue("bw_units"),n=e.responseText.split(/[\n\r]+/),r=new Array,i;for(i=0;n[i].match(/^Success/)==null;i++){var s=n[i];try{var o=s.split(/[\t ]+/)[2],u=s.match(/src=([^ \t]*)[\t ]+/)[1],a=s.match(/sport=([^ \t]*)[\t ]+/)[1],f=s.match(/dst=([^ \t]*)[\t ]+/)[1],l=s.match(/dport=([^ \t]*)[\t ]+/)[1],c=s.match(/bytes=([^ \t]*)[\t ]+/)[1],h=s.match(/mark=/)?parseInt(s.match(/mark=([^ \t]*)[\t ]+/)[1]):"",p=s.match(/l7proto=/)?s.match(/l7proto=([^ \t]*)[\t ]+/)[1]:"",d=s.match(/src=([^ \t]*)[\t ]+.*src=([^ \t]*)[\t ]+/)[2],v=s.match(/sport=([^ \t]*)[\t ]+.*sport=([^ \t]*)[\t ]+/)[2],m=s.match(/dst=([^ \t]*)[\t ]+.*dst=([^ \t]*)[\t ]+/)[2],g=s.match(/dport=([^ \t]*)[\t ]+.*dport=([^ \t]*)[\t ]+/)[2],y=s.match(/bytes=([^ \t]*)[\t ]+.*bytes=([^ \t]*)[\t ]+/)[2],b=currentLanIp.lastIndexOf(".");if(u.substr(0,b)!=f.substr(0,b)){m==currentWanIp?(downloadBytes=y,uploadBytes=c,localIp=u,localPort=a,WanIp=d,WanPort=v):(downloadBytes=c,uploadBytes=y,localIp=d,localPort=v,WanIp=m,WanPort=g);var w=[parseInt(uploadBytes)+parseInt(downloadBytes),o,textListToSpanElement([getHostDisplay(WanIp)+":"+WanPort,getHostDisplay(localIp)+":"+localPort]),textListToSpanElement([parseBytes(uploadBytes,t),parseBytes(downloadBytes,t)])];if(qosEnabled){var E=function(e,t){var n=e==""?"":markToQosClass[e&t],r=uciOriginal.get("qos_gargoyle",n,"name");return r==""?"NA":r};w.push(textListToSpanElement([E(qosUpMask,h),E(qosDownMask,h)]))}w.push(p),r.push(w)}}catch(S){}}var x=function(e,t){return parseInt(t[0])-parseInt(e[0])};r.sort(x);var T;for(T=0;T<r.length;T++)r[T].shift();var N=["Proto","WAN Host/LAN Host","Bytes Up/Down"];qosEnabled&&N.push("Qos Up/Down"),N.push("L7 Proto");var C=createTable(N,r,"connection_table",!1,!1);if(r.length>0){var k;try{for(k=0;k<5;k++)C.firstChild.firstChild.childNodes[k].style.textAlign="left"}catch(S){}}var L=document.getElementById("connection_table_container");L.firstChild!=null&&L.removeChild(L.firstChild),L.appendChild(C),updateInProgress=!1}};runAjax("POST","utility/run_commands.sh",t,n)}}var updateInProgress,timeSinceUpdate,httpsPort="",httpPort="",remoteHttpsPort="",remoteHttpPort="",qosUpMask="",qosDownMask="",markToQosClass=[];
+ */
+
+var updateInProgress;
+var timeSinceUpdate;
+
+var httpsPort ="";
+var httpPort = "";
+var remoteHttpsPort = "";
+var remoteHttpPort = "";
+
+var qosUpMask = "";
+var qosDownMask = "";
+var markToQosClass = [];
+
+function initializeConnectionTable()
+{
+	httpsPort = uciOriginal.get("httpd_gargoyle", "server", "https_port");
+	httpPort= uciOriginal.get("httpd_gargoyle", "server", "http_port");
+
+	setSelectedValue("host_display", "hostname");
+
+	remoteHttpsPort = "";
+	remoteHttpPort = "";
+	var remoteAcceptSections = uciOriginal.getAllSectionsOfType("firewall", "remote_accept");
+	var acceptIndex=0;
+	for(acceptIndex = 0; acceptIndex < remoteAcceptSections.length; acceptIndex++)
+	{
+		var section = remoteAcceptSections[acceptIndex];
+		var localPort = uciOriginal.get("firewall", section, "local_port");
+		var remotePort = uciOriginal.get("firewall", section, "remote_port");
+		var proto = uciOriginal.get("firewall", section, "proto").toLowerCase();
+		var zone = uciOriginal.get("firewall", section, "zone").toLowerCase();
+		if((zone == "wan" || zone == "") && (proto == "tcp" || proto == ""))
+		{
+			remotePort = remotePort == "" ? localPort : remotePort;
+			if(localPort == httpsPort && localPort != "")
+			{
+				remoteHttpsPort = remotePort;
+			}
+			else if(localPort == httpPort && localPort != "")
+			{
+				remoteHttpPort = remotePort;
+			}
+		}
+	}
+
+	var qmIndex=0;
+	for(qmIndex=0; qmIndex < qosMarkList.length; qmIndex++)
+	{
+		var mask=  parseInt((qosMarkList[qmIndex][3]).toLowerCase());
+		qosUpMask   = qosMarkList[qmIndex][0] == "upload"   ? mask: qosUpMask;
+		qosDownMask = qosMarkList[qmIndex][0] == "download" ? mask : qosDownMask;
+		markToQosClass[ parseInt(qosMarkList[qmIndex][2]) ] = qosMarkList[qmIndex][1];
+	}
+
+	updateInProgress = false;
+	timeSinceUpdate = -5000;
+	setInterval("checkForRefresh()", 500);
+}
+
+
+function checkForRefresh()
+{
+	timeSinceUpdate = timeSinceUpdate + 500;
+	refreshRate = getSelectedValue("refresh_rate");
+	refreshRate = refreshRate == "never" ? timeSinceUpdate+500 : refreshRate;
+	if(timeSinceUpdate < 0 || timeSinceUpdate >= refreshRate)
+	{
+		timeSinceUpdate = 0;
+		updateConnectionTable();
+	}
+}
+
+function getHostDisplay(ip)
+{
+	var hostDisplay = getSelectedValue("host_display");
+	var host = ip;
+	if(hostDisplay == "hostname" && ipToHostname[ip] != null)
+	{
+		host = ipToHostname[ip];
+		host = host.length < 25 ? host : host.substr(0,22)+"...";
+	}
+	return host;
+}
+
+
+function updateConnectionTable()
+{
+
+	if(!updateInProgress)
+	{
+		updateInProgress = true;
+		var commands="cat /proc/net/nf_conntrack"
+		var param = getParameterDefinition("commands", commands) + "&" + getParameterDefinition("hash", document.cookie.replace(/^.*hash=/,"").replace(/[\t ;]+.*$/, ""));
+
+		var stateChangeFunction = function(req)
+		{
+			if(req.readyState == 4)
+			{
+				var bwUnits = getSelectedValue("bw_units");
+				var conntrackLines = req.responseText.split(/[\n\r]+/);
+				var tableData = new Array();
+				var conntrackIndex;
+				for(conntrackIndex=0; conntrackLines[conntrackIndex].match(/^Success/) == null ; conntrackIndex++)
+				{
+					var line = conntrackLines[conntrackIndex];
+					try
+					{
+						var protocol= (line.split(/[\t ]+/))[2];
+						var srcIp   = (line.match(/src=([^ \t]*)[\t ]+/))[1];
+						var srcPort = (line.match(/sport=([^ \t]*)[\t ]+/))[1];
+						var dstIp   = (line.match(/dst=([^ \t]*)[\t ]+/))[1];
+						var dstPort = (line.match(/dport=([^ \t]*)[\t ]+/))[1];
+						var bytes = (line.match(/bytes=([^ \t]*)[\t ]+/))[1];
+						var connmark    = line.match(/mark=/) ? parseInt((line.match(/mark=([^ \t]*)[\t ]+/))[1]) : "";
+						var l7proto = line.match(/l7proto=/) ? (line.match(/l7proto=([^ \t]*)[\t ]+/))[1] : "";
+						var srcIp2   = (line.match(/src=([^ \t]*)[\t ]+.*src=([^ \t]*)[\t ]+/))[2];
+						var srcPort2 = (line.match(/sport=([^ \t]*)[\t ]+.*sport=([^ \t]*)[\t ]+/))[2];
+						var dstIp2   = (line.match(/dst=([^ \t]*)[\t ]+.*dst=([^ \t]*)[\t ]+/))[2];
+						var dstPort2 = (line.match(/dport=([^ \t]*)[\t ]+.*dport=([^ \t]*)[\t ]+/))[2];
+						var bytes2 = (line.match(/bytes=([^ \t]*)[\t ]+.*bytes=([^ \t]*)[\t ]+/))[2];
+						
+						var i = currentLanIp.lastIndexOf('.')
+
+						//filter connections to and from the router
+						if (srcIp.substr(0,i) == dstIp.substr(0,i))
+						{
+							//filter out
+						}
+						else
+						{
+
+						//Connections are weird in that they list src/dest while we are interested in upload/download.
+						//Based on the location of the router WanIP in the connection record we can determine traffic direction
+							if (dstIp2 == currentWanIp) {
+								downloadBytes = bytes2;
+								uploadBytes = bytes;
+								localIp = srcIp;
+								localPort = srcPort;
+								WanIp = srcIp2;
+								WanPort = srcPort2;
+							} else {
+								downloadBytes = bytes;
+								uploadBytes = bytes2;
+								localIp = srcIp2;
+								localPort = srcPort2;
+								WanIp = dstIp2;
+								WanPort = dstPort2;
+							}
+
+							var tableRow =[parseInt(uploadBytes) + parseInt(downloadBytes),
+									protocol, 
+									textListToSpanElement([ getHostDisplay(WanIp) + ":" + WanPort, getHostDisplay(localIp) + ":" + localPort]), 
+									textListToSpanElement([parseBytes(uploadBytes, bwUnits),parseBytes(downloadBytes, bwUnits)])
+									];
+							if(qosEnabled)
+							{
+								var getQosName = function(mask, mark)
+								{
+									var section = mask == "" ? "" : markToQosClass[ (mask & mark) ];
+									var name = uciOriginal.get("qos_gargoyle", section, "name");
+									return name == "" ? "NA" : name;
+								}
+								tableRow.push( textListToSpanElement([getQosName(qosUpMask, connmark), getQosName(qosDownMask, connmark)]) );
+							}
+							tableRow.push(l7proto);
+							tableData.push(tableRow);
+						}
+					}
+					catch(e){}
+				}
+				
+				//Sort on the total of up bytes + down bytes
+				var tableSortFun = function(a,b){ return parseInt(b[0]) - parseInt(a[0]); }
+				tableData.sort(tableSortFun);
+
+				//remove integer totals we used to sort
+				var rowIndex;
+				for(rowIndex=0; rowIndex < tableData.length; rowIndex++)
+				{ 
+					(tableData[rowIndex]).shift();
+				}
+
+
+				var columnNames= ['Proto', 'WAN Host/LAN Host', 'Bytes Up/Down' ]; 
+				if(qosEnabled) { columnNames.push("Qos Up/Down"); };
+				columnNames.push("L7 Proto");
+				
+				var connTable = createTable(columnNames, tableData, "connection_table", false, false);
+				if(tableData.length > 0)
+				{
+					var headerIndex;
+					try
+					{
+						for(headerIndex=0; headerIndex < 5; headerIndex++){ connTable.firstChild.firstChild.childNodes[headerIndex].style.textAlign="left"; }
+					}
+					catch(e){}
+				}
+				
+				var tableContainer = document.getElementById('connection_table_container');
+				if(tableContainer.firstChild != null)
+				{
+					tableContainer.removeChild(tableContainer.firstChild);
+				}
+				tableContainer.appendChild(connTable);
+
+				updateInProgress = false;
+			}
+		}
+		runAjax("POST", "utility/run_commands.sh", param, stateChangeFunction);
+	}
+}
+
+

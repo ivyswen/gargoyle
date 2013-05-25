@@ -1,1 +1,909 @@
-function saveChanges(){setControlsEnabled(!1,!0);var e=!1,t=[],n=["restriction_rule","whitelist_rule"],r=["rule_","exception_"],i=0,s=[],o=[];for(i=0;i<n.length;i++){var u=document.getElementById(r[i]+"table_container"),a=u.firstChild,f=getTableDataArray(a);for(ruleIndex=0;ruleIndex<f.length;ruleIndex++){var l=f[ruleIndex][1];e=e||l.checked,uci.set(pkg,l.id,"enabled",l.checked?"1":"0")}var c=uciOriginal.getAllSectionsOfType(pkg,n[i]),h=0;for(h=0;h<c.length;h++){var p=uciOriginal.get(pkg,c[h],"is_ingress");p!="1"&&(uciOriginal.removeSection(pkg,c[h]),s.push("uci del "+pkg+"."+c[h]))}var d=uci.getAllSectionsOfType(pkg,n[i]);for(h=0;h<d.length;h++)o.push("uci set "+pkg+"."+d[h]+"='"+n[i]+"'")}s.push("uci commit"),o.push("uci commit");var v=s.join("\n")+"\n"+o.join("\n")+"\n"+uci.getScriptCommands(uciOriginal)+"\n"+t.join("\n")+"\n"+"sh /usr/lib/gargoyle/restart_firewall.sh",m=getParameterDefinition("commands",v)+"&"+getParameterDefinition("hash",document.cookie.replace(/^.*hash=/,"").replace(/[\t ;]+.*$/,"")),g=function(e){e.readyState==4&&(uciOriginal=uci.clone(),resetData(),setControlsEnabled(!0))};runAjax("POST","utility/run_commands.sh",m,g)}function resetData(){var e=["restriction_rule","whitelist_rule"],t=["rule_","exception_"],n=0;for(n=0;n<e.length;n++){var r=e[n],i=t[n],s=uciOriginal.getAllSectionsOfType(pkg,r),o=new Array,u=[],a=[];for(sectionIndex=0;sectionIndex<s.length;sectionIndex++){var f=uciOriginal.get(pkg,s[sectionIndex],"is_ingress");if(f!="1"){var l=uciOriginal.get(pkg,s[sectionIndex],"description");l=l==""?s[sectionIndex]:l;var c=uciOriginal.get(pkg,s[sectionIndex],"enabled"),h=c==""||c=="1"||c=="true",p=createEnabledCheckbox(h);p.id=s[sectionIndex],u.push(p),a.push(h),o.push([l,p,createEditButton(h)])}}var d=r=="restriction_rule"?"Rule Description":"Exception Description";columnNames=[d,"Enabled",""],ruleTable=createTable(columnNames,o,i+"table",!0,!1,removeRuleCallback),tableContainer=document.getElementById(i+"table_container"),tableContainer.firstChild!=null&&tableContainer.removeChild(tableContainer.firstChild),tableContainer.appendChild(ruleTable);while(u.length>0){var v=u.shift(),m=a.shift();v.checked=m}setDocumentFromUci(document,new UCIContainer,"",r,i),setVisibility(document,i)}}function addNewRule(e,t){var n=validateRule(document,t);if(n.length>0)alert(n.join("\n")+"\nCould not add rule.");else{var r=document.getElementById(t+"table_container"),i=r.firstChild,s=getTableDataArray(i),o=s.length+1,u=t+""+o;while(uci.get(pkg,u,"")!="")o++,u=t+""+o;setUciFromDocument(document,u,e,t);var a=uci.get(pkg,u,"description");a=a==""?u:a;var f=createEnabledCheckbox(!0);f.id=u,addTableRow(i,[a,f,createEditButton(!0)],!0,!1,removeRuleCallback),setDocumentFromUci(document,new UCIContainer,"",e,t),f.checked=!0}}function setVisibility(e,t){e=e==null?document:e,setInvisibleIfAnyChecked([t+"all_access"],t+"resources","block",e),setInvisibleIfAnyChecked([t+"all_day"],t+"hours_active_container","block",e),setInvisibleIfAnyChecked([t+"every_day"],t+"days_active","block",e),setInvisibleIfAnyChecked([t+"all_day",t+"every_day"],t+"days_and_hours_active_container","block",e),setInvisibleIfAnyChecked([t+"all_day",t+"every_day"],t+"schedule_repeats","inline",e);var n=e.getElementById(t+"schedule_repeats");n.style.display!="none"&&(setInvisibleIfIdMatches(t+"schedule_repeats","daily",t+"days_and_hours_active_container","block",e),setInvisibleIfIdMatches(t+"schedule_repeats","weekly",t+"days_active","block",e),setInvisibleIfIdMatches(t+"schedule_repeats","weekly",t+"hours_active_container","block",e)),setInvisibleIfIdMatches(t+"applies_to","all",t+"applies_to_container","block",e),setInvisibleIfIdMatches(t+"remote_ip_type","all",t+"remote_ip_container","block",e),setInvisibleIfIdMatches(t+"remote_port_type","all",t+"remote_port","inline",e),setInvisibleIfIdMatches(t+"local_port_type","all",t+"local_port","inline",e),setInvisibleIfIdMatches(t+"app_protocol_type","all",t+"app_protocol","inline",e),setInvisibleIfIdMatches(t+"url_type","all",t+"url_match_list","block",e)}function setInvisibleIfAnyChecked(e,t,n,r){r=r==null?document:r,n=n==null?"block":n;var i=r.getElementById(t),s=!1;for(checkIndex=0;checkIndex<e.length;checkIndex++){var o=r.getElementById(e[checkIndex]);o!=null&&(s=s||o.checked)}s&&i!=null?i.style.display="none":i!=null&&(i.style.display=n)}function setInvisibleIfIdMatches(e,t,n,r,i){i=i==null?document:i,r=r==null?"restriction_rule":r;var s=i.getElementById(n);getSelectedValue(e,i)==t&&s!=null?s.style.display="none":s!=null&&(s.style.display=r)}function createEnabledCheckbox(e){return enabledCheckbox=createInput("checkbox"),enabledCheckbox.onclick=setRowEnabled,enabledCheckbox.checked=e,enabledCheckbox}function createEditButton(e,t,n){return editButton=createInput("button"),editButton.value="Edit",editButton.className="default_button",editButton.onclick=editRule,editButton.className=e?"default_button":"default_button_disabled",editButton.disabled=e?!1:!0,editButton}function setRowEnabled(){enabled=this.checked?"1":"0",enabledRow=this.parentNode.parentNode,enabledId=this.id,enabledRow.childNodes[2].firstChild.disabled=this.checked?!1:!0,enabledRow.childNodes[2].firstChild.className=this.checked?"default_button":"default_button_disabled",uci.set(pkg,enabledId,"enabled",enabled)}function removeRuleCallback(e,t){var n=t.childNodes[1].firstChild.id;uci.removeSection(pkg,n)}function editRule(){editRow=this.parentNode.parentNode,editTable=editRow.parentNode.parentNode,editTable.id.match("rule_")?(editRuleType="restriction_rule",editRulePrefix="rule_"):(editRuleType="whitelist_rule",editRulePrefix="exception_");if(typeof editRuleWindow!="undefined")try{editRuleWindow.close()}catch(e){}try{xCoor=window.screenX+225,yCoor=window.screenY+225}catch(e){xCoor=window.left+225,yCoor=window.top+225}editRuleWindow=window.open(editRuleType=="restriction_rule"?"restriction_edit_rule.sh":"whitelist_edit_rule.sh","edit","width=560,height=600,left="+xCoor+",top="+yCoor),saveButton=createInput("button",editRuleWindow.document),closeButton=createInput("button",editRuleWindow.document),saveButton.value="Close and Apply Changes",saveButton.className="default_button",closeButton.value="Close and Discard Changes",closeButton.className="default_button",editRuleSectionId=editRow.childNodes[1].firstChild.id,runOnEditorLoaded=function(){updateDone=!1,editRuleWindow.document!=null&&editRuleWindow.document.getElementById("bottom_button_container")!=null&&(editRuleWindow.document.getElementById("bottom_button_container").appendChild(saveButton),editRuleWindow.document.getElementById("bottom_button_container").appendChild(closeButton),setDocumentFromUci(editRuleWindow.document,uci,editRuleSectionId,editRuleType,editRulePrefix),setVisibility(editRuleWindow.document,editRulePrefix),closeButton.onclick=function(){editRuleWindow.close()},saveButton.onclick=function(){var e=validateRule(editRuleWindow.document,editRulePrefix);e.length>0?alert(e.join("\n")+"\nCould not add rule."):(setUciFromDocument(editRuleWindow.document,editRuleSectionId,editRuleType,editRulePrefix),uci.get(pkg,editRuleSectionId,"description")!=""&&(editRow.childNodes[0].firstChild.data=uci.get(pkg,editRuleSectionId,"description")),editRuleWindow.close())},editRuleWindow.moveTo(xCoor,yCoor),editRuleWindow.focus(),updateDone=!0),updateDone||setTimeout("runOnEditorLoaded()",250)},runOnEditorLoaded()}function addAddressesToTable(e,t,n,r,i){e=e==null?document:e;var s=e.getElementById(t).value,o=i?validateMultipleIpsOrMacs(s):validateMultipleIps(s);if(o==0){var u=e.getElementById(n),a=u.childNodes.length>0?u.firstChild:createTable([""],[],r,!0,!1);s=s.replace(/^[\t ]*/,""),s=s.replace(/[\t ]*$/,"");var f=s.split(/[\t ]*,[\t ]*/);while(f.length>0)addTableRow(a,[f.shift()],!0,!1);u.childNodes.length==0&&u.appendChild(a),e.getElementById(t).value=""}else alert("ERROR: Invalid Address\n")}function addUrlToTable(e,t,n,r,i){e=e==null?document:e;var s=e.getElementById(t).value,o=getSelectedValue(n,e),u=validateUrl(s,n,e);if(u==0){var a=createUrlSpan(s,e),f=e.getElementById(r),l=f.childNodes.length>0?f.firstChild:createTable(["URL Part","Match Type","Match Text / Expression"],[],i,!0,!1);addTableRow(l,[o.match("domain")?"domain":"full",o.substring(o.lastIndexOf("_")+1),a],!0,!1),f.childNodes.length==0&&f.appendChild(l),e.getElementById(t).value=""}else s.length==0?alert("ERROR: URL match length must be greater than zero"):alert("ERROR: URL match cannot contain quote or newline characters\n")}function validateRule(e,t){e=e==null?document:e;var n=[t+"hours_active",t+"days_and_hours_active",t+"remote_port",t+"local_port"],r=[t+"hours_active_label",t+"days_and_hours_active_label",t+"remote_port_label",t+"local_port_label"],i=[validateHours,validateWeeklyRange,validateMultiplePorts,validateMultiplePorts],s=[0,0,0,0],o=[t+"hours_active_container",t+"days_and_hours_active_container",t+"remote_port",t+"local_port"];return e.getElementById(t+"all_access").checked&&(o[2]=t+"resources",o[3]=t+"resources"),proofreadFields(n,r,i,s,o,e)}function validateMultipleIps(e){e=e.replace(/^[\t ]+/g,""),e=e.replace(/[\t ]+$/g,"");var t=e.split(/[\t ]*,[\t ]*/),n=t.length>0?0:1;while(n==0&&t.length>0){var r=t.pop();if(r.match(/-/)){var i=r.split(/[\t ]*-[\t ]*/);n=i.length==2&&validateIP(i[0])==0&&validateIP(i[1])==0?0:1}else n=validateIpRange(r)}return n}function proofreadMultipleIps(e){proofreadText(e,validateMultipleIps,0)}function proofreadMultipleIpsOrMacs(e){proofreadText(e,validateMultipleIpsOrMacs,0)}function validateMultipleIpsOrMacs(e){var t=e.replace(/^[\t ]+/g,"");t=t.replace(/[\t ]+$/g,"");var n=t.split(/[\t ]*,[\t ]*/),r=n.length>0?0:1;while(r==0&&n.length>0){var i=n.pop();if(i.match(/-/)){var s=i.split(/[\t ]*-[\t ]*/);r=s.length==2&&validateIP(s[0])==0&&validateIP(s[1])==0?0:1}else i.match(/:/)?r=validateMac(i):r=validateIpRange(i)}return r}function validateMultiplePorts(e){e=e.replace(/^[\t ]+/g,""),e=e.replace(/[\t ]+$/g,"");var t=e.match(/,/)?e.split(/[\t ]*,[\t ]*/):[e],n=!0;for(splitIndex=0;splitIndex<t.length;splitIndex++)t[splitIndex].replace(/^[\t ]+/g,""),t[splitIndex].replace(/[\t ]+$/g,""),n=n&&validatePortOrPortRange(t[splitIndex])==0;return n?0:1}function proofreadMultiplePorts(e){proofreadText(e,validateMultiplePorts,0)}function validateUrl(e,t,n){n=n==null?document:n;var r=getSelectedValue(t,n),i=e.match(/[\n\r\"\']/)||e.length==0?1:0;return i}function proofreadUrl(e){proofreadText(e,validateUrl,0)}function createUrlSpan(e,t){t=t==null?document:t;var n=[];while(e.length>0){var r=e.substr(0,30);e=e.substr(30),n.push(e.length>0?r+"-":r)}var i=t.createElement("span");while(n.length>0)i.appendChild(t.createTextNode(n.shift())),n.length>0&&i.appendChild(t.createElement("br"));return i}function parseUrlSpan(e){var t=e.childNodes,n="";for(childIndex=0;childIndex<t.length;childIndex++)if(childIndex%2==0){var r=t[childIndex].data;childIndex<t.length-1&&(r=r.substr(0,r.length-1)),n+=r}return n}function setDocumentFromUci(e,t,n,r,i){e=e==null?document:e;var s=t.get(pkg,n,"description");s=s==""?n:s,e.getElementById(i+"name").value=s,setIpTableAndSelectFromUci(e,t,pkg,n,"local_addr",i+"applies_to_table_container",i+"applies_to_table",i+"applies_to",i+"applies_to_addr");var o=t.get(pkg,n,"active_weekly_ranges"),u=t.get(pkg,n,"active_hours"),a=o==""&&u=="";e.getElementById(i+"hours_active").value=u,e.getElementById(i+"all_day").checked=a,e.getElementById(i+"days_and_hours_active").value=o,setSelectedValue(i+"schedule_repeats",o==""?"daily":"weekly",e);var f=["sun","mon","tue","wed","thu","fri","sat"],l=t.get(pkg,n,"active_weekdays"),c=[];l==""?c=f:c=l.split(/,/);var h=o=="",p=0;for(p=0;p<f.length;p++){var d=f[p],v=!1,m=0;for(m=0;m<c.length&&!v;m++)v=c[m]==d;h=h&&v,e.getElementById(i+f[p]).checked=v}e.getElementById(i+"every_day").checked=h,setIpTableAndSelectFromUci(e,t,pkg,n,"remote_addr",i+"remote_ip_table_container",i+"remote_ip_table",i+"remote_ip_type",i+"remote_ip"),setTextAndSelectFromUci(e,t,pkg,n,"remote_port",i+"remote_port",i+"remote_port_type"),setTextAndSelectFromUci(e,t,pkg,n,"local_port",i+"local_port",i+"local_port_type");var g=t.get(pkg,n,"proto");g=g!="tcp"&&g!="udp"?"both":g,setSelectedValue(i+"transport_protocol",g,e);var y=t.get(pkg,n,"app_proto"),b=y==""?"except":"only";y=y==""?t.get(pkg,n,"not_app_proto"):y,b=y==""?"all":b,setSelectedValue(i+"app_protocol_type",b,e),setSelectedValue(i+"app_protocol",y,e);var w=["url_contains","url_regex","url_exact","url_domain_contains","url_domain_regex","url_domain_exact"],E=["contains","regex","exact","contains","regex","exact"],S=["full","full","full","domain","domain","domain"],x="",T=[],N=!1,C=0,k="all";for(C=0;C<w.length;C++)T[C]=t.get(pkg,n,w[C]),N=T[C]!=""?!0:N,k=T[C]!=""?"only":k;if(!N){x="not_";for(C=0;C<w.length;C++)T[C]=t.get(pkg,n,x+w[C]),N=T[C]!=""?!0:N,k=T[C]!=""?"except":k}setSelectedValue(i+"url_type",k,e);var L=e.getElementById(i+"url_match_table_container");L.childNodes.length>0&&L.removeChild(L.firstChild);if(N){var A=createTable(["URL Part","Match Type","Match Text / Expression"],[],i+"url_match_table",!0,!1,null,null,e);for(C=0;C<w.length;C++){var O=T[C];if(O!=""){O=O.replace(/^[\t ]*\"/,""),O=O.replace(/\"[\t ]*$/,""),def=O.match(/\".*\"/)?O.split(/\"[\t, ]*\"/):[O];var M=0;for(M=0;M<def.length;M++)addTableRow(A,[S[C],E[C],createUrlSpan(def[M],e)],!0,!1,null,null,e)}}L.appendChild(A)}e.getElementById(i+"url_match").value="";var _=!0,D=["remote_ip_type","remote_port_type","local_port_type","transport_protocol","app_protocol_type","url_type"];for(typeIndex=0;typeIndex<D.length;typeIndex++){var P=getSelectedValue(i+D[typeIndex],e);_=_&&(P=="all"||P=="both")}e.getElementById(i+"all_access").checked=_,setVisibility(e,i)}function setIpTableAndSelectFromUci(e,t,n,r,i,s,o,u,a){e=e==null?document:e;var f=t.get(n,r,i),l="only";f==""&&(f=t.get(n,r,"not_"+i),l=f!=""?"except":"all"),setSelectedValue(u,l,e);var c=e.getElementById(s);c.childNodes.length>0&&c.removeChild(c.firstChild);if(f!=""){f=f.replace(/^[\t ]*/,""),f=f.replace(/[\t ]*$/,"");var h=f.split(/[\t ]*,[\t ]*/),p=createTable([""],[],o,!0,!1,null,null,e);while(h.length>0)addTableRow(p,[h.shift()],!0,!1,null,null,e);c.appendChild(p),e.getElementById(a).value=""}}function setTextAndSelectFromUci(e,t,n,r,i,s,o){e=e==null?document:e;var u=t.get(n,r,i),a="only";u==""&&(u=t.get(n,r,"not_"+i),a=u!=""?"except":"all"),setSelectedValue(o,a,e),e.getElementById(s).value=u}function setUciFromDocument(e,t,n,r){uci.removeSection(pkg,t),uci.set(pkg,t,"",n),uci.set(pkg,t,"is_ingress","0"),e=e==null?document:e,uci.set(pkg,t,"",n),uci.set(pkg,t,"description",e.getElementById(r+"name").value),setFromIpTable(e,pkg,t,"local_addr",r+"applies_to_table_container",r+"applies_to");var i=e.getElementById(r+"days_active");if(i.style.display!="none"){var i=[],s=["sun","mon","tue","wed","thu","fri","sat"];for(dayIndex=0;dayIndex<s.length;dayIndex++)e.getElementById(r+s[dayIndex]).checked&&i.push(s[dayIndex]);daysActiveStr=i.join(","),uci.set(pkg,t,"active_weekdays",daysActiveStr)}setIfVisible(e,pkg,t,"active_hours",r+"hours_active"),setIfVisible(e,pkg,t,"active_weekly_ranges",r+"days_and_hours_active");if(!e.getElementById(r+"all_access").checked){setFromIpTable(e,pkg,t,"remote_addr",r+"remote_ip_table_container",r+"remote_ip_type"),setIfVisible(e,pkg,t,"remote_port",r+"remote_port",r+"remote_port_type"),setIfVisible(e,pkg,t,"local_port",r+"local_port",r+"local_port_type"),uci.set(pkg,t,"proto",getSelectedValue(r+"transport_protocol",e));var o=getSelectedValue(r+"app_protocol_type",e);if(o!="all"){var u=o=="except"?"not_":"";uci.set(pkg,t,u+"app_proto",getSelectedValue(r+"app_protocol",e))}var a=getSelectedValue(r+"url_type",e),f=e.getElementById(r+"url_match_table_container").firstChild;if(a!="all"&&f!=null){var l=getTableDataArray(f,!0,!1),c=a=="except"?"not_":"",h=[],p;for(p=0;p<l.length;p++){var d=l[p][0];d=(d.match("domain")?"url_domain_":"url_")+l[p][1],urlStr=parseUrlSpan(l[p][2]),h[d]!=null?h[d]=h[d]+',"'+urlStr+'"':h[d]='"'+urlStr+'"'}var v=["url_","url_domain_"],m=["exact","contains","regex"],g=0,y=0;for(g=0;g<2;g++)for(y=0;y<3;y++){var b=v[g]+m[y];h[b]!=null&&uci.set(pkg,t,c+b,h[b])}}}}function setIfVisible(e,t,n,r,i,s){e=e==null?document:e;var o=e.getElementById(i);o.style.display!="none"&&(s!=null&&(prefixValue=getSelectedValue(s,e),r=prefixValue=="except"?"not_"+r:r),uci.set(t,n,r,o.value))}function setFromIpTable(e,t,n,r,i,s){e=e==null?document:e;var o=getSelectedValue(s,e),u=e.getElementById(i).firstChild;if(o!="all"&&u!=null){var a=getTableDataArray(u,!0,!1),f="";for(ipIndex=0;ipIndex<a.length;ipIndex++)f=f+a[ipIndex][0]+",";f=f.replace(/,$/,"");if(f.length>0){var l=o=="except"?"not_":"";uci.set(t,n,l+r,f)}}}var pkg="firewall";
+var pkg = "firewall";
+
+function saveChanges()
+{
+	setControlsEnabled(false, true);
+	
+	var enabledRuleFound = false;
+	var runCommands = [];
+
+
+	var ruleTypes = [ "restriction_rule", "whitelist_rule" ];
+	var rulePrefixes   = [ "rule_", "exception_" ];
+	var typeIndex=0;
+	var deleteSectionCommands = [];
+	var createSectionCommands = [];
+	for(typeIndex=0; typeIndex < ruleTypes.length; typeIndex++)
+	{
+		//set enabled status to corrospond with checked in table
+		var ruleTableContainer = document.getElementById(rulePrefixes[typeIndex] + 'table_container');
+		var ruleTable = ruleTableContainer.firstChild;
+		var ruleData = getTableDataArray(ruleTable);
+		for(ruleIndex =0; ruleIndex < ruleData.length; ruleIndex++)
+		{
+			var check = ruleData[ruleIndex][1];
+			enabledRuleFound = enabledRuleFound || check.checked; 
+			uci.set(pkg, check.id, "enabled", check.checked ? "1" : "0");
+		}
+
+		
+		//delete all sections of type in uciOriginal & remove them from uciOriginal
+		var originalSections = uciOriginal.getAllSectionsOfType(pkg, ruleTypes[typeIndex]);
+		var sectionIndex = 0;
+		for(sectionIndex=0; sectionIndex < originalSections.length; sectionIndex++)
+		{
+			var isIngress = uciOriginal.get(pkg, originalSections[sectionIndex], "is_ingress");
+			if(isIngress != "1")
+			{
+				uciOriginal.removeSection(pkg, originalSections[sectionIndex]);
+				deleteSectionCommands.push("uci del " + pkg + "." + originalSections[sectionIndex]);
+			}
+		}
+	
+		//create/initialize  sections in uci
+		var newSections = uci.getAllSectionsOfType(pkg, ruleTypes[typeIndex]);
+		for(sectionIndex=0; sectionIndex < newSections.length; sectionIndex++)
+		{
+			createSectionCommands.push("uci set " + pkg + "." + newSections[sectionIndex] + "='" + ruleTypes[typeIndex] + "'");
+		}
+	}
+	deleteSectionCommands.push("uci commit");
+	createSectionCommands.push("uci commit");
+	
+
+	var commands = deleteSectionCommands.join("\n") + "\n" + createSectionCommands.join("\n") + "\n" + uci.getScriptCommands(uciOriginal) + "\n" + runCommands.join("\n") + "\n" + "sh /usr/lib/gargoyle/restart_firewall.sh";
+
+	var param = getParameterDefinition("commands", commands) +  "&" + getParameterDefinition("hash", document.cookie.replace(/^.*hash=/,"").replace(/[\t ;]+.*$/, ""));
+	var stateChangeFunction = function(req)
+	{
+		if(req.readyState == 4)
+		{	
+			uciOriginal = uci.clone();
+			resetData();
+			setControlsEnabled(true);	
+			//alert(req.responseText);
+		}
+	}
+	runAjax("POST", "utility/run_commands.sh", param, stateChangeFunction);
+
+}
+
+function resetData()
+{
+	var ruleTypes = [ "restriction_rule", "whitelist_rule" ];
+	var rulePrefixes   = [ "rule_", "exception_" ];
+	var typeIndex=0;
+	for(typeIndex=0; typeIndex < ruleTypes.length; typeIndex++)
+	{
+		var ruleType = ruleTypes[typeIndex];
+		var rulePrefix = rulePrefixes[typeIndex];
+
+		var sections = uciOriginal.getAllSectionsOfType(pkg, ruleType);
+		var ruleTableData = new Array();
+		var checkElements = []; //because IE is a bitch and won't register that checkboxes are checked/unchecked unless they are part of document
+		var areChecked = [];
+		for(sectionIndex=0; sectionIndex < sections.length; sectionIndex++)
+		{
+			var isIngress = uciOriginal.get(pkg, sections[sectionIndex], "is_ingress");
+			if(isIngress != "1")
+			{
+				var description = uciOriginal.get(pkg, sections[sectionIndex], "description");
+				description = description == "" ? sections[sectionIndex] : description;
+				
+				var enabledStr =   uciOriginal.get(pkg, sections[sectionIndex], "enabled");
+				var enabledBool =  (enabledStr == "" || enabledStr == "1" || enabledStr == "true") ;
+				var enabledCheck = createEnabledCheckbox(enabledBool);
+				enabledCheck.id = sections[sectionIndex]; //save section id as checkbox name (yeah, it's kind of sneaky...)
+				
+				checkElements.push(enabledCheck);
+				areChecked.push(enabledBool);
+	
+				ruleTableData.push([description, enabledCheck, createEditButton(enabledBool)]);
+			}
+		}
+		
+		var firstColumn = ruleType == "restriction_rule" ? "Rule Description" : "Exception Description";
+		columnNames=[firstColumn, "Enabled", ""];
+		ruleTable = createTable(columnNames, ruleTableData, rulePrefix + "table", true, false, removeRuleCallback);
+		
+		tableContainer = document.getElementById(rulePrefix + 'table_container');
+		
+		if(tableContainer.firstChild != null)
+		{
+			tableContainer.removeChild(tableContainer.firstChild);
+		}
+		tableContainer.appendChild(ruleTable);
+
+		while(checkElements.length > 0)
+		{
+			var c = checkElements.shift();
+			var b = areChecked.shift();
+			c.checked = b;
+		}
+
+		setDocumentFromUci(document, new UCIContainer(), "", ruleType, rulePrefix);
+		setVisibility(document, rulePrefix);
+	}
+}
+
+
+function addNewRule(ruleType, rulePrefix)
+{
+	var errors = validateRule(document, rulePrefix);
+	if(errors.length > 0)
+	{
+		alert(errors.join("\n") + "\nCould not add rule.");
+	}
+	else
+	{
+		var tableContainer = document.getElementById(rulePrefix + 'table_container');
+		var table = tableContainer.firstChild;
+		var tableData = getTableDataArray(table);
+		
+		var newIndex = tableData.length+1;
+		var newId = rulePrefix + "" + newIndex;
+		while( uci.get(pkg, newId, "") != "" )
+		{
+			newIndex++;
+			newId = rulePrefix + "" + newIndex;
+		}
+		
+		setUciFromDocument(document, newId, ruleType, rulePrefix);
+
+		var description = uci.get(pkg, newId, "description");
+		description = description == "" ? newId : description;
+
+		var enabledCheck = createEnabledCheckbox(true);
+		enabledCheck.id = newId; //save section id as checkbox name (yeah, it's kind of sneaky...)
+		
+		addTableRow(table, [description, enabledCheck, createEditButton(true)], true, false, removeRuleCallback);	
+
+		setDocumentFromUci(document, new UCIContainer(), "", ruleType, rulePrefix);
+
+		enabledCheck.checked = true;
+	}
+}
+
+function setVisibility(controlDocument, rulePrefix)
+{
+	controlDocument = controlDocument == null ? document : controlDocument;
+	
+	
+	setInvisibleIfAnyChecked([rulePrefix + "all_access"], rulePrefix + "resources", "block", controlDocument);
+	setInvisibleIfAnyChecked([rulePrefix + "all_day"], rulePrefix + "hours_active_container", "block", controlDocument);
+	setInvisibleIfAnyChecked([rulePrefix + "every_day"], rulePrefix + "days_active", "block", controlDocument);
+	setInvisibleIfAnyChecked([rulePrefix + "all_day", rulePrefix + "every_day"], rulePrefix + "days_and_hours_active_container", "block", controlDocument);
+	setInvisibleIfAnyChecked([rulePrefix + "all_day", rulePrefix + "every_day"], rulePrefix + "schedule_repeats", "inline", controlDocument);
+
+
+	var scheduleRepeats = controlDocument.getElementById(rulePrefix + "schedule_repeats");
+	if(scheduleRepeats.style.display != "none")
+	{
+		setInvisibleIfIdMatches(rulePrefix + "schedule_repeats", "daily", rulePrefix + "days_and_hours_active_container", "block", controlDocument);
+		setInvisibleIfIdMatches(rulePrefix + "schedule_repeats", "weekly", rulePrefix + "days_active", "block", controlDocument);
+		setInvisibleIfIdMatches(rulePrefix + "schedule_repeats", "weekly", rulePrefix + "hours_active_container", "block", controlDocument);
+	}
+
+
+	setInvisibleIfIdMatches(rulePrefix + "applies_to", "all", rulePrefix + "applies_to_container", "block", controlDocument);
+	setInvisibleIfIdMatches(rulePrefix + "remote_ip_type", "all", rulePrefix + "remote_ip_container", "block", controlDocument);
+	setInvisibleIfIdMatches(rulePrefix + "remote_port_type", "all", rulePrefix + "remote_port", "inline", controlDocument);
+	setInvisibleIfIdMatches(rulePrefix + "local_port_type", "all", rulePrefix + "local_port", "inline", controlDocument);
+	setInvisibleIfIdMatches(rulePrefix + "app_protocol_type", "all", rulePrefix + "app_protocol", "inline", controlDocument);
+	setInvisibleIfIdMatches(rulePrefix + "url_type", "all", rulePrefix + "url_match_list", "block", controlDocument);
+}
+
+function setInvisibleIfAnyChecked(checkIds, associatedElementId, defaultDisplayMode, controlDocument)
+{
+	controlDocument = controlDocument == null ? document : controlDocument;
+	defaultDisplayMode = defaultDisplayMode == null ? "block" : defaultDisplayMode;
+	var visElement = controlDocument.getElementById(associatedElementId);
+
+	var isChecked = false;
+	for(checkIndex = 0; checkIndex < checkIds.length ; checkIndex++)
+	{
+		var checkElement = controlDocument.getElementById( checkIds[checkIndex] );
+		if(checkElement != null)
+		{
+			isChecked = isChecked || checkElement.checked;
+		}
+	}
+
+	if(isChecked && visElement != null)
+	{
+		visElement.style.display = "none";
+	}
+	else if(visElement != null)
+	{
+		visElement.style.display = defaultDisplayMode;
+	}
+
+}
+
+function setInvisibleIfIdMatches(selectId, invisibleOptionValue, associatedElementId, defaultDisplayMode, controlDocument )
+{
+	controlDocument = controlDocument == null ? document : controlDocument;
+	defaultDisplayMode = defaultDisplayMode == null ? "restriction_rule" : defaultDisplayMode;
+	var visElement = controlDocument.getElementById(associatedElementId);
+	
+	if(getSelectedValue(selectId, controlDocument) == invisibleOptionValue && visElement != null)
+	{
+		visElement.style.display = "none";
+	}
+	else if(visElement != null)
+	{
+		visElement.style.display = defaultDisplayMode;
+	}
+}
+
+
+
+function createEnabledCheckbox(enabled)
+{
+	enabledCheckbox = createInput('checkbox');
+	enabledCheckbox.onclick = setRowEnabled;
+	enabledCheckbox.checked = enabled;
+	return enabledCheckbox;
+}
+
+function createEditButton(enabled, ruleType, rulePrefix)
+{
+	editButton = createInput("button");
+	editButton.value = "Edit";
+	editButton.className="default_button";
+	editButton.onclick = editRule;
+	
+	editButton.className = enabled ? "default_button" : "default_button_disabled" ;
+	editButton.disabled  = enabled ? false : true;
+
+	return editButton;
+}
+function setRowEnabled()
+{
+	enabled= this.checked ? "1" : "0";
+	enabledRow=this.parentNode.parentNode;
+	enabledId = this.id;
+
+	enabledRow.childNodes[2].firstChild.disabled  = this.checked ? false : true;
+	enabledRow.childNodes[2].firstChild.className = this.checked ? "default_button" : "default_button_disabled" ;
+
+	uci.set(pkg, enabledId, "enabled", enabled);
+}
+function removeRuleCallback(table, row)
+{
+	var ruleId = row.childNodes[1].firstChild.id;
+	uci.removeSection(pkg, ruleId);
+}
+
+function editRule()
+{
+	editRow = this.parentNode.parentNode;
+	editTable = editRow.parentNode.parentNode;
+	if(editTable.id.match("rule_"))
+	{
+		editRuleType = "restriction_rule";
+		editRulePrefix = "rule_";
+	}
+	else
+	{
+		editRuleType = "whitelist_rule";
+		editRulePrefix = "exception_";
+	}
+
+	if( typeof(editRuleWindow) != "undefined" )
+	{
+		//opera keeps object around after
+		//window is closed, so we need to deal
+		//with error condition
+		try
+		{
+			editRuleWindow.close();
+		}
+		catch(e){}
+	}
+
+	
+	try
+	{
+		xCoor = window.screenX + 225;
+		yCoor = window.screenY+ 225;
+	}
+	catch(e)
+	{
+		xCoor = window.left + 225;
+		yCoor = window.top + 225;
+	}
+
+
+	editRuleWindow = window.open(editRuleType == "restriction_rule" ? "restriction_edit_rule.sh" : "whitelist_edit_rule.sh", "edit", "width=560,height=600,left=" + xCoor + ",top=" + yCoor );
+	
+	saveButton = createInput("button", editRuleWindow.document);
+	closeButton = createInput("button", editRuleWindow.document);
+	saveButton.value = "Close and Apply Changes";
+	saveButton.className = "default_button";
+	closeButton.value = "Close and Discard Changes";
+	closeButton.className = "default_button";
+
+	editRuleSectionId = editRow.childNodes[1].firstChild.id;
+
+	runOnEditorLoaded = function () 
+	{
+		updateDone=false;
+		if(editRuleWindow.document != null)
+		{
+			if(editRuleWindow.document.getElementById("bottom_button_container") != null)
+			{
+				editRuleWindow.document.getElementById("bottom_button_container").appendChild(saveButton);
+				editRuleWindow.document.getElementById("bottom_button_container").appendChild(closeButton);
+		
+				setDocumentFromUci(editRuleWindow.document, uci, editRuleSectionId, editRuleType, editRulePrefix);
+				setVisibility(editRuleWindow.document, editRulePrefix);
+
+				closeButton.onclick = function()
+				{
+					editRuleWindow.close();
+				}
+				saveButton.onclick = function()
+				{
+					// error checking goes here
+					var errors = validateRule(editRuleWindow.document, editRulePrefix);
+					if(errors.length > 0)
+					{
+						alert(errors.join("\n") + "\nCould not add rule.");
+					}
+					else
+					{
+						setUciFromDocument(editRuleWindow.document, editRuleSectionId, editRuleType, editRulePrefix);
+						if(uci.get(pkg, editRuleSectionId, "description") != "")
+						{
+							editRow.childNodes[0].firstChild.data = uci.get(pkg, editRuleSectionId, "description");
+						}
+						editRuleWindow.close();
+					}
+					
+				}
+				editRuleWindow.moveTo(xCoor,yCoor);
+				editRuleWindow.focus();
+				updateDone = true;
+				
+			}
+		}
+		if(!updateDone)
+		{
+			setTimeout( "runOnEditorLoaded()", 250);
+
+		}
+	}
+	runOnEditorLoaded();
+}
+
+function addAddressesToTable(controlDocument, textId, tableContainerId, tableId, macsValid)
+{
+	controlDocument = controlDocument == null ? document : controlDocument;
+	var newAddrs = controlDocument.getElementById(textId).value;
+	var valid = macsValid ?  validateMultipleIpsOrMacs(newAddrs) : validateMultipleIps(newAddrs);
+	if(valid == 0)
+	{
+		var tableContainer = controlDocument.getElementById(tableContainerId);
+		var table = tableContainer.childNodes.length > 0 ? tableContainer.firstChild : createTable([""], [], tableId, true, false);
+		newAddrs = newAddrs.replace(/^[\t ]*/, "");
+		newAddrs = newAddrs.replace(/[\t ]*$/, "");
+		var addrs = newAddrs.split(/[\t ]*,[\t ]*/);
+		
+		while(addrs.length > 0)
+		{
+			addTableRow(table, [ addrs.shift() ], true, false);
+		}
+		
+		if(tableContainer.childNodes.length == 0)
+		{
+			tableContainer.appendChild(table);
+		}
+		controlDocument.getElementById(textId).value = "";
+	}
+	else
+	{
+		alert("ERROR: Invalid Address\n");
+	}
+}
+
+function addUrlToTable(controlDocument, textId, selectId, tableContainerId, tableId)
+{
+	controlDocument = controlDocument == null ? document : controlDocument;
+	
+	var newUrl = controlDocument.getElementById(textId).value;
+	var urlType = getSelectedValue(selectId, controlDocument);
+	var valid = validateUrl(newUrl, selectId, controlDocument);
+	if(valid == 0)
+	{
+		var urlSpan = createUrlSpan(newUrl, controlDocument);
+		var tableContainer = controlDocument.getElementById(tableContainerId);
+		var table = tableContainer.childNodes.length > 0 ? tableContainer.firstChild : createTable(["URL Part", "Match Type", "Match Text / Expression"], [], tableId, true, false);
+		addTableRow(table, [(urlType.match("domain") ? "domain" : "full"), urlType.substring(urlType.lastIndexOf("_")+1), urlSpan ], true, false);
+		if(tableContainer.childNodes.length == 0)
+		{
+			tableContainer.appendChild(table);
+		}
+		controlDocument.getElementById(textId).value = "";
+	}
+	else
+	{
+		if( newUrl.length == 0)
+		{
+			alert("ERROR: URL match length must be greater than zero");
+		}
+		else
+		{
+			alert("ERROR: URL match cannot contain quote or newline characters\n");
+		}
+	}
+}
+
+function validateRule(controlDocument, rulePrefix)
+{
+	controlDocument = controlDocument == null ? document : controlDocument;
+	var inputIds = [rulePrefix + "hours_active", rulePrefix + "days_and_hours_active", rulePrefix + "remote_port", rulePrefix + "local_port"];
+	var labelIds = [rulePrefix + "hours_active_label", rulePrefix + "days_and_hours_active_label", rulePrefix + "remote_port_label", rulePrefix + "local_port_label"];
+	var functions = [validateHours, validateWeeklyRange, validateMultiplePorts, validateMultiplePorts];
+	var validReturnCodes = [0,0,0,0];
+	var visibilityIds = [rulePrefix + "hours_active_container", rulePrefix + "days_and_hours_active_container", rulePrefix + "remote_port", rulePrefix + "local_port"];
+	if(controlDocument.getElementById(rulePrefix + "all_access").checked)
+	{
+		visibilityIds[2] = rulePrefix + "resources";
+		visibilityIds[3] = rulePrefix + "resources";
+	}
+	
+	return proofreadFields(inputIds, labelIds, functions, validReturnCodes, visibilityIds, controlDocument );
+}
+function validateMultipleIps(ips)
+{
+	ips = ips.replace(/^[\t ]+/g, "");
+	ips = ips.replace(/[\t ]+$/g, "");
+	var splitIps = ips.split(/[\t ]*,[\t ]*/);
+	var valid = splitIps.length > 0 ? 0 : 1;
+	while(valid == 0 && splitIps.length > 0)
+	{
+		var nextIp = splitIps.pop();
+		if(nextIp.match(/-/))
+		{
+			var nextSplit = nextIp.split(/[\t ]*-[\t ]*/);
+			valid = nextSplit.length==2 && validateIP(nextSplit[0]) == 0 && validateIP(nextSplit[1]) == 0 ? 0 : 1;
+		}
+		else
+		{
+			valid = validateIpRange(nextIp);
+		}
+	}
+	return valid;
+}
+function proofreadMultipleIps(input)
+{
+	proofreadText(input, validateMultipleIps, 0);
+}
+function proofreadMultipleIpsOrMacs(input)
+{
+	proofreadText(input, validateMultipleIpsOrMacs, 0);
+}
+function validateMultipleIpsOrMacs(addresses)
+{
+	var addr = addresses.replace(/^[\t ]+/g, "");
+	addr = addr.replace(/[\t ]+$/g, "");
+	var splitAddr = addr.split(/[\t ]*,[\t ]*/);
+	var valid = splitAddr.length > 0 ? 0 : 1;
+	while(valid == 0 && splitAddr.length > 0)
+	{
+		var nextAddr = splitAddr.pop();
+		if(nextAddr.match(/-/))
+		{
+			var nextSplit = nextAddr.split(/[\t ]*-[\t ]*/);
+			valid = nextSplit.length==2 && validateIP(nextSplit[0]) == 0 && validateIP(nextSplit[1]) == 0 ? 0 : 1;
+		}
+		else if(nextAddr.match(/:/))
+		{
+			valid = validateMac(nextAddr);
+		}
+		else
+		{
+			valid = validateIpRange(nextAddr);
+		}
+	}
+	return valid;
+
+}
+
+function validateMultiplePorts(portStr)
+{
+	portStr = portStr.replace(/^[\t ]+/g, "");
+	portStr = portStr.replace(/[\t ]+$/g, "");
+	var splitStr = portStr.match(/,/) ?  portStr.split(/[\t ]*,[\t ]*/) : [portStr];
+	var valid = true;
+	for(splitIndex = 0; splitIndex < splitStr.length; splitIndex++)
+	{
+		splitStr[splitIndex].replace(/^[\t ]+/g, "");
+		splitStr[splitIndex].replace(/[\t ]+$/g, "");
+		valid = valid && (validatePortOrPortRange(splitStr[splitIndex]) == 0);
+	}
+	return valid ? 0 : 1;
+}
+function proofreadMultiplePorts(input)
+{
+	proofreadText(input, validateMultiplePorts, 0);
+}
+
+function validateUrl(url, selectId, controlDocument)
+{
+	controlDocument = controlDocument == null ? document : controlDocument;
+	var urlType = getSelectedValue(selectId, controlDocument);
+	var valid = url.match(/[\n\r\"\']/) || url.length == 0 ? 1 : 0;
+	return valid;
+}
+
+function proofreadUrl(input)
+{
+	proofreadText(input, validateUrl, 0);
+}
+
+function createUrlSpan(urlStr, controlDocument)
+{
+	controlDocument = controlDocument == null ? document : controlDocument;
+	
+	var splitUrl = [];
+	while(urlStr.length > 0)
+	{
+		var next = urlStr.substr(0, 30);
+		urlStr = urlStr.substr(30);
+		splitUrl.push(urlStr.length > 0 ? next + "-" : next);
+	}
+	
+	var urlSpan = controlDocument.createElement('span');
+	while(splitUrl.length > 0)
+	{
+		urlSpan.appendChild(controlDocument.createTextNode( splitUrl.shift() ));
+		if(splitUrl.length > 0)
+		{
+			urlSpan.appendChild(controlDocument.createElement('br'));
+		}
+	}
+	return urlSpan;
+}
+function parseUrlSpan(urlSpan)
+{
+	var children = urlSpan.childNodes;
+	var parsedUrl = "";
+	for(childIndex=0; childIndex < children.length; childIndex++)
+	{
+		if(childIndex %2 == 0)
+		{
+			var nextStr = children[childIndex].data;
+			if(childIndex < children.length-1)
+			{
+				nextStr = nextStr.substr(0, nextStr.length-1);
+			}
+			parsedUrl = parsedUrl + nextStr;
+		}
+	}
+	return parsedUrl;
+}
+
+
+function setDocumentFromUci(controlDocument, sourceUci, sectionId, ruleType, rulePrefix)
+{
+	controlDocument = controlDocument == null ? document : controlDocument;
+
+	var description = sourceUci.get(pkg, sectionId, "description");
+	description = description == "" ? sectionId : description;	
+	controlDocument.getElementById(rulePrefix + "name").value = description;
+
+	setIpTableAndSelectFromUci(controlDocument, sourceUci, pkg, sectionId, "local_addr", rulePrefix + "applies_to_table_container", rulePrefix + "applies_to_table", rulePrefix + "applies_to", rulePrefix + "applies_to_addr");
+
+
+	var daysAndHours = sourceUci.get(pkg, sectionId, "active_weekly_ranges");
+	var hours = sourceUci.get(pkg, sectionId, "active_hours");
+	var allDay = (daysAndHours == "" && hours == "");
+	controlDocument.getElementById(rulePrefix + "hours_active").value = hours;
+	controlDocument.getElementById(rulePrefix + "all_day").checked = allDay;
+	controlDocument.getElementById(rulePrefix + "days_and_hours_active").value = daysAndHours;
+	setSelectedValue(rulePrefix + "schedule_repeats", (daysAndHours == "" ? "daily" : "weekly"), controlDocument);
+
+	var allDays = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
+	var dayStr =  sourceUci.get(pkg, sectionId, "active_weekdays");
+	var days = [];
+	if(dayStr == "")
+	{
+		days = allDays;
+	}
+	else
+	{
+		days = dayStr.split(/,/);
+	}
+	
+	var everyDay = (daysAndHours == "");
+	var dayIndex=0;
+	for(dayIndex = 0; dayIndex < allDays.length; dayIndex++)
+	{
+		var nextDay = allDays[dayIndex];
+		var dayFound = false;
+		var testIndex=0;
+		for(testIndex=0; testIndex < days.length && !dayFound; testIndex++)
+		{
+			dayFound = days[testIndex] == nextDay;
+		}
+		everyDay = everyDay && dayFound;
+		controlDocument.getElementById(rulePrefix + allDays[dayIndex]).checked = dayFound;
+	}
+	controlDocument.getElementById(rulePrefix + "every_day").checked = everyDay;
+
+
+	setIpTableAndSelectFromUci(controlDocument, sourceUci, pkg, sectionId, "remote_addr", rulePrefix + "remote_ip_table_container", rulePrefix + "remote_ip_table", rulePrefix + "remote_ip_type", rulePrefix + "remote_ip");
+	setTextAndSelectFromUci(controlDocument, sourceUci,  pkg, sectionId, "remote_port", rulePrefix + "remote_port", rulePrefix + "remote_port_type");
+	setTextAndSelectFromUci(controlDocument, sourceUci, pkg, sectionId, "local_port", rulePrefix + "local_port", rulePrefix + "local_port_type");
+
+	var proto = sourceUci.get(pkg, sectionId, "proto");
+	proto = proto != "tcp" && proto != "udp" ? "both" : proto;
+	setSelectedValue(rulePrefix + "transport_protocol", proto, controlDocument);
+
+	var app_proto = sourceUci.get(pkg, sectionId, "app_proto");
+	var app_proto_type = app_proto == "" ? "except" : "only";
+	app_proto = app_proto == "" ? sourceUci.get(pkg, sectionId, "not_app_proto") : app_proto;
+	app_proto_type = app_proto == "" ? "all" : app_proto_type;
+	setSelectedValue(rulePrefix + "app_protocol_type", app_proto_type, controlDocument);
+	setSelectedValue(rulePrefix + "app_protocol", app_proto, controlDocument);
+	
+
+
+
+
+	var urlTypes = [ "url_contains", "url_regex", "url_exact", "url_domain_contains", "url_domain_regex", "url_domain_exact" ];
+	var urlExprTypes = [ "contains", "regex", "exact", "contains", "regex", "exact" ];
+	var urlPartTypes = [ "full", "full", "full", "domain", "domain", "domain" ];
+	var urlPrefix = "";
+	var urlDefinitions = [];
+	var urlDefFound = false;
+	var urlTypeIndex = 0;
+	var urlMatchType = "all";
+	for(urlTypeIndex=0; urlTypeIndex < urlTypes.length; urlTypeIndex++)
+	{
+		urlDefinitions[urlTypeIndex] = sourceUci.get(pkg, sectionId, urlTypes[urlTypeIndex]);
+		urlDefFound = urlDefinitions[urlTypeIndex] != "" ? true : urlDefFound;
+		urlMatchType = urlDefinitions[urlTypeIndex] != "" ? "only" : urlMatchType;
+	}
+	if(!urlDefFound)
+	{
+		urlPrefix = "not_";
+		for(urlTypeIndex=0; urlTypeIndex < urlTypes.length; urlTypeIndex++)
+		{
+			urlDefinitions[urlTypeIndex] = sourceUci.get(pkg, sectionId, urlPrefix + urlTypes[urlTypeIndex]);
+			urlDefFound = urlDefinitions[urlTypeIndex] != "" ? true : urlDefFound;
+			urlMatchType = urlDefinitions[urlTypeIndex] != "" ? "except" : urlMatchType;
+		}
+	}
+	setSelectedValue(rulePrefix + "url_type", urlMatchType, controlDocument);
+	
+	var urlTableContainer = controlDocument.getElementById(rulePrefix + "url_match_table_container");
+	if(urlTableContainer.childNodes.length > 0)
+	{
+		urlTableContainer.removeChild(urlTableContainer.firstChild);
+	}
+
+
+	if(urlDefFound)
+	{
+		var table = createTable(["URL Part", "Match Type", "Match Text / Expression"], [], rulePrefix + "url_match_table", true, false, null, null, controlDocument);
+		for(urlTypeIndex=0; urlTypeIndex < urlTypes.length; urlTypeIndex++)
+		{
+			var defStr = urlDefinitions[urlTypeIndex];
+			if(defStr != "")
+			{
+				defStr = defStr.replace(/^[\t ]*\"/, "");
+				defStr = defStr.replace(/\"[\t ]*$/, "");
+				def = defStr.match(/\".*\"/) ? defStr.split(/\"[\t, ]*\"/) : [ defStr ];
+				var defIndex=0;
+				for(defIndex=0; defIndex < def.length; defIndex++)
+				{
+					addTableRow(table, [ urlPartTypes[urlTypeIndex], urlExprTypes[urlTypeIndex], createUrlSpan(def[defIndex], controlDocument) ], true, false, null, null, controlDocument);
+				}
+			}
+		}
+		urlTableContainer.appendChild(table);
+	}
+
+
+	controlDocument.getElementById(rulePrefix + "url_match").value = "";
+	
+	var allResourcesBlocked = true;
+	var resourceTypeIds = ["remote_ip_type", "remote_port_type", "local_port_type", "transport_protocol", "app_protocol_type", "url_type" ];
+	for(typeIndex=0; typeIndex < resourceTypeIds.length; typeIndex++)
+	{
+		var type = getSelectedValue(rulePrefix + resourceTypeIds[typeIndex], controlDocument);
+		allResourcesBlocked = allResourcesBlocked && (type == "all" || type == "both");
+	}
+	controlDocument.getElementById(rulePrefix + "all_access").checked = allResourcesBlocked;
+
+	setVisibility(controlDocument, rulePrefix);
+}
+function setIpTableAndSelectFromUci(controlDocument, sourceUci, pkg, sectionId, optionId, tableContainerId, tableId, prefixSelectId, textId)
+{
+	controlDocument = controlDocument == null ? document : controlDocument;
+	var optionValue = sourceUci.get(pkg, sectionId, optionId);
+	var type = "only";
+	if(optionValue == "")
+	{
+		optionValue = sourceUci.get(pkg, sectionId, "not_" + optionId)
+		type = optionValue != "" ? "except" : "all";
+	}
+	setSelectedValue(prefixSelectId, type, controlDocument);
+
+
+	var tableContainer = controlDocument.getElementById(tableContainerId);
+	if(tableContainer.childNodes.length > 0)
+	{
+		tableContainer.removeChild(tableContainer.firstChild);
+	}	
+	if(optionValue != "")
+	{
+		optionValue = optionValue.replace(/^[\t ]*/, "");
+		optionValue = optionValue.replace(/[\t ]*$/, "");
+		var ips = optionValue.split(/[\t ]*,[\t ]*/);
+
+
+		var table = createTable([""], [], tableId, true, false, null, null, controlDocument);
+		while(ips.length > 0)
+		{
+			addTableRow(table, [ ips.shift() ], true, false, null, null, controlDocument);
+		}
+		tableContainer.appendChild(table);
+		
+		controlDocument.getElementById(textId).value = "";
+	}
+}
+function setTextAndSelectFromUci(controlDocument, sourceUci, pkg, sectionId, optionId, textId, prefixSelectId)
+{
+	controlDocument = controlDocument == null ? document : controlDocument;
+	var optionValue = sourceUci.get(pkg, sectionId, optionId);
+	var type = "only";
+	if(optionValue == "")
+	{
+		optionValue = sourceUci.get(pkg, sectionId, "not_" + optionId)
+		type = optionValue != "" ? "except" : "all";
+	}
+	setSelectedValue(prefixSelectId, type, controlDocument);
+
+	// if option is not defined, optionValue is empty string, so no need to check for this case
+	controlDocument.getElementById(textId).value = optionValue;
+}
+
+
+function setUciFromDocument(controlDocument, sectionId, ruleType, rulePrefix)
+{
+	// note: we assume error checking has already been done 
+	uci.removeSection(pkg, sectionId);
+	uci.set(pkg, sectionId, "", ruleType);
+	uci.set(pkg, sectionId, "is_ingress", "0");
+
+
+	controlDocument = controlDocument == null ? document : controlDocument;
+	
+	uci.set(pkg, sectionId, "", ruleType);
+	uci.set(pkg, sectionId, "description", controlDocument.getElementById(rulePrefix + "name").value);
+	
+	setFromIpTable(controlDocument, pkg, sectionId, "local_addr", rulePrefix + "applies_to_table_container", rulePrefix + "applies_to");
+
+	var daysActive = controlDocument.getElementById(rulePrefix + "days_active");
+	if(daysActive.style.display != "none")
+	{
+		var daysActive = [];
+		var dayIds = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
+		
+		for(dayIndex =0; dayIndex < dayIds.length; dayIndex++)
+		{
+			if(controlDocument.getElementById(rulePrefix + dayIds[dayIndex]).checked)
+			{
+				daysActive.push(dayIds[dayIndex]);
+			}
+		}
+		daysActiveStr = daysActive.join(",");
+		uci.set(pkg, sectionId, "active_weekdays", daysActiveStr);
+	}
+	setIfVisible(controlDocument, pkg, sectionId, "active_hours", rulePrefix + "hours_active");
+	setIfVisible(controlDocument, pkg, sectionId, "active_weekly_ranges", rulePrefix + "days_and_hours_active");
+
+	if(!controlDocument.getElementById(rulePrefix + "all_access").checked)
+	{
+		setFromIpTable(controlDocument, pkg, sectionId, "remote_addr", rulePrefix + "remote_ip_table_container", rulePrefix + "remote_ip_type");
+		setIfVisible(controlDocument, pkg, sectionId, "remote_port", rulePrefix + "remote_port", rulePrefix + "remote_port_type");
+		setIfVisible(controlDocument, pkg, sectionId, "local_port", rulePrefix + "local_port", rulePrefix + "local_port_type");
+		
+		uci.set(pkg, sectionId, "proto", getSelectedValue(rulePrefix + "transport_protocol", controlDocument));
+
+		var appProtocolType = getSelectedValue(rulePrefix + "app_protocol_type", controlDocument);
+		if(appProtocolType != "all")
+		{
+			var prefix = appProtocolType == "except" ? "not_" : "";
+			uci.set(pkg, sectionId, prefix + "app_proto", getSelectedValue(rulePrefix + "app_protocol", controlDocument));
+		}
+
+
+
+
+		var urlMatchType = getSelectedValue(rulePrefix + "url_type", controlDocument);
+		var urlTable = controlDocument.getElementById(rulePrefix + "url_match_table_container").firstChild;
+		if(urlMatchType != "all" && urlTable != null)
+		{
+			var urlData = getTableDataArray(urlTable, true, false);
+			var urlPrefix = urlMatchType == "except" ? "not_" : "";
+			var urlDefStrings = [];
+			var urlIndex;
+			for(urlIndex = 0; urlIndex < urlData.length; urlIndex++)
+			{
+				var urlId = urlData[urlIndex][0];
+				urlId = (urlId.match("domain") ? "url_domain_" : "url_") + urlData[urlIndex][1];
+				urlStr = parseUrlSpan(urlData[urlIndex][2]);
+				if(urlDefStrings[urlId] != null)
+				{
+					urlDefStrings[urlId] = urlDefStrings[urlId] + ",\"" + urlStr + "\"";
+				}
+				else
+				{
+					urlDefStrings[urlId] = "\"" + urlStr + "\""
+				}
+			}
+
+			var parts = ["url_", "url_domain_"];
+			var exprs = ["exact", "contains", "regex"];
+			var partIndex=0;
+			var exprIndex=0;
+			for(partIndex=0; partIndex < 2; partIndex++)
+			{
+				for(exprIndex=0; exprIndex < 3; exprIndex++)
+				{
+					var id = parts[partIndex] + exprs[exprIndex];
+					if(urlDefStrings[id] != null)
+					{
+						uci.set(pkg, sectionId, urlPrefix + id, urlDefStrings[id]);
+					}
+				}
+			}
+
+		}
+	}
+}
+
+
+
+function setIfVisible(controlDocument, pkg, sectionId, optionId, textId, prefixSelectId)
+{
+	controlDocument = controlDocument == null ? document : controlDocument;
+	var element = controlDocument.getElementById(textId);
+	if(element.style.display != "none")
+	{
+		if(prefixSelectId != null)
+		{
+			prefixValue = getSelectedValue(prefixSelectId, controlDocument);
+			optionId = prefixValue == "except" ? "not_" + optionId : optionId;
+		}
+		uci.set(pkg, sectionId, optionId, element.value);
+	}
+}
+
+function setFromIpTable(controlDocument, pkg, sectionId, optionId, containerId, prefixSelectId)
+{
+	controlDocument = controlDocument == null ? document : controlDocument;
+	var localAddrType = getSelectedValue(prefixSelectId, controlDocument);
+	var table = controlDocument.getElementById(containerId).firstChild;
+	if(localAddrType != "all" && table != null)
+	{
+		var ipData = getTableDataArray(table, true, false);
+		var ipStr = "";
+		for(ipIndex=0; ipIndex < ipData.length ; ipIndex++)
+		{
+			ipStr = ipStr + ipData[ipIndex][0] + ",";
+		}
+		ipStr = ipStr.replace(/,$/, "");
+		if(ipStr.length > 0)
+		{
+			var prefix = localAddrType == "except" ? "not_" : "";
+			uci.set(pkg, sectionId, prefix + optionId, ipStr);
+		}
+	}
+}
+

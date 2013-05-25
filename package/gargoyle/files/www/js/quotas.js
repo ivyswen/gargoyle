@@ -4,4 +4,1249 @@
  * configure proprietary "back end" software provided that all modifications to the web interface
  * itself remain covered by the GPL. 
  * See http://gargoyle-router.com/faq.html#qfoss for more information
- */function saveChanges(){setControlsEnabled(!1,!0);var e=[],t=uciOriginal.getAllSectionsOfType(pkg,"quota");while(t.length>0){var n=t.shift();uciOriginal.removeSection(pkg,n),e.push("uci del "+pkg+"."+n)}e.push("uci commit");var r=uci.getAllSectionsOfType(pkg,"quota"),i="\nuci del gargoyle.status.quotause ; uci commit ;\n",s=[];while(r.length>0){var n=r.shift(),o=uci.get(pkg,n,"id");s[o]=n,changedIds[o]==1&&uci.set(pkg,n,"ignore_backup_at_next_restore","1")}var u=document.getElementById("quota_table_container").firstChild,a=getTableDataArray(u,!0,!1),f=0;for(f=0;f<a.length;f++){var l=a[f][rowCheckIndex],c=s[l.id];c!=null&&(uci.set(pkg,c,"enabled",l.checked?"1":"0"),l.checked&&(i='\nuci set gargoyle.status.quotause="225" ; uci commit ;\n'))}var h=[];h.push("sh /usr/lib/gargoyle/restart_firewall.sh"),h.push('if [ -d "/usr/data/quotas/" ] ; then rm -rf /usr/data/quotas/* ; fi ;'),h.push("backup_quotas");var p=e.join("\n")+"\n"+uci.getScriptCommands(uciOriginal)+"\n"+i+"\n"+h.join("\n"),d=getParameterDefinition("commands",p)+"&"+getParameterDefinition("hash",document.cookie.replace(/^.*hash=/,"").replace(/[\t ;]+.*$/,"")),v=function(e){e.readyState==4&&(setControlsEnabled(!0),window.location.href=window.location.href)};runAjax("POST","utility/run_commands.sh",d,v)}function resetData(){var e=0;upQosClasses=[],upQosMarks=[],downQosClasses=[],downQosMarks=[];for(e=0;e<qosMarkList.length;e++){var t=qosMarkList[e][1],n=uciOriginal.get("qos_gargoyle",t,"name");t=n==""?t:n,qosMarkList[e][0]=="upload"?(upQosClasses.push(t),upQosMarks.push(qosMarkList[e][2])):(downQosClasses.push(t),downQosMarks.push(qosMarkList[e][2]))}var r=uciOriginal.getAllSectionsOfType(pkg,"quota"),i=[],s=[],o=[];changedIds=[];for(sectionIndex=0;sectionIndex<r.length;sectionIndex++){var u=uciOriginal.get(pkg,r[sectionIndex],"ip").toUpperCase(),a=uciOriginal.get(pkg,r[sectionIndex],"id");a==""&&(a=getIdFromIp(u),uci.set(pkg,r[sectionIndex],"id",a));var f=getTimeParametersFromUci(uci,r[sectionIndex]),l=getLimitStrFromUci(uci,r[sectionIndex]),c=uciOriginal.get(pkg,r[sectionIndex],"enabled");c=c!="0"?!0:!1;var h=createEnabledCheckbox(c);h.id=a,s.push(h),o.push(c),i.push([ipToTableSpan(u),timeParamsToTableSpan(f),l,h,createEditButton(c)])}columnNames=["IP(s)","Active",textListToSpanElement(["Limits","(Total/Down/Up)"],!1),"Enabled",""],quotaTable=createTable(columnNames,i,"quota_table",!0,!1,removeQuotaCallback),tableContainer=document.getElementById("quota_table_container"),tableContainer.firstChild!=null&&tableContainer.removeChild(tableContainer.firstChild),tableContainer.appendChild(quotaTable);while(s.length>0){var p=s.shift(),d=o.shift();p.checked=d}setDocumentFromUci(document,new UCIContainer,""),setVisibility(document)}function ipToTableSpan(e){var t=e;if(t=="ALL_OTHERS_INDIVIDUAL")t="Others (Individual)";else if(t=="ALL_OTHERS_COMBINED")t="Others (Combined)";else if(t=="ALL"||t=="")t="All";return textListToSpanElement(t.split(/[\t ]*,[\t ]*/),!0,document)}function timeParamsToTableSpan(e){var t=e[0],n=e[1],r=e[2],i=e[3],s=[];return i=="always"?s.unshift("Always"):(r!=""?s=r.match(",")?r.split(/[\t ]*,[\t ]*/):[r]:(t!=""&&(s=t.match(",")?t.split(/[\t ]*,[\t ]*/):[t]),n!=""&&s.unshift(n)),s.unshift(i=="only"?"Only:":"All Times Except:")),textListToSpanElement(s,!1,document)}function getLimitStrFromUci(e,t){var n=uci.get(pkg,t,"combined_limit"),r=uci.get(pkg,t,"ingress_limit"),i=uci.get(pkg,t,"egress_limit"),s=function(e){return e==""?"NA":parseBytes(parsePaddedInt(e)).replace(/ytes/,"").replace(/\.[\d]+/,"").replace(/[\t ]+/,"")};return s(n)+"/"+s(r)+"/"+s(i)}function getIdFromIp(e){id=e==""?"ALL":e.replace(/[\t, ]+.*$/,""),id=id.replace(/\//,"_");var t=id,n=!0,r=0,i=uci.getAllSectionsOfType(pkg,"quota");while(n){n=!1;var s;for(s=0;s<i.length&&!n;s++)n=n||uci.get(pkg,i[s],"id")==id;if(n){var o="ABCDEFGHIJKLMNOPQRSTUVWXYZ",u=r<26?"_"+o.substr(r,1):"_Z"+(r-25);id=t+u}r++}return id}function getIpFromDocument(e){e=e==null?document:e;var t="ALL";if(getSelectedValue("applies_to_type",e)=="all")t="ALL";else if(getSelectedValue("applies_to_type",e)=="others_combined")t="ALL_OTHERS_COMBINED";else if(getSelectedValue("applies_to_type",e)=="others_individual")t="ALL_OTHERS_INDIVIDUAL";else if(getSelectedValue("applies_to_type",e)=="only"){var n=e.getElementById("quota_ip_table_container").firstChild,r=n!=null?getTableDataArray(n,!0,!1):[],i=[],s;for(s=0;s<r.length;s++)i.push(r[s][0]);t=i.join(",")}return t}function setDocumentIp(e,t){e=e==""?"ALL":e,t=t==null?document:t,t.getElementById("add_ip").value="";var n=t.getElementById("quota_ip_table_container");while(n.firstChild!=null)n.removeChild(n.firstChild);if(e=="ALL")setSelectedValue("applies_to_type","all",t);else if(e=="ALL_OTHERS_COMBINED")setSelectedValue("applies_to_type","others_combined",t);else if(e=="ALL_OTHERS_INDIVIDUAL")setSelectedValue("applies_to_type","others_individual",t);else{setSelectedValue("applies_to_type","only",t),t.getElementById("add_ip").value=e;var r=addAddressesToTable(t,"add_ip","quota_ip_table_container","quota_ip_table",!1,3,!1,250);r||(t.getElementById("add_ip").value="")}}function addNewQuota(){var e=validateQuota(document,"","none");if(e.length>0)alert(e.join("\n")+"\nCould not add quota.");else{var t=1;while(uci.get(pkg,"quota_"+t,"")!="")t++;setUciFromDocument(document,"");var n=createEnabledCheckbox(!0);n.id=uci.get(pkg,"quota_"+t,"id");var r=document.getElementById("quota_table_container"),i=r.firstChild,s=getIpFromDocument(document),o=getTimeParametersFromUci(uci,"quota_"+t),u=getLimitStrFromUci(pkg,"quota_"+t);addTableRow(i,[ipToTableSpan(s),timeParamsToTableSpan(o),u,n,createEditButton(!0)],!0,!1,removeQuotaCallback),setDocumentFromUci(document,new UCIContainer,""),n.checked=!0}}function setVisibility(e){e=e==null?document:e,setInvisibleIfIdMatches("applies_to_type",["all","others_combined","others_individual"],"quota_ip_container","inline",e),setInvisibleIfIdMatches("quota_reset",["hour","day"],"quota_day_container","block",e),setInvisibleIfIdMatches("quota_reset",["hour"],"quota_hour_container","block",e),setInvisibleIfIdMatches("max_up_type",["unlimited"],"max_up_container","inline",e),setInvisibleIfIdMatches("max_down_type",["unlimited"],"max_down_container","inline",e),setInvisibleIfIdMatches("max_combined_type",["unlimited"],"max_combined_container","inline",e),setInvisibleIfIdMatches("quota_active",["always"],"quota_active_type","inline",e),setInvisibleIfIdMatches("quota_active",["always"],"quota_active_controls_container","block",e),getSelectedValue("quota_active",e)!="always"?(setInvisibleIfIdMatches("quota_active_type",["days","weekly_range"],"active_hours_container","block",e),setInvisibleIfIdMatches("quota_active_type",["hours","weekly_range"],"active_days_container","block",e),setInvisibleIfIdMatches("quota_active_type",["hours","days","days_and_hours"],"active_weekly_container","block",e)):(setInvisibleIfIdMatches("quota_active",["always"],"active_hours_container","block",e),setInvisibleIfIdMatches("quota_active",["always"],"active_days_container","block",e),setInvisibleIfIdMatches("quota_active",["always"],"active_weekly_container","block",e)),setInvisibleIfIdMatches("quota_exceeded",["hard_cutoff"],"quota_only_qos_container","block",e),setInvisibleIfIdMatches("quota_exceeded",["hard_cutoff"],"quota_full_qos_container","block",e),fullQosEnabled?e.getElementById("quota_only_qos_container").style.display="none":e.getElementById("quota_full_qos_container").style.display="none";var t=getSelectedValue("quota_reset",e);if(t=="month"){var n=[],r=[],i=1;for(i=1;i<=28;i++){var s=""+i,o=s.substr(s.length-1,1),u="th";i%100!=11&&o=="1"&&(u="st"),i%100!=12&&o=="2"&&(u="nd"),i%100!=13&&o=="3"&&(u="rd"),r.push(s+u),n.push((i-1)*60*60*24+"")}setAllowableSelections("quota_day",n,r,e)}if(t=="week"){var r=["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],n=[],a;for(a=0;a<7;a++)n.push(a*60*60*24+"");setAllowableSelections("quota_day",n,r,e)}}function getDaySeconds(e){return Math.floor(e/86400)*86400}function getHourSeconds(e){return Math.floor(e%86400/3600)*3600}function timeVariablesToWeeklyRanges(e,t,n,r){var e=e==null?"":e,t=t==null?"":t,n=n==null?"":n,i=[];i.SUN=0,i.MON=1,i.TUE=2,i.WED=3,i.THU=4,i.FRI=5,i.SAT=6;var s=function(e,t){var n=[],r;for(r=0;r<e.length;r+=2){if(e[r+1]<e[r]){var i=e[r+1];e[r+1]=t,e.push(0),e.push(i)}var s=e[r],o=e[r+1];n.push([s,o])}var u=function(e,t){return e[0]-t[0]},a=n.sort(u),f=[];for(r=0;r<a.length;r++)f.push(a[r][0]),f.push(a[r][1]);return f},o=[];if(e==""&&t==""&&n=="")o=[0,604800],r=!1;else if(n!=""){var u=function(e){var t=e.split(/[:\t ]+/),n=t[0].substr(0,3).toUpperCase();return t[0]=i[n]!=null?i[n]*24*60*60:0,t[1]=parsePaddedInt(t[1])+""!="NaN"?parsePaddedInt(t[1])*60*60:0,t[2]=parsePaddedInt(t[2])+""!="NaN"?parsePaddedInt(t[2])*60:0,t[3]=t[3]!=null?parsePaddedInt(t[3])+""!="NaN"?parsePaddedInt(t[3]):0:0,t[0]+t[1]+t[2]+t[3]},a=n.split(/[\t ]*,[\t ]*/),f;for(f=0;f<a.length;f++){var l=a[f].split(/[\t ]*\-[\t ]*/);o.push(u(l[0])),o.push(u(l[1]))}o=s(o,604800)}else{var c=[1,1,1,1,1,1,1],h=[];if(t!=""){c=[0,0,0,0,0,0,0];var p=t.split(/[\t ]*,[\t ]*/),d;for(d=0;d<p.length;d++){var v=p[d].substr(0,3).toUpperCase();i[v]!=null&&(c[i[v]]=1)}}if(e!=""){var u=function(e){var t=e.split(/[:\t ]+/);return t[0]=parsePaddedInt(t[0])+""!="NaN"?parsePaddedInt(t[0])*60*60:0,t[1]=parsePaddedInt(t[1])+""!="NaN"?parsePaddedInt(t[1])*60:0,t[2]=t[2]!=null?parsePaddedInt(t[2])+""!="NaN"?parsePaddedInt(t[2]):0:0,t[0]+t[1]+t[2]},a=e.split(/[\t ]*,[\t ]*/),f;for(f=0;f<a.length;f++){var m=a[f].replace(/^[\t ]*/,"").replace(/[\t ]*$/,""),l=m.split(/[\t ]*\-[\t ]*/);h.push(u(l[0])),h.push(u(l[1]))}h=s(h,86400)}h=h.length==0?[0,86400]:h;var d;for(d=0;d<c.length;d++)if(c[d]!=0){var g;for(g=0;g<h.length;g++)o.push(d*24*60*60+h[g])}}return r&&(o[0]==0?o.shift():o.unshift(0),o[o.length-1]==7*24*60*60?o.pop():o.push(604800)),o}function rangesOverlap(e,t){var n=timeVariablesToWeeklyRanges(e[0],e[1],e[2],e[3]),r=timeVariablesToWeeklyRanges(t[0],t[1],t[2],t[3]),i=0,s=0,o=!1;for(i=0;i<n.length&&!o;i+=2){var u=n[i],a=n[i+1],f=r[s],l=r[s+1];o=o||a>f&&u<l;while(!o&&f<u&&s<r.length){s+=2;if(s<r.length){var f=r[s],l=r[s+1];o=o||a>f&&u<l}}}return o}function validateQuota(e,t,n){t=t==null?"":t,n=n==null?"none":n,e=e==null?document:e;var r=["max_up","max_down","max_combined","active_hours","active_weekly"],i=["max_up_label","max_down_label","max_combined_label","quota_active_label","quota_active_label"],s=[validateDecimal,validateDecimal,validateDecimal,validateHours,validateWeeklyRange],o=[0,0,0,0,0],u=["max_up_container","max_down_container","max_combined_container","active_hours_container","active_weekly_container"],a=proofreadFields(r,i,s,o,u,e);if(a.length==0&&getSelectedValue("applies_to_type",e)=="only"&&e.getElementById("add_ip").value!=""){var f=addAddressesToTable(e,"add_ip","quota_ip_table_container","quota_ip_table",!1,3,!1,250);f||a.push('"'+e.getElementById("add_ip").value+'" is not a valid IP or IP range')}var l="";a.length==0&&(l=getIpFromDocument(e),l==""&&a.push("You must specify at least one valid IP or IP range")),a.length==0&&getSelectedValue("max_up_type",e)=="unlimited"&&getSelectedValue("max_down_type",e)=="unlimited"&&getSelectedValue("max_combined_type",e)=="unlimited"&&a.push("Upload, download and combined bandwidth limits cannot all be unlimited");if(a.length==0&&l!=n){var c=uci.getAllSectionsOfType(pkg,"quota"),h,p=!1;for(h=0;h<c.length&&!p;h++){var d=uci.get(pkg,c[h],"id");if(d!=t){var v=uci.get(pkg,c[h],"ip"),m=testAddrOverlap(v,l);if(m){var g=getTimeParametersFromDocument(e),y=getTimeParametersFromUci(uci,c[h]);g[3]=g[3]=="except"?!0:!1,y[3]=y[3]=="except"?!0:!1,p=rangesOverlap(g,y)}}}p&&(l.match(/ALL/)?l.match(/OTHER/)?a.push("You may have only one quota at a given time for hosts without explicit quotas"):a.push("You may have only one quota at a given time that applies to entire network"):a.push("Duplicate IP/Time Range -- only one quota per IP at a given time is allowed"))}return a}function setDocumentFromUci(e,t,n){e=e==null?document:e;var r="",i=t.getAllSectionsOfType(pkg,"quota");for(sectionIndex=0;sectionIndex<i.length&&r=="";sectionIndex++)t.get(pkg,i[sectionIndex],"id")==n&&(r=i[sectionIndex]);var s=t.get(pkg,r,"ip");s=s==""?"ALL":s;var o=t.get(pkg,r,"reset_interval"),u=t.get(pkg,r,"egress_limit"),a=t.get(pkg,r,"ingress_limit"),f=t.get(pkg,r,"combined_limit");o=o==""||o=="minute"?"day":o;var l=t.get(pkg,r,"reset_time");l=l==""?0:parseInt(l);var c=getDaySeconds(l),h=getHourSeconds(l),p=t.get(pkg,r,"exceeded_up_speed"),d=t.get(pkg,r,"exceeded_down_speed"),v=t.get(pkg,r,"exceeded_up_class_mark"),m=t.get(pkg,r,"exceeded_down_class_mark");setDocumentIp(s,e),setSelectedValue("quota_reset",o,e);var g=getTimeParametersFromUci(t,r),y=g[1],b=["sun","mon","tue","wed","thu","fri","sat"],w=[];y==""?w=b:w=y.split(/,/);var E=0;for(E=0;E<b.length;E++){var S=b[E],x=!1,T=0;for(T=0;T<w.length&&!x;T++)x=w[T]==S;e.getElementById("quota_"+b[E]).checked=x}e.getElementById("active_hours").value=g[0],e.getElementById("active_weekly").value=g[2];var N=g[3];setSelectedValue("quota_active",N,e);if(N!="always"){var C=[];C["000"]="hours",C[100]="hours",C["010"]="days",C[110]="days_and_hours";var k=(g[0]!=""?"1":"0")+(g[1]!=""?"1":"0")+(g[2]==""?"0":"1"),L=C[k]!=null?C[k]:"weekly_range";setSelectedValue("quota_active_type",L,e)}setSelectedValue("max_up_type",u==""?"unlimited":"limited",e),setSelectedValue("max_down_type",a==""?"unlimited":"limited",e),setSelectedValue("max_combined_type",f==""?"unlimited":"limited",e),setDocumentLimit(u,"max_up","max_up_unit",e),setDocumentLimit(a,"max_down","max_down_unit",e),setDocumentLimit(f,"max_combined","max_combined_unit",e);var A=p!=""&&d!=""&&!fullQosEnabled||v!=""&&m!=""&&fullQosEnabled?"throttle":"hard_cutoff";setSelectedValue("quota_exceeded",A,e),setDocumentSpeed(p,"quota_qos_up","quota_qos_up_unit",e),setDocumentSpeed(d,"quota_qos_down","quota_qos_down_unit",e),setVisibility(e),setSelectedValue("quota_day",c+"",e),setSelectedValue("quota_hour",h+"",e),fullQosEnabled&&(setAllowableSelections("quota_full_qos_up_class",upQosMarks,upQosClasses,e),setAllowableSelections("quota_full_qos_down_class",downQosMarks,downQosClasses,e),v!=""&&m!=""&&(setSelectedValue("quota_full_qos_up_class",v,e),setSelectedValue("quota_full_qos_down_class",m,e)))}function setDocumentLimit(e,t,n,r){e=e==""?0:parseInt(e);var i=r.getElementById(t),s="MB",o=1048576;if(e<=0)setSelectedValue(n,s,r),i.value="0";else{var u=parseBytes(e),a=s,f=o;u.match(/GBytes/)&&(a="GB",f=1073741824),u.match(/TBytes/)&&(a="TB",f=1099511627776),setSelectedValue(n,a,r);var l=truncateDecimal(e/f);i.value=l}}function setDocumentSpeed(e,t,n,r){var i="KBytes/s",s=r.getElementById(t);setSelectedValue(n,i,r),e=e==""?0:parseInt(e);if(e<=0)s.value="0";else{var o=parseKbytesPerSecond(e),u=o.split(/[\t ]+/);s.value=u[0],setSelectedValue(n,u[1],r)}}function setUciFromDocument(e,t){e=e==null?document:e;var n=getIpFromDocument(e);t=t==null?"":t,t=t==""?getIdFromIp(n):t;var r="",i=uci.getAllSectionsOfType(pkg,"quota");for(sectionIndex=0;sectionIndex<i.length;sectionIndex++)uci.get(pkg,i[sectionIndex],"id")==t&&(r=i[sectionIndex]);if(r==""){var s=1;while(uci.get(pkg,"quota_"+s,"")!="")s++;r="quota_"+s,uci.set(pkg,r,"","quota")}var o=uci.get(pkg,r,"ip");o!=n&&(testAddrOverlap(o,n)||(changedIds[t]=1)),uci.set(pkg,r,"ingress_limit",getDocumentLimit("max_down","max_down_type","max_down_unit",e)),uci.set(pkg,r,"egress_limit",getDocumentLimit("max_up","max_up_type","max_up_unit",e)),uci.set(pkg,r,"combined_limit",getDocumentLimit("max_combined","max_combined_type","max_combined_unit",e)),uci.set(pkg,r,"exceeded_up_speed",getDocumentSpeed("quota_only_qos_container","quota_qos_up","quota_qos_up_unit",e)),uci.set(pkg,r,"exceeded_down_speed",getDocumentSpeed("quota_only_qos_container","quota_qos_down","quota_qos_down_unit",e)),uci.set(pkg,r,"exceeded_up_class_mark",getDocumentMark("quota_full_qos_container","quota_full_qos_up_class",e)),uci.set(pkg,r,"exceeded_down_class_mark",getDocumentMark("quota_full_qos_container","quota_full_qos_down_class",e)),uci.set(pkg,r,"reset_interval",getSelectedValue("quota_reset",e)),uci.set(pkg,r,"ip",n),uci.set(pkg,r,"id",t);var u=getSelectedValue("quota_day",e),a=getSelectedValue("quota_hour",e);u=u==""?"0":u,a=a==""?"0":a;var f=parseInt(u)+parseInt(a);if(f>0){var l=f+"";uci.set(pkg,r,"reset_time",l)}else uci.remove(pkg,r,"reset_time");var c=getTimeParametersFromDocument(e),h=c[3],p=["offpeak","onpeak"],d=0;for(d=0;d<p.length;d++){var v=p[d],m=function(e,t,n){e?uci.set(pkg,r,t,n):uci.remove(pkg,r,t)},g=v=="offpeak"&&h=="except"||v=="onpeak"&&h=="only";m(g,v+"_hours",c[0]),m(g,v+"_weekdays",c[1]),m(g,v+"_weekly_ranges",c[2])}}function getTimeParametersFromDocument(e){var t=e.getElementById("active_hours_container").style.display!="none"?e.getElementById("active_hours").value:"",n=e.getElementById("active_weekly_container").style.display!="none"?e.getElementById("active_weekly").value:"",r=[];if(e.getElementById("active_days_container").style.display!="none"){var i=["sun","mon","tue","wed","thu","fri","sat"],s;for(s=0;s<i.length;s++)e.getElementById("quota_"+i[s]).checked&&r.push(i[s])}var o=""+r.join(","),u=getSelectedValue("quota_active",e);return[t,o,n,u]}function getTimeParametersFromUci(e,t){var n=e.get(pkg,t,"offpeak_hours"),r=e.get(pkg,t,"offpeak_weekdays"),i=e.get(pkg,t,"offpeak_weekly_ranges"),s=n!=""||r!=""||i!=""?"except":"always";return s=="always"&&(n=e.get(pkg,t,"onpeak_hours"),r=e.get(pkg,t,"onpeak_weekdays"),i=e.get(pkg,t,"onpeak_weekly_ranges"),s=n!=""||r!=""||i!=""?"only":"always"),[n,r,i,s]}function getDocumentLimit(e,t,n,r){var i="";if(getSelectedValue(t,r)!="unlimited"){var s=getSelectedValue(n,r),o=1048576;s=="MB"&&(o=1048576),s=="GB"&&(o=1073741824),s=="TB"&&(o=1099511627776);var u=Math.round(o*parseFloat(r.getElementById(e).value));i=""+u}return i}function getDocumentSpeed(e,t,n,r){var i="";if(r.getElementById(e).style.display!="none"){var s=getSelectedValue(n,r);s=="MBytes/s"&&(multiple=1024),s=="KBytes/s"&&(multiple=1);var o=Math.round(multiple*parseFloat(r.getElementById(t).value));i=""+o}return i}function getDocumentMark(e,t,n){var r="";return n.getElementById(e).style.display!="none"&&(r=getSelectedValue(t,n)),r}function createEnabledCheckbox(e){return enabledCheckbox=createInput("checkbox"),enabledCheckbox.onclick=setRowEnabled,enabledCheckbox.checked=e,enabledCheckbox}function createEditButton(e){return editButton=createInput("button"),editButton.value="Edit",editButton.className="default_button",editButton.onclick=editQuota,editButton.className=e?"default_button":"default_button_disabled",editButton.disabled=e?!1:!0,editButton}function setRowEnabled(){enabled=this.checked?"1":"0",enabledRow=this.parentNode.parentNode,enabledRow.childNodes[rowCheckIndex+1].firstChild.disabled=this.checked?!1:!0,enabledRow.childNodes[rowCheckIndex+1].firstChild.className=this.checked?"default_button":"default_button_disabled";var e=this.id,t=e.split(/\./);uci.get(pkg,t[0])!=""&&uci.set(pkg,t[0],"enabled",enabled),uci.get(pkg,t[1])!=""&&uci.set(pkg,t[1],"enabled",enabled)}function removeQuotaCallback(e,t){var n=t.childNodes[rowCheckIndex].firstChild.id,r=uci.getAllSectionsOfType(pkg,"quota");for(sectionIndex=0;sectionIndex<r.length;sectionIndex++)uci.get(pkg,r[sectionIndex],"id")==n&&uci.removeSection(pkg,r[sectionIndex]);changedIds[n]=1}function editQuota(){if(typeof editQuotaWindow!="undefined")try{editQuotaWindow.close()}catch(e){}try{xCoor=window.screenX+225,yCoor=window.screenY+225}catch(e){xCoor=window.left+225,yCoor=window.top+225}editQuotaWindow=window.open("quotas_edit.sh","edit","width=560,height=600,left="+xCoor+",top="+yCoor);var t=createInput("button",editQuotaWindow.document),n=createInput("button",editQuotaWindow.document);t.value="Close and Apply Changes",t.className="default_button",n.value="Close and Discard Changes",n.className="default_button";var r=this.parentNode.parentNode,i=r.childNodes[rowCheckIndex].firstChild.id,s,o="",u=uci.getAllSectionsOfType(pkg,"quota");for(sectionIndex=0;sectionIndex<u.length&&o=="";sectionIndex++)uci.get(pkg,u[sectionIndex],"id")==i&&(o=u[sectionIndex],s=uci.get(pkg,o,"ip"));var a=uci.get(pkg,o,"egress_limit"),f=uci.get(pkg,o,"ingress_limit"),l=uci.get(pkg,o,"combined_limit"),c=function(){var e=!1;editQuotaWindow.document!=null&&editQuotaWindow.document.getElementById("bottom_button_container")!=null&&(editQuotaWindow.document.getElementById("bottom_button_container").appendChild(t),editQuotaWindow.document.getElementById("bottom_button_container").appendChild(n),setDocumentFromUci(editQuotaWindow.document,uci,i),n.onclick=function(){editQuotaWindow.close()},t.onclick=function(){var e=validateQuota(editQuotaWindow.document,i,s);if(e.length>0)alert(e.join("\n")+"\nCould not add quota.");else{var t=getIpFromDocument(editQuotaWindow.document);setUciFromDocument(editQuotaWindow.document,i);var n=function(e,t){var n=r.childNodes[t];while(n.firstChild!=null)n.removeChild(n.firstChild);n.appendChild(e)};if(t!=s){var u=getIdFromIp(t);uci.set(pkg,o,"id",u),testAddrOverlap(t,s)||(changedIds[u]=1),n(ipToTableSpan(t),0),r.childNodes[rowCheckIndex].firstChild.id=u}n(timeParamsToTableSpan(getTimeParametersFromUci(uci,o)),1),r.childNodes[2].firstChild.data=getLimitStrFromUci(uci,o),editQuotaWindow.close()}},editQuotaWindow.moveTo(xCoor,yCoor),editQuotaWindow.focus(),e=!0),e||setTimeout(c,250)};c()}var pkg="firewall",changedIds=[],rowCheckIndex=3,downQosClasses=[],downQosMarks=[],upQosClasses=[],upQosMarks=[];
+ */
+var pkg = "firewall";
+var changedIds = [];
+var rowCheckIndex = 3;
+
+var downQosClasses = [];
+var downQosMarks = [];
+var upQosClasses = [];
+var upQosMarks = [];
+
+function saveChanges()
+{
+	setControlsEnabled(false, true);
+	
+	//remove old quotas
+	var preCommands = [];
+	var allOriginalQuotas = uciOriginal.getAllSectionsOfType(pkg, "quota");
+	while(allOriginalQuotas.length > 0)
+	{
+		var section = allOriginalQuotas.shift();
+		uciOriginal.removeSection(pkg, section);
+		preCommands.push("uci del " + pkg + "." + section);	
+	}
+	preCommands.push("uci commit");
+
+	var allNewQuotas = uci.getAllSectionsOfType(pkg, "quota");
+	var quotaUseVisibleCommand = "\nuci del gargoyle.status.quotause ; uci commit ;\n"
+	var idToNewSection = [];
+	while(allNewQuotas.length > 0)
+	{
+		//if ip has changed, reset saved data
+		var section = allNewQuotas.shift()
+		var newId = uci.get(pkg,section,"id");
+		idToNewSection[newId] = section;
+		if( changedIds[ newId ] == 1 )
+		{
+			uci.set(pkg, section, "ignore_backup_at_next_restore", "1");
+		}
+	}
+
+	//set enabled / disabled	
+	var quotaTable = document.getElementById('quota_table_container').firstChild;
+	var quotaTableData = getTableDataArray(quotaTable, true, false);
+	var qtIndex=0;
+	for(qtIndex=0; qtIndex < quotaTableData.length; qtIndex++)
+	{
+		var enabledCheck = quotaTableData[qtIndex][rowCheckIndex];
+		var enabledSection = idToNewSection[ enabledCheck.id ];
+		if(enabledSection != null)
+		{
+			uci.set(pkg, enabledSection, "enabled", (enabledCheck.checked ? "1" : "0") )
+			if(enabledCheck.checked)
+			{
+				quotaUseVisibleCommand = "\nuci set gargoyle.status.quotause=\"225\" ; uci commit ;\n"
+			}
+		}
+	}
+
+	var postCommands = [];
+	postCommands.push("sh /usr/lib/gargoyle/restart_firewall.sh");
+	postCommands.push("if [ -d \"/usr/data/quotas/\" ] ; then rm -rf /usr/data/quotas/* ; fi ;");
+	postCommands.push("backup_quotas");
+	var commands = preCommands.join("\n") + "\n" + uci.getScriptCommands(uciOriginal) + "\n" + quotaUseVisibleCommand + "\n" + postCommands.join("\n");
+
+	var param = getParameterDefinition("commands", commands) + "&" + getParameterDefinition("hash", document.cookie.replace(/^.*hash=/,"").replace(/[\t ;]+.*$/, ""));
+	var stateChangeFunction = function(req)
+	{
+		if(req.readyState == 4)
+		{
+			//just reload page -- it's easier than any other mechanism to load proper quota data from uci
+			setControlsEnabled(true);
+			window.location.href = window.location.href;	
+		}
+	}
+
+	runAjax("POST", "utility/run_commands.sh", param, stateChangeFunction);
+}
+
+
+function resetData()
+{
+	//initialize qos mark lists, if full qos is active
+	var qmIndex=0;
+	upQosClasses = [];
+	upQosMarks = [];
+	downQosClasses = [];
+	downQosMarks = [];
+	for(qmIndex=0; qmIndex < qosMarkList.length; qmIndex++)
+	{
+		var className = qosMarkList[qmIndex][1];
+		var classDisplay = uciOriginal.get("qos_gargoyle", className, "name");
+		className = classDisplay == "" ? className : classDisplay;
+		if(qosMarkList[qmIndex][0] == "upload")
+		{
+			upQosClasses.push(className);
+			upQosMarks.push(qosMarkList[qmIndex][2]);
+		}
+		else
+		{
+			downQosClasses.push(className);
+			downQosMarks.push(qosMarkList[qmIndex][2]);
+		}
+	}
+
+	//table columns: ip, percent upload used, percent download used, percent combined used, enabled, edit, remove
+	var quotaSections = uciOriginal.getAllSectionsOfType(pkg, "quota");
+	var quotaTableData = [];
+	var checkElements = []; //because IE is a bitch and won't register that checkboxes are checked/unchecked unless they are part of document
+	var areChecked = [];
+	changedIds = [];
+	for(sectionIndex = 0; sectionIndex < quotaSections.length; sectionIndex++)
+	{
+		var ip = uciOriginal.get(pkg, quotaSections[sectionIndex], "ip").toUpperCase();
+		var id = uciOriginal.get(pkg, quotaSections[sectionIndex], "id");
+		if(id == "")
+		{
+			id = getIdFromIp(ip);
+			uci.set(pkg, quotaSections[sectionIndex], "id", id);
+		}
+
+
+		
+		var timeParameters = getTimeParametersFromUci(uci, quotaSections[sectionIndex]);
+		var limitStr = getLimitStrFromUci(uci, quotaSections[sectionIndex]);
+		var enabled = uciOriginal.get(pkg, quotaSections[sectionIndex], "enabled");
+		enabled = enabled != "0" ? true : false;
+		
+		
+		var enabledCheck = createEnabledCheckbox(enabled);
+		enabledCheck.id= id;
+		checkElements.push(enabledCheck);
+		areChecked.push(enabled);
+
+		quotaTableData.push( [ ipToTableSpan(ip), timeParamsToTableSpan(timeParameters), limitStr, enabledCheck, createEditButton(enabled) ] );
+	}
+
+	
+	columnNames=["IP(s)", "Active", textListToSpanElement(["Limits","(Total/Down/Up)"], false), "Enabled", "" ];
+	
+	quotaTable = createTable(columnNames, quotaTableData, "quota_table", true, false, removeQuotaCallback);
+	tableContainer = document.getElementById('quota_table_container');
+	if(tableContainer.firstChild != null)
+	{
+		tableContainer.removeChild(tableContainer.firstChild);
+	}
+	tableContainer.appendChild(quotaTable);
+
+	while(checkElements.length > 0)
+	{
+		var c = checkElements.shift();
+		var b = areChecked.shift();
+		c.checked = b;
+	}
+	
+	setDocumentFromUci(document, new UCIContainer(), "");
+	
+	setVisibility(document);
+}
+
+function ipToTableSpan(ip)
+{
+	var ipStr = ip;
+	if(ipStr == "ALL_OTHERS_INDIVIDUAL")
+	{
+		ipStr="Others (Individual)";
+	}
+	else if(ipStr == "ALL_OTHERS_COMBINED")
+	{
+		ipStr = "Others (Combined)";
+	}
+	else if(ipStr == "ALL" || ipStr == "")
+	{
+		ipStr = "All";
+	}
+	return textListToSpanElement(ipStr.split(/[\t ]*,[\t ]*/), true, document);
+}
+
+function timeParamsToTableSpan(timeParameters)
+{
+	var hours = timeParameters[0];
+       	var days = timeParameters[1];
+	var weekly = timeParameters[2];
+	var active = timeParameters[3];
+	
+		
+	var textList = [];
+	if(active == "always")
+	{
+		textList.unshift("Always");
+	}
+	else
+	{
+		if(weekly != "")
+		{
+			textList = weekly.match(",") ? weekly.split(/[\t ]*,[\t ]*/) : [ weekly ];
+		}
+		else
+		{
+			if(hours != ""){ textList = hours.match(",") ? hours.split(/[\t ]*,[\t ]*/) : [ hours ]; }
+			if(days  != ""){ textList.unshift(days); }
+		}
+		textList.unshift( active == "only" ? "Only:" : "All Times Except:" );
+	}
+	return textListToSpanElement(textList, false, document);
+}
+function getLimitStrFromUci(srcUci, section)
+{
+	var totalLimit = uci.get(pkg, section, "combined_limit");
+	var downLimit  = uci.get(pkg, section, "ingress_limit");
+	var upLimit    = uci.get(pkg, section, "egress_limit");
+
+	var parseLimit = function(limStr){ return limStr == "" ? "NA" : parseBytes(parsePaddedInt(limStr)).replace(/ytes/, "").replace(/\.[\d]+/,"").replace(/[\t ]+/, ""); }
+	return parseLimit(totalLimit) + "/" + parseLimit(downLimit) + "/" + parseLimit(upLimit);
+}
+
+function getIdFromIp(ip)
+{
+	id = ip == "" ? "ALL" : ip.replace(/[\t, ]+.*$/, "");
+	id = id.replace(/\//, "_");
+			
+	var idPrefix = id;
+	var found = true;
+	var suffixCount = 0;
+
+	var quotaSections = uci.getAllSectionsOfType(pkg, "quota");
+
+	while(found)
+	{
+		found = false;
+		var sectionIndex;
+		for(sectionIndex=0; sectionIndex < quotaSections.length && (!found); sectionIndex++)
+		{
+			found = found || uci.get(pkg, quotaSections[sectionIndex], "id") == id;
+		}
+		if(found)
+		{
+			var letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+			var suffix = suffixCount < 26 ? "_" + letters.substr(suffixCount,1) : "_Z" + (suffixCount-25);
+			id = idPrefix + suffix;
+		}
+		suffixCount++;
+	}
+	return id;
+
+}
+
+
+function getIpFromDocument(controlDocument)
+{
+	controlDocument = controlDocument == null ? document : controlDocument;
+	var ip = "ALL";
+	if(getSelectedValue("applies_to_type", controlDocument) == "all")
+	{
+		ip = "ALL";
+	}
+	else if(getSelectedValue("applies_to_type", controlDocument) == "others_combined")
+	{
+		ip = "ALL_OTHERS_COMBINED";
+	}
+	else if(getSelectedValue("applies_to_type", controlDocument) == "others_individual")
+	{
+		ip = "ALL_OTHERS_INDIVIDUAL";
+	}
+	else if(getSelectedValue("applies_to_type", controlDocument) == "only")
+	{
+		
+		var table = controlDocument.getElementById("quota_ip_table_container").firstChild;
+		var ipData = table != null ? getTableDataArray(table, true, false) : [];
+		var ipList = [];
+		var rowIndex;
+		for(rowIndex=0; rowIndex < ipData.length; rowIndex++)
+		{
+			ipList.push( ipData[rowIndex][0] );
+		}
+		ip = ipList.join(",");
+	}
+	return ip;
+}
+
+function setDocumentIp(ip, controlDocument)
+{
+	ip = ip== ""  ? "ALL" : ip;
+	controlDocument = controlDocument == null ? document : controlDocument;
+	controlDocument.getElementById("add_ip").value = "";
+
+	/* clear ip table */
+	var tableContainer = controlDocument.getElementById("quota_ip_table_container");
+	while(tableContainer.firstChild != null)
+	{
+		tableContainer.removeChild(tableContainer.firstChild);
+	}
+
+
+	if(ip == "ALL")
+	{
+		setSelectedValue("applies_to_type", "all", controlDocument);
+	}
+	else if(ip == "ALL_OTHERS_COMBINED")
+	{
+		setSelectedValue("applies_to_type", "others_combined", controlDocument);
+	}
+	else if(ip == "ALL_OTHERS_INDIVIDUAL")
+	{
+		setSelectedValue("applies_to_type", "others_individual", controlDocument);
+	}
+	else
+	{
+		setSelectedValue("applies_to_type", "only", controlDocument);
+		controlDocument.getElementById("add_ip").value = ip;
+		var valid = addAddressesToTable(controlDocument,"add_ip","quota_ip_table_container","quota_ip_table",false, 3, false,250);
+		if(!valid)
+		{
+			controlDocument.getElementById("add_ip").value = "";
+		}
+	}
+}
+
+
+function addNewQuota()
+{
+	var errors = validateQuota(document, "", "none");
+	if(errors.length > 0)
+	{
+		alert(errors.join("\n") + "\nCould not add quota.");
+	}
+	else
+	{
+		var quotaNum = 1;
+		while( uci.get(pkg, "quota_" + quotaNum, "") != "") { quotaNum++; }
+
+		setUciFromDocument(document, "");
+
+		
+		var enabledCheck = createEnabledCheckbox(true);
+		enabledCheck.id = uci.get(pkg, "quota_" + quotaNum, "id");
+
+		var tableContainer = document.getElementById("quota_table_container");
+		var table = tableContainer.firstChild;
+		
+		
+		var ip = getIpFromDocument(document);
+		var timeParameters = getTimeParametersFromUci(uci, "quota_" + quotaNum);
+		var limitStr = getLimitStrFromUci(pkg, "quota_" + quotaNum);
+		addTableRow(table, [ ipToTableSpan(ip), timeParamsToTableSpan(timeParameters), limitStr, enabledCheck, createEditButton(true)], true, false, removeQuotaCallback);
+
+		setDocumentFromUci(document, new UCIContainer(), "");
+
+		enabledCheck.checked = true;
+	}
+}
+
+function setVisibility(controlDocument)
+{
+	controlDocument = controlDocument == null ? document : controlDocument;
+	setInvisibleIfIdMatches("applies_to_type", ["all","others_combined", "others_individual"], "quota_ip_container", "inline", controlDocument);
+	setInvisibleIfIdMatches("quota_reset", ["hour", "day"], "quota_day_container", "block", controlDocument);
+	setInvisibleIfIdMatches("quota_reset", ["hour"], "quota_hour_container", "block", controlDocument);
+	setInvisibleIfIdMatches("max_up_type", ["unlimited"], "max_up_container", "inline", controlDocument);
+	setInvisibleIfIdMatches("max_down_type", ["unlimited"], "max_down_container", "inline", controlDocument);
+	setInvisibleIfIdMatches("max_combined_type", ["unlimited"], "max_combined_container", "inline", controlDocument);
+	
+	setInvisibleIfIdMatches("quota_active", ["always"], "quota_active_type", "inline", controlDocument);
+	setInvisibleIfIdMatches("quota_active", ["always"], "quota_active_controls_container", "block", controlDocument);
+	if(getSelectedValue("quota_active", controlDocument) != "always")
+	{
+		setInvisibleIfIdMatches("quota_active_type", ["days", "weekly_range"], "active_hours_container", "block", controlDocument);
+		setInvisibleIfIdMatches("quota_active_type", ["hours", "weekly_range"], "active_days_container", "block", controlDocument);
+		setInvisibleIfIdMatches("quota_active_type", ["hours", "days", "days_and_hours"], "active_weekly_container", "block", controlDocument);
+	}
+	else
+	{
+		//individual control divs need to be set invisible as well as enclosing div, because this lets validation function know whether to test them
+		setInvisibleIfIdMatches("quota_active", ["always"], "active_hours_container", "block", controlDocument);
+		setInvisibleIfIdMatches("quota_active", ["always"], "active_days_container", "block", controlDocument);
+		setInvisibleIfIdMatches("quota_active", ["always"], "active_weekly_container", "block", controlDocument);
+	}
+	
+	setInvisibleIfIdMatches("quota_exceeded", ["hard_cutoff"], "quota_only_qos_container", "block", controlDocument);
+	setInvisibleIfIdMatches("quota_exceeded", ["hard_cutoff"], "quota_full_qos_container", "block", controlDocument);
+	if(fullQosEnabled)
+	{
+		controlDocument.getElementById("quota_only_qos_container").style.display = "none";
+	}
+	else
+	{
+		controlDocument.getElementById("quota_full_qos_container").style.display = "none";
+	}
+
+
+	var qri=getSelectedValue("quota_reset", controlDocument);
+	if(qri == "month")
+	{
+		var vals = [];	
+		var names = [];	
+		var day=1;
+		for(day=1; day <= 28; day++)
+		{
+			var dayStr = "" + day;
+			var lastDigit = dayStr.substr( dayStr.length-1, 1);
+			var suffix="th"
+			if( day % 100  != 11 && lastDigit == "1")
+			{
+				suffix="st"
+			}
+			if( day % 100 != 12 && lastDigit == "2")
+			{
+				suffix="nd"
+			}
+			if( day %100 != 13 && lastDigit == "3")
+			{
+				suffix="rd"
+			}
+			names.push(dayStr + suffix);
+			vals.push( ((day-1)*60*60*24) + "" );
+		}
+		setAllowableSelections("quota_day", vals, names, controlDocument);
+	}
+	if(qri == "week")
+	{
+		var names = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+		var vals = [];
+		var dayIndex;
+		for(dayIndex=0; dayIndex < 7; dayIndex++)
+		{
+			vals.push( (dayIndex*60*60*24) + "")
+		}
+		setAllowableSelections("quota_day", vals, names, controlDocument);
+	}
+}
+
+function getDaySeconds(offset)
+{
+	return ( Math.floor(offset/(60*60*24))*(60*60*24)) ;
+}
+function getHourSeconds(offset)
+{
+	return ( Math.floor((offset%(60*60*24))/(60*60)) * (60*60) );
+}
+
+
+function timeVariablesToWeeklyRanges(hours, days, weekly, invert)
+{
+	var hours = hours == null ? "" : hours;
+	var days = days == null ? "" : days;
+	var weekly = weekly == null ? "" : weekly;
+	
+	var dayToIndex = [];
+	dayToIndex["SUN"] = 0;
+	dayToIndex["MON"] = 1;
+	dayToIndex["TUE"] = 2;
+	dayToIndex["WED"] = 3;
+	dayToIndex["THU"] = 4;
+	dayToIndex["FRI"] = 5;
+	dayToIndex["SAT"] = 6;
+
+
+	var splitRangesAtEnd = function(rangeList, max)
+	{
+		var startEndPairs = [];
+		var rangeIndex;
+		for(rangeIndex=0;rangeIndex < rangeList.length; rangeIndex=rangeIndex+2)
+		{
+			if(rangeList[rangeIndex+1] < rangeList[rangeIndex])
+			{
+				var oldEnd = rangeList[rangeIndex+1];
+				rangeList[rangeIndex+1] = max;
+				rangeList.push(0);
+				rangeList.push(oldEnd);
+			}
+			var s = rangeList[rangeIndex];
+			var e = rangeList[rangeIndex+1];
+			startEndPairs.push( [s,e] );
+		}
+		
+		//sort based on starts
+		var sortPairs = function(a,b){ return a[0] - b[0]; }
+		var sortedPairs = startEndPairs.sort(sortPairs);
+		var newRanges = [];
+		for(rangeIndex=0;rangeIndex < sortedPairs.length; rangeIndex++)
+		{
+			newRanges.push( sortedPairs[rangeIndex][0] );
+			newRanges.push( sortedPairs[rangeIndex][1] );
+		}
+		return newRanges;
+	}
+
+
+	var ranges = [];
+	if(hours == "" && days == "" && weekly == "")
+	{
+		ranges = [0, 7*24*60*60];
+		invert = false;
+	}
+	else if(weekly != "")
+	{
+		var parsePiece = function(piece)
+		{
+			var splitPiece = piece.split(/[:\t ]+/);
+			var dayName = (splitPiece[0]).substr(0,3).toUpperCase();
+			splitPiece[0] = dayToIndex[dayName] != null ? dayToIndex[dayName]*24*60*60 : 0;
+			splitPiece[1] = parsePaddedInt(splitPiece[1]) + "" != "NaN" ? parsePaddedInt(splitPiece[1])*60*60 : 0;
+			splitPiece[2] = parsePaddedInt(splitPiece[2]) + "" != "NaN" ? parsePaddedInt(splitPiece[2])*60 : 0;
+			splitPiece[3] = splitPiece[3] != null ? ( parsePaddedInt(splitPiece[3]) + "" != "NaN" ? parsePaddedInt(splitPiece[3]) : 0) : 0;
+			return splitPiece[0] + splitPiece[1] + splitPiece[2] + splitPiece[3];
+		}
+		var pairs = weekly.split(/[\t ]*,[\t ]*/);
+		var pairIndex;
+		for(pairIndex=0; pairIndex < pairs.length; pairIndex++)
+		{
+
+			var pieces = (pairs[pairIndex]).split(/[\t ]*\-[\t ]*/);
+			ranges.push(parsePiece(pieces[0]));
+			ranges.push(parsePiece(pieces[1]));
+		}
+		ranges = splitRangesAtEnd(ranges, 7*24*60*60);
+	}
+	else
+	{
+		var validDays= [1,1,1,1,1,1,1];
+		var hourRanges = [];
+		if(days != "")
+		{
+			validDays= [0,0,0,0,0,0,0];
+			var splitDays = days.split(/[\t ]*,[\t ]*/);
+			var dayIndex;
+			for(dayIndex=0; dayIndex < splitDays.length; dayIndex++)
+			{
+				var dayName = (splitDays[dayIndex]).substr(0,3).toUpperCase();
+				if(dayToIndex[dayName] != null)
+				{
+					validDays[ dayToIndex[dayName] ] = 1;
+				}
+			}
+		}
+		if(hours != "")
+		{
+			var parsePiece = function(piece)
+			{
+				var splitPiece = piece.split(/[:\t ]+/);
+				splitPiece[0] = parsePaddedInt(splitPiece[0]) + "" != "NaN" ? parsePaddedInt(splitPiece[0])*60*60 : 0;
+				splitPiece[1] = parsePaddedInt(splitPiece[1]) + "" != "NaN" ? parsePaddedInt(splitPiece[1])*60 : 0;
+				splitPiece[2] = splitPiece[2] != null ? ( parsePaddedInt(splitPiece[2]) + "" != "NaN" ? parsePaddedInt(splitPiece[2]) : 0) : 0;
+
+
+				return splitPiece[0] + splitPiece[1] + splitPiece[2]; 
+			}
+			var pairs = hours.split(/[\t ]*,[\t ]*/);
+			var pairIndex;
+			for(pairIndex=0; pairIndex < pairs.length; pairIndex++)
+			{
+				var pair = (pairs[pairIndex]).replace(/^[\t ]*/, "").replace(/[\t ]*$/, "");
+				var pieces = pair.split(/[\t ]*\-[\t ]*/);
+				hourRanges.push(parsePiece(pieces[0]));
+				hourRanges.push(parsePiece(pieces[1]));
+			}
+			hourRanges = splitRangesAtEnd(hourRanges, 24*60*60);
+		}
+		hourRanges = hourRanges.length == 0 ? [0,24*60*60] : hourRanges;
+
+		var dayIndex;
+		for(dayIndex=0; dayIndex < validDays.length; dayIndex++)
+		{
+			if(validDays[dayIndex] != 0)
+			{
+				var hourIndex;
+				for(hourIndex=0; hourIndex < hourRanges.length; hourIndex++)
+				{
+					ranges.push( (dayIndex*24*60*60) + hourRanges[hourIndex] )
+				}
+			}
+		}
+	}
+
+	if(invert)
+	{
+		if(ranges[0] == 0)
+		{
+			ranges.shift();
+		}
+		else
+		{
+			ranges.unshift(0);
+		}
+
+		if(ranges[ ranges.length-1 ] == 7*24*60*60)
+		{
+			ranges.pop();
+		}
+		else
+		{
+			ranges.push(7*24*60*60);
+		}
+	}
+	return ranges;
+}
+
+
+function rangesOverlap(t1, t2)
+{
+	//alert("testing overlap for:\n" + t1.join(",") + "\n" + t2.join(",") );
+	var ranges1 = timeVariablesToWeeklyRanges(t1[0], t1[1], t1[2], t1[3]);
+	var ranges2 = timeVariablesToWeeklyRanges(t2[0], t2[1], t2[2], t2[3]);
+
+	var r1Index = 0;
+	var r2Index = 0;
+	var overlapFound = false;
+	for(r1Index=0; r1Index < ranges1.length && (!overlapFound); r1Index=r1Index+2)
+	{
+		var r1Start = ranges1[r1Index];
+		var r1End   = ranges1[r1Index+1];
+		var r2Start = ranges2[r2Index];
+		var r2End   = ranges2[r2Index+1];
+		overlapFound = overlapFound || (r1End > r2Start && r1Start < r2End);
+
+		while( (!overlapFound) && r2Start < r1Start && r2Index < ranges2.length)
+		{
+			r2Index = r2Index+2;
+			if(r2Index < ranges2.length)
+			{
+				var r2Start = ranges2[r2Index];
+				var r2End   = ranges2[r2Index+1];
+				overlapFound = overlapFound || (r1End > r2Start && r1Start < r2End);
+			}
+		}
+		/*
+		if(overlapFound)
+		{
+			alert("overlapFound: r1=[" + r1Start + "," + r1End + "], r2=[" + r2Start + "," + r2End + "]");
+		}
+		*/
+	}
+	return overlapFound;
+}
+
+
+
+function validateQuota(controlDocument, originalQuotaId, originalQuotaIp)
+{
+	originalQuotaId = originalQuotaId == null ? "" : originalQuotaId;
+	originalQuotaIp = originalQuotaIp == null ? "none" : originalQuotaIp; //null is not the same as "" -- the latter gets interpretted as "ALL"
+
+	controlDocument = controlDocument == null ? document : controlDocument;
+
+
+	var inputIds = ["max_up", "max_down", "max_combined", "active_hours", "active_weekly"];
+	var labelIds = ["max_up_label", "max_down_label", "max_combined_label", "quota_active_label", "quota_active_label"];
+	var functions = [validateDecimal, validateDecimal, validateDecimal, validateHours, validateWeeklyRange];
+	var validReturnCodes = [0,0,0,0,0];
+	var visibilityIds = ["max_up_container","max_down_container","max_combined_container", "active_hours_container", "active_weekly_container"];
+	var errors = proofreadFields(inputIds, labelIds, functions, validReturnCodes, visibilityIds, controlDocument );
+
+	//add any ips in add_ip box, if it is visible and isn't empty
+	if(errors.length == 0 && getSelectedValue("applies_to_type", controlDocument) == "only" && controlDocument.getElementById("add_ip").value != "")
+	{
+		var valid = addAddressesToTable(controlDocument,"add_ip","quota_ip_table_container","quota_ip_table",false, 3, false,250);
+		if(!valid)
+		{
+			errors.push("\"" + controlDocument.getElementById("add_ip").value  + "\" is not a valid IP or IP range");
+		}
+	}
+
+	// check that ip is not empty (e.g. that we are matching based on IP(s) and no ips are defined)
+	// thw getIpFromDocument function will always return ALL in the case where uci had no ip originallly, 
+	// so we don't have to worry about empty ip meaning ALL vs null here
+	var ip = "";
+	if(errors.length == 0)
+	{
+		ip = getIpFromDocument(controlDocument);
+		if(ip == "")
+		{
+			errors.push("You must specify at least one valid IP or IP range");
+		}
+	}
+
+	//check that up,down,total aren't all unlimited 
+	if(errors.length == 0)
+	{
+		if( 	getSelectedValue("max_up_type", controlDocument) == "unlimited" && 
+			getSelectedValue("max_down_type", controlDocument) == "unlimited" && 
+			getSelectedValue("max_combined_type", controlDocument) == "unlimited"
+			)
+		{
+			errors.push("Upload, download and combined bandwidth limits cannot all be unlimited");
+		}
+	}
+
+	//check that any quota with overlapping ips with this one doesn't have overlapping time ranges
+	if(errors.length == 0)
+	{
+		if(ip != originalQuotaIp)
+		{
+			var quotaSections = uci.getAllSectionsOfType(pkg, "quota");
+			var sectionIndex;
+			var overlapFound = false;
+			for(sectionIndex=0; sectionIndex < quotaSections.length && (!overlapFound); sectionIndex++)
+			{
+				var sectionId = uci.get(pkg, quotaSections[sectionIndex], "id");
+				if(sectionId != originalQuotaId)
+				{
+					var sectionIp = uci.get(pkg, quotaSections[sectionIndex], "ip");
+					var ipOverlap = testAddrOverlap(sectionIp, ip);
+					if(ipOverlap)
+					{
+						//test time range overlap
+						var sectionTime = getTimeParametersFromDocument(controlDocument);
+						var testTime = getTimeParametersFromUci(uci, quotaSections[sectionIndex]);
+						sectionTime[3] = sectionTime[3] == "except" ? true : false;
+						testTime[3] = testTime[3] == "except" ? true : false;
+						overlapFound = rangesOverlap(sectionTime, testTime);
+					}
+				}
+			}
+			
+			if(overlapFound)
+			{	
+				if(!ip.match(/ALL/))
+				{
+					errors.push("Duplicate IP/Time Range -- only one quota per IP at a given time is allowed");
+				}
+				else if(ip.match(/OTHER/))
+				{
+					errors.push("You may have only one quota at a given time for hosts without explicit quotas");
+				}
+				else
+				{
+					errors.push("You may have only one quota at a given time that applies to entire network");
+				}
+			}
+		}
+	}
+	return errors;
+}
+
+function setDocumentFromUci(controlDocument, srcUci, id)
+{
+	controlDocument = controlDocument == null ? document : controlDocument;
+	
+
+	var quotaSection = "";
+	var sections = srcUci.getAllSectionsOfType(pkg, "quota");
+	for(sectionIndex=0; sectionIndex < sections.length && quotaSection == ""; sectionIndex++)
+	{
+		if(srcUci.get(pkg, sections[sectionIndex], "id") == id )
+		{
+			quotaSection = sections[sectionIndex];
+		}
+	}
+
+	var ip = srcUci.get(pkg, quotaSection, "ip");
+	ip = ip == "" ? "ALL" : ip;
+
+	var resetInterval = srcUci.get(pkg, quotaSection, "reset_interval");
+	var uploadLimit = srcUci.get(pkg, quotaSection, "egress_limit");
+	var downloadLimit = srcUci.get(pkg, quotaSection, "ingress_limit");
+	var combinedLimit = srcUci.get(pkg, quotaSection, "combined_limit");
+
+	resetInterval = resetInterval == "" || resetInterval == "minute" ? "day" : resetInterval;
+	var offset = srcUci.get(pkg, quotaSection, "reset_time");
+	offset = offset == "" ? 0 : parseInt(offset);
+	var resetDay = getDaySeconds(offset);
+	var resetHour = getHourSeconds(offset);
+
+	var exceededUpSpeed = srcUci.get(pkg, quotaSection, "exceeded_up_speed");
+	var exceededDownSpeed = srcUci.get(pkg, quotaSection, "exceeded_down_speed");
+	var upMark = srcUci.get(pkg, quotaSection, "exceeded_up_class_mark");
+	var downMark = srcUci.get(pkg, quotaSection, "exceeded_down_class_mark");
+
+
+	setDocumentIp(ip, controlDocument);
+	setSelectedValue("quota_reset", resetInterval, controlDocument);
+
+
+
+	var timeParameters = getTimeParametersFromUci(srcUci, quotaSection);
+	var days = timeParameters[1];
+
+	var allDays = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
+	var dayList = [];
+	if(days == "")
+	{
+		dayList = allDays;
+	}
+	else
+	{
+		dayList = days.split(/,/);
+	}
+	var dayIndex=0;
+	for(dayIndex = 0; dayIndex < allDays.length; dayIndex++)
+	{
+		var nextDay = allDays[dayIndex];
+		var dayFound = false;
+		var testIndex=0;
+		for(testIndex=0; testIndex < dayList.length && !dayFound; testIndex++)
+		{
+			dayFound = dayList[testIndex] == nextDay;
+		}
+		controlDocument.getElementById("quota_" + allDays[dayIndex]).checked = dayFound;
+	}
+
+	controlDocument.getElementById("active_hours").value = timeParameters[0];
+	controlDocument.getElementById("active_weekly").value = timeParameters[2];
+
+	var active = timeParameters[3];
+	setSelectedValue("quota_active", active, controlDocument);
+	if(active != "always")
+	{
+		var activeTypes = [];
+		activeTypes["000"] = "hours";
+		activeTypes["100"] = "hours";
+		activeTypes["010"] = "days";
+		activeTypes["110"] = "days_and_hours";
+		var activeTypeId = (timeParameters[0] != "" ? "1" : "0") + (timeParameters[1] != "" ? "1" : "0") + (timeParameters[2] == "" ? "0" : "1");
+		var activeType = activeTypes[activeTypeId] != null ? activeTypes[activeTypeId] : "weekly_range";
+		setSelectedValue("quota_active_type", activeType, controlDocument);
+	}
+	
+
+	setSelectedValue("max_up_type", uploadLimit == "" ? "unlimited" : "limited", controlDocument );
+	setSelectedValue("max_down_type", downloadLimit == "" ? "unlimited" : "limited", controlDocument );
+	setSelectedValue("max_combined_type", combinedLimit == "" ? "unlimited" : "limited", controlDocument );
+
+	
+	setDocumentLimit(uploadLimit,   "max_up",       "max_up_unit", controlDocument);
+	setDocumentLimit(downloadLimit, "max_down",     "max_down_unit", controlDocument);
+	setDocumentLimit(combinedLimit, "max_combined", "max_combined_unit", controlDocument);
+
+	//setAllowableSelections("quota_exceeded", (fullQosEnabled ? ["hard_cutoff"] : ["hard_cutoff", "throttle"]), (fullQosEnabled ? ["Shut Down All Internet Access"] : ["Shut Down All Internet Access", "Throttle Bandwidth"]), controlDocument);
+	var exceededType = (exceededUpSpeed != "" && exceededDownSpeed != "" && (!fullQosEnabled)) || (upMark != "" && downMark != "" && fullQosEnabled) ? "throttle" : "hard_cutoff";
+	setSelectedValue("quota_exceeded", exceededType, controlDocument);
+	setDocumentSpeed(exceededUpSpeed, "quota_qos_up",   "quota_qos_up_unit", controlDocument);
+	setDocumentSpeed(exceededDownSpeed, "quota_qos_down", "quota_qos_down_unit", controlDocument);
+
+	
+
+	setVisibility(controlDocument);
+	setSelectedValue("quota_day", resetDay + "", controlDocument);
+	setSelectedValue("quota_hour", resetHour + "", controlDocument);
+
+	if(fullQosEnabled)
+	{
+		setAllowableSelections("quota_full_qos_up_class", upQosMarks, upQosClasses, controlDocument);
+		setAllowableSelections("quota_full_qos_down_class", downQosMarks, downQosClasses, controlDocument);
+		if(upMark != "" && downMark != "")
+		{
+			setSelectedValue("quota_full_qos_up_class", upMark, controlDocument);
+			setSelectedValue("quota_full_qos_down_class", downMark, controlDocument);
+		}
+	}
+}
+
+function setDocumentLimit(bytes, textId, unitSelectId, controlDocument)
+{
+	bytes = bytes == "" ? 0 : parseInt(bytes);
+	var textEl = controlDocument.getElementById(textId);
+	var defaultUnit = "MB";
+	var defaultMultiple = 1024*1024;
+	if(bytes <= 0)
+	{
+		setSelectedValue(unitSelectId, defaultUnit, controlDocument);
+		textEl.value = "0";
+	}
+	else
+	{
+		var pb = parseBytes(bytes);
+		var unit = defaultUnit;
+		var multiple = defaultMultiple;
+		if(pb.match(/GBytes/)) { unit = "GB"; multiple = 1024*1024*1024; };
+		if(pb.match(/TBytes/)) { unit = "TB"; multiple = 1024*1024*1024*1024; };
+		setSelectedValue(unitSelectId, unit, controlDocument);
+		var adjustedVal = truncateDecimal(bytes/multiple);
+		textEl.value = adjustedVal;
+	}
+}
+function setDocumentSpeed(kbytes, textId, unitSelectId, controlDocument)
+{
+	var defaultUnit = "KBytes/s";
+	var textEl = controlDocument.getElementById(textId);
+	setSelectedValue(unitSelectId, defaultUnit, controlDocument);
+	
+	kbytes = kbytes == "" ? 0 : parseInt(kbytes);
+	if(kbytes <= 0)
+	{
+		textEl.value = "0";
+	}
+	else
+	{
+		var pb = parseKbytesPerSecond(kbytes);
+		var splitParsed = pb.split(/[\t ]+/);
+		textEl.value = splitParsed[0];
+		setSelectedValue(unitSelectId, splitParsed[1], controlDocument);
+	}
+}
+
+
+function setUciFromDocument(controlDocument, id)
+{
+	controlDocument = controlDocument == null ? document : controlDocument;
+	
+	var ip = getIpFromDocument(controlDocument);
+	id = id == null ? "" : id;
+	id = id == "" ? getIdFromIp(ip) : id;
+
+	var quotaSection = "";
+	var sections = uci.getAllSectionsOfType(pkg, "quota");
+	for(sectionIndex=0; sectionIndex < sections.length; sectionIndex++)
+	{
+		if(uci.get(pkg, sections[sectionIndex], "id") == id)
+		{
+			quotaSection = sections[sectionIndex];
+		}
+	}
+	if(quotaSection == "")
+	{
+		var quotaNum = 1;
+		while( uci.get(pkg, "quota_" + quotaNum, "") != "") { quotaNum++; }
+		quotaSection = "quota_" + quotaNum;
+		uci.set(pkg, quotaSection, "", "quota");
+	}
+
+	var oldIp = uci.get(pkg, quotaSection, "ip");
+	if(oldIp != ip)
+	{
+		if(!testAddrOverlap(oldIp, ip))
+		{
+			changedIds[id] = 1;
+		}
+	}
+
+	
+	uci.set(pkg, quotaSection, "ingress_limit",  getDocumentLimit("max_down", "max_down_type", "max_down_unit", controlDocument)  );
+	uci.set(pkg, quotaSection, "egress_limit",   getDocumentLimit("max_up", "max_up_type", "max_up_unit", controlDocument) );
+	uci.set(pkg, quotaSection, "combined_limit", getDocumentLimit("max_combined", "max_combined_type", "max_combined_unit", controlDocument) );
+
+	uci.set(pkg, quotaSection, "exceeded_up_speed", getDocumentSpeed("quota_only_qos_container", "quota_qos_up", "quota_qos_up_unit", controlDocument) );
+	uci.set(pkg, quotaSection, "exceeded_down_speed", getDocumentSpeed("quota_only_qos_container", "quota_qos_down", "quota_qos_down_unit", controlDocument) );
+
+	uci.set(pkg, quotaSection, "exceeded_up_class_mark", getDocumentMark("quota_full_qos_container", "quota_full_qos_up_class", controlDocument) );
+	uci.set(pkg, quotaSection, "exceeded_down_class_mark", getDocumentMark("quota_full_qos_container", "quota_full_qos_down_class", controlDocument) );
+
+
+	uci.set(pkg, quotaSection, "reset_interval", getSelectedValue("quota_reset", controlDocument));
+	uci.set(pkg, quotaSection, "ip", ip);
+	uci.set(pkg, quotaSection, "id", id);
+
+	var qd = getSelectedValue("quota_day", controlDocument);
+	var qh = getSelectedValue("quota_hour", controlDocument);
+	qd = qd == "" ? "0" : qd;
+	qh = qh == "" ? "0" : qh;
+	var resetTime= parseInt(qd) + parseInt(qh);
+	if(resetTime > 0)
+	{
+		var resetTimeStr = resetTime + "";
+		uci.set(pkg, quotaSection, "reset_time", resetTimeStr);
+	}
+	else
+	{
+		uci.remove(pkg, quotaSection, "reset_time");
+	}
+
+
+	var timeParameters = getTimeParametersFromDocument(controlDocument);
+	var active = timeParameters[3];
+	var onoff = ["offpeak", "onpeak"];
+	var onoffIndex = 0;
+	for(onoffIndex=0; onoffIndex < onoff.length; onoffIndex++)
+	{
+		var prefix = onoff[onoffIndex];
+		var updateFun = function(prefixActive,option,val)
+		{ 
+			if(prefixActive)
+			{
+				uci.set(pkg,quotaSection,option,val); 
+			}
+			else
+			{
+				uci.remove(pkg,quotaSection,option);
+			}
+		}
+		var prefixActive = (prefix == "offpeak" && active == "except") || (prefix == "onpeak" && active == "only");
+		updateFun(prefixActive, prefix + "_hours", timeParameters[0]);
+		updateFun(prefixActive, prefix + "_weekdays", timeParameters[1]);
+		updateFun(prefixActive, prefix + "_weekly_ranges", timeParameters[2]);
+	}
+}
+
+function getTimeParametersFromDocument(controlDocument)
+{
+	var hours = controlDocument.getElementById("active_hours_container").style.display != "none" ? controlDocument.getElementById("active_hours").value : "";
+	var weekly = controlDocument.getElementById("active_weekly_container").style.display != "none" ? controlDocument.getElementById("active_weekly").value : "";
+	
+	var dayList = [];
+	if(controlDocument.getElementById("active_days_container").style.display != "none")
+	{
+		var allDays = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
+		var dayIndex;
+		for(dayIndex=0; dayIndex < allDays.length; dayIndex++)
+		{
+			if( controlDocument.getElementById("quota_" + allDays[dayIndex]).checked )
+			{
+				dayList.push( allDays[dayIndex]);
+			}
+		}
+	}
+	var days = "" + dayList.join(",");
+
+	var active = getSelectedValue("quota_active", controlDocument);
+	
+	return [hours,days,weekly,active];
+
+}
+function getTimeParametersFromUci(srcUci, quotaSection)
+{
+	var hours = srcUci.get(pkg, quotaSection, "offpeak_hours");
+	var days = srcUci.get(pkg, quotaSection, "offpeak_weekdays");
+	var weekly = srcUci.get(pkg, quotaSection, "offpeak_weekly_ranges");
+	var active = hours != "" || days != "" || weekly != "" ? "except" : "always";
+	if(active == "always")
+	{
+		hours = srcUci.get(pkg, quotaSection, "onpeak_hours");
+		days = srcUci.get(pkg, quotaSection, "onpeak_weekdays");
+		weekly = srcUci.get(pkg, quotaSection, "onpeak_weekly_ranges");
+		active = hours != "" || days != "" || weekly != "" ? "only" : "always";
+
+	}
+	return [hours,days,weekly,active];
+}
+
+
+/* returns a number if there is a limit "" if no limit defined */
+function getDocumentLimit(textId, unlimitedSelectId, unitSelectId, controlDocument)
+{
+	var ret = "";
+	if(getSelectedValue(unlimitedSelectId, controlDocument) != "unlimited")
+	{
+		var unit = getSelectedValue(unitSelectId, controlDocument);
+		var multiple = 1024*1024;
+		if(unit == "MB") { multiple = 1024*1024; }
+		if(unit == "GB") { multiple = 1024*1024*1024; }
+		if(unit == "TB") { multiple = 1024*1024*1024*1024; }
+		var bytes = Math.round(multiple * parseFloat(controlDocument.getElementById(textId).value));
+		ret =  "" + bytes;
+	}
+	return ret;
+}
+
+function getDocumentSpeed(containerId, textId, unitSelectId, controlDocument)
+{
+	var ret = "";
+	if(controlDocument.getElementById(containerId).style.display != "none")
+	{
+		var unit = getSelectedValue(unitSelectId, controlDocument);
+		if(unit == "MBytes/s") { multiple = 1024; }
+		if(unit == "KBytes/s") { multiple = 1; }
+		var kbits = Math.round(multiple * parseFloat(controlDocument.getElementById(textId).value));
+		ret = "" + kbits;
+	}
+	return ret;
+}
+
+function getDocumentMark(containerId, selectId, controlDocument)
+{
+	var ret = "";
+	if(controlDocument.getElementById(containerId).style.display != "none")
+	{
+		ret = getSelectedValue(selectId, controlDocument);
+	}
+	return ret;
+}
+
+
+function createEnabledCheckbox(enabled)
+{
+	enabledCheckbox = createInput('checkbox');
+	enabledCheckbox.onclick = setRowEnabled;
+	enabledCheckbox.checked = enabled;
+	return enabledCheckbox;
+}
+
+function createEditButton(enabled)
+{
+	editButton = createInput("button");
+	editButton.value = "Edit";
+	editButton.className="default_button";
+	editButton.onclick = editQuota;
+	
+	editButton.className = enabled ? "default_button" : "default_button_disabled" ;
+	editButton.disabled  = enabled ? false : true;
+
+	return editButton;
+}
+function setRowEnabled()
+{
+	enabled= this.checked ? "1" : "0";
+	enabledRow=this.parentNode.parentNode;
+
+	enabledRow.childNodes[rowCheckIndex+1].firstChild.disabled  = this.checked ? false : true;
+	enabledRow.childNodes[rowCheckIndex+1].firstChild.className = this.checked ? "default_button" : "default_button_disabled" ;
+
+	var idStr = this.id;
+	var ids = idStr.split(/\./);
+	if(uci.get(pkg, ids[0]) != "")
+	{
+		uci.set(pkg, ids[0], "enabled", enabled);
+	}
+	if(uci.get(pkg, ids[1]) != "")
+	{
+		uci.set(pkg, ids[1], "enabled", enabled);
+	}
+}
+function removeQuotaCallback(table, row)
+{
+	var id = row.childNodes[rowCheckIndex].firstChild.id;
+	var sections = uci.getAllSectionsOfType(pkg, "quota");                                                               
+	for(sectionIndex=0; sectionIndex < sections.length; sectionIndex++)                             
+	{                                                                                                                    
+		if(uci.get(pkg, sections[sectionIndex], "id") == id)
+		{
+			uci.removeSection(pkg, sections[sectionIndex]);
+		}
+	}
+	changedIds [ id ] = 1;
+}
+
+function editQuota()
+{
+	if( typeof(editQuotaWindow) != "undefined" )
+	{
+		//opera keeps object around after
+		//window is closed, so we need to deal
+		//with error condition
+		try
+		{
+			editQuotaWindow.close();
+		}
+		catch(e){}
+	}
+
+	
+	try
+	{
+		xCoor = window.screenX + 225;
+		yCoor = window.screenY+ 225;
+	}
+	catch(e)
+	{
+		xCoor = window.left + 225;
+		yCoor = window.top + 225;
+	}
+
+
+	editQuotaWindow = window.open("quotas_edit.sh", "edit", "width=560,height=600,left=" + xCoor + ",top=" + yCoor );
+	
+	var saveButton = createInput("button", editQuotaWindow.document);
+	var closeButton = createInput("button", editQuotaWindow.document);
+	saveButton.value = "Close and Apply Changes";
+	saveButton.className = "default_button";
+	closeButton.value = "Close and Discard Changes";
+	closeButton.className = "default_button";
+
+	var editRow=this.parentNode.parentNode;
+	var editId          = editRow.childNodes[rowCheckIndex].firstChild.id;
+	
+	var editIp;
+
+	var editSection = "";
+	var sections = uci.getAllSectionsOfType(pkg, "quota");
+	for(sectionIndex=0; sectionIndex < sections.length && editSection == ""; sectionIndex++)
+	{
+		if(uci.get(pkg, sections[sectionIndex], "id") == editId)
+		{
+			editSection = sections[sectionIndex];
+			editIp = uci.get(pkg, editSection, "ip");
+		}
+	}
+
+	var editUpMax       = uci.get(pkg, editSection, "egress_limit");
+	var editDownMax     = uci.get(pkg, editSection, "ingress_limit");
+	var editCombinedMax = uci.get(pkg, editSection, "combined_limit");
+
+	var runOnEditorLoaded = function () 
+	{
+		var updateDone=false;
+		if(editQuotaWindow.document != null)
+		{
+			if(editQuotaWindow.document.getElementById("bottom_button_container") != null)
+			{
+				editQuotaWindow.document.getElementById("bottom_button_container").appendChild(saveButton);
+				editQuotaWindow.document.getElementById("bottom_button_container").appendChild(closeButton);
+				setDocumentFromUci(editQuotaWindow.document, uci, editId);
+
+				closeButton.onclick = function()
+				{
+					editQuotaWindow.close();
+				}
+				saveButton.onclick = function()
+				{
+					// error checking goes here
+					var errors = validateQuota(editQuotaWindow.document, editId, editIp);
+					if(errors.length > 0)
+					{
+						alert(errors.join("\n") + "\nCould not add quota.");
+					}
+					else
+					{
+						var newIp = getIpFromDocument(editQuotaWindow.document);
+						setUciFromDocument(editQuotaWindow.document, editId);
+
+						var setElementAtColumn = function(newEl, cellIndex)
+						{
+							var cell = editRow.childNodes[cellIndex];
+							while(cell.firstChild != null){ cell.removeChild(cell.firstChild); }
+							cell.appendChild(newEl);
+						}
+
+						if(newIp != editIp)
+						{
+							var newId = getIdFromIp(newIp);
+							uci.set(pkg, editSection, "id", newId);
+							if(!testAddrOverlap(newIp, editIp))
+							{
+								changedIds[newId] = 1;
+							}
+							
+							
+							setElementAtColumn(ipToTableSpan(newIp), 0);
+							editRow.childNodes[rowCheckIndex].firstChild.id = newId;
+						}
+						setElementAtColumn(timeParamsToTableSpan(getTimeParametersFromUci(uci, editSection)), 1);
+						editRow.childNodes[2].firstChild.data =getLimitStrFromUci(uci, editSection);
+						
+						editQuotaWindow.close();
+					}
+				}
+				editQuotaWindow.moveTo(xCoor,yCoor);
+				editQuotaWindow.focus();
+				updateDone = true;
+				
+			}
+		}
+		if(!updateDone)
+		{
+			setTimeout(runOnEditorLoaded, 250);
+		}
+	}
+	runOnEditorLoaded();
+}

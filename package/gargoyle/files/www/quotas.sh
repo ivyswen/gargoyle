@@ -30,29 +30,29 @@
 
 <form>
 	<fieldset>
-		<legend class="sectionheader">流量配额</legend>
+		<legend class="sectionheader">Bandwidth Quotas</legend>
 
-		<span id="add_quota_label" style="text-decoration:underline" >添加新的配额:</span>	
+		<span id="add_quota_label" style="text-decoration:underline" >Add New Quota:</span>
 
 		<div>
 
 			<? cat templates/quotas_template ?>
 
 			<div>
-				<input type="button" id="add_quota_button" class="default_button" value="添加新配额" onclick="addNewQuota()" />
+				<input type="button" id="add_quota_button" class="default_button" value="Add New Quota" onclick="addNewQuota()" />
 			</div>
 		</div>
 
 		<div id='internal_divider1' class='internal_divider'></div>
 
-		<span id="active_quotas_label" style="text-decoration:underline" >已启用配额:</span>	
+		<span id="active_quotas_label" style="text-decoration:underline" >Active Quotas:</span>
 
 		<div id="quota_table_container"></div>
 
 	</fieldset>
 	<div id="bottom_button_container">
-		<input type='button' value='保存设置' id="save_button" class="bottom_button" onclick='saveChanges()' />
-		<input type='button' value='重设' id="reset_button" class="bottom_button" onclick='resetData()'/>
+		<input type='button' value='Save Changes' id="save_button" class="bottom_button" onclick='saveChanges()' />
+		<input type='button' value='Reset' id="reset_button" class="bottom_button" onclick='resetData()'/>
 	</div>
 
 	<span id="update_container" >Please wait while new settings are applied. . .</span>

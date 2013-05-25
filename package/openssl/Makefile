@@ -59,7 +59,7 @@ define Package/openssl-util
   $(call Package/openssl/Default)
   SECTION:=utils
   CATEGORY:=Utilities
-  DEPENDS:=+libopenssl
+  DEPENDS:=+libopenssl +libpthread
   TITLE+= (utility)
 endef
 
@@ -111,7 +111,7 @@ define Build/Configure
 	)
 endef
 
-TARGET_CFLAGS += $(FPIC)
+TARGET_CFLAGS += $(FPIC) -DOPENSSL_THREADS -pthread -D_REENTRANT -D_THREAD_SAFE -D_THREADSAFE
 
 define Build/Compile
 	# XXX: OpenSSL "make depend" will look for installed headers before its own,

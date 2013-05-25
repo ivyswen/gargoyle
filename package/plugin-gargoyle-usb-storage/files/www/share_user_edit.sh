@@ -9,19 +9,19 @@
 	gargoyle_header_footer -m  -c "internal.css"
 ?>
 <fieldset>
-	<legend class="sectionheader">更改用户密码</legend>
+	<legend class="sectionheader">Change User Password</legend>
 
 	<div style="clear:both;display:block">
-		<label class="leftcolumn" for="share_user_text">用户:</label>
+		<label class="leftcolumn" for="share_user_text">User:</label>
 		<span class="rightcolumn" id="share_user_text"></span>
 	</div>
 
 	<div style="clear:both">
-		<label class="leftcolumn" for="new_password">新密码:</label>
+		<label class="leftcolumn" for="new_password">New Password:</label>
 		<input class="rightcolumn" type="password" id="new_password" />
 	</div>
 	<div style="clear:both">
-		<label class="leftcolumn" for="new_password_confirm">确认密码:</label>
+		<label class="leftcolumn" for="new_password_confirm">Confirm Password:</label>
 		<input class="rightcolumn" type="password" id="new_password_confirm" />
 	</div>
 

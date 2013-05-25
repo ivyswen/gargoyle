@@ -26,10 +26,10 @@
 
 <form>
 	<fieldset>
-		<legend class="sectionheader">单独端口转发</legend>
+		<legend class="sectionheader">Individual Port Forwarding</legend>
 
 		<div id='portf_add_heading_container'>
-			<label class='nocolumn' id='portf_add_heading_label'>从WAN到LAN的端口转发:</label>
+			<label class='nocolumn' id='portf_add_heading_label'>Forward Individual Ports From WAN to LAN:</label>
 		</div>
 		<div class='bottom_gap'>
 			<div id='portf_add_container'>
@@ -41,10 +41,10 @@
 	</fieldset>
 
 	<fieldset>
-		<legend class="sectionheader">端口范围转发</legend>
+		<legend class="sectionheader">Port Range Forwarding</legend>
 
 		<div id='portfrange_add_heading_container'>
-			<label class='nocolumn' id='portf_add_heading_label'>从WAN到LAN的端口范围转发:</label>
+			<label class='nocolumn' id='portf_add_heading_label'>Forward Port Range From WAN to LAN:</label>
 		</div>
 
 		<div class='bottom_gap'>
@@ -60,7 +60,7 @@
 		<legend class="sectionheader">DMZ</legend>
 		<div id='dmz_enabled_container'>
 			<input type='checkbox' id='dmz_enabled' onclick="setDmzEnabled()" />
-			<label id='dmz_enabled_label' for='dmz_enabled'>启用 DMZ (De-Militarized Zone)</label>
+			<label id='dmz_enabled_label' for='dmz_enabled'>Use DMZ (De-Militarized Zone)</label>
 		</div>
 		<div id="dmz_ip_container" class="indent">
 			<label class='leftcolumn' for='dmz_ip' id='dmz_ip_label'>DMZ IP:</label>
@@ -72,11 +72,11 @@
 		<legend class="sectionheader">UPnP / NAT-PMP</legend>
 		<div id='upnp_enabled_container'>
 			<input type='checkbox' id='upnp_enabled' onclick="setUpnpEnabled()" />
-			<label id='upnp_enabled_label' for='upnp_enabled'>启用 UPnP &amp; NAT-PMP 服务</label>
+			<label id='upnp_enabled_label' for='upnp_enabled'>Enable UPnP &amp; NAT-PMP service</label>
 		</div>
 
 		<div id='upnp_table_heading_container'>
-			<span class='nocolumn'>已启用的端口转发:</span>
+			<span class='nocolumn'>Active port forwards:</span>
 		</div>
  
 		<br>
@@ -86,7 +86,7 @@
 		</div>
 
 		<div id='upnp_up_container'>
-			<label class='leftcolumn' for='upnp_up' id='upnp_up_label'>上传速度报告:</label>
+			<label class='leftcolumn' for='upnp_up' id='upnp_up_label'>Upload speed to report:</label>
 			<span class = 'rightcolumn'>
 				<input type='text' class='rightcolumn' id='upnp_up' onkeyup='proofreadNumeric(this)' size='5' maxlength='5' />
 				<em>Kbytes / second</em>
@@ -94,7 +94,7 @@
 		</div>
 
 		<div id='upnp_down_container'>
-			<label class='leftcolumn' for='upnp_down' id='upnp_down_label'>下载速度报告:</label>
+			<label class='leftcolumn' for='upnp_down' id='upnp_down_label'>Download speed to report:</label>
 			<span class='rightcolumn'>
 				<input type='text' id='upnp_down' onkeyup='proofreadNumeric(this)' size='5' maxlength='5' />
 				<em>Kbytes / second</em>
@@ -127,8 +127,8 @@
 	</fieldset>
 
 	<div id="bottom_button_container">
-		<input type='button' value='保存设置' id="save_button" class="bottom_button" onclick='saveChanges()' />
-		<input type='button' value='重设' id="reset_button" class="bottom_button" onclick='resetData()'/>
+		<input type='button' value='Save Changes' id="save_button" class="bottom_button" onclick='saveChanges()' />
+		<input type='button' value='Reset' id="reset_button" class="bottom_button" onclick='resetData()'/>
 	</div>
 	<span id="update_container" >Please wait while new settings are applied. . .</span>
 

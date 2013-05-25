@@ -9,7 +9,7 @@
 	gargoyle_header_footer -m  -c "internal.css" -j "usb_storage.js table.js" network
 ?>
 <fieldset id="edit_container">
-	<legend class="sectionheader">编辑共享磁盘</legend>
+	<legend class="sectionheader">Edit Shared Disk</legend>
 
 <?
 	cat templates/usb_storage_template

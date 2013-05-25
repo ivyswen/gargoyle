@@ -9,11 +9,11 @@
 	gargoyle_header_footer -m  -c "internal.css" -j "ddns.js"
 ?>
 <fieldset id="edit_container">
-	<legend class="sectionheader">编辑动态DNS服务</legend>
+	<legend class="sectionheader">Edit Dynamic DNS Service</legend>
 
 	<div>
 		<div>
-			<label class='leftcolumn' for='ddns_provider' id='ddns_provider_label'>服务提供商:</label>
+			<label class='leftcolumn' for='ddns_provider' id='ddns_provider_label'>Service Provider:</label>
 			<span class='rightcolumn' id="ddns_provider_text" ></span>
 		</div>
 	</div>
@@ -22,9 +22,9 @@
 
 	<div>
 		<div>
-			<label class='leftcolumn' for='ddns_check' id='ddns_check_label'>检查间隔:</label>
+			<label class='leftcolumn' for='ddns_check' id='ddns_check_label'>Check Interval:</label>
 			<input type='text' class='rightcolumn' id='ddns_check'  size='8' onkeyup='proofreadNumeric(this)'/>
-			<em>分钟</em>
+			<em>minutes</em>
 			<div class='indent'>
 				<p>
 				The check interval specifies how often the router will check whether your current IP matches the one currently associated with your
@@ -35,9 +35,9 @@
 			</div>
 		</div>
 		<div>
-			<label class='leftcolumn' for='ddns_force' id='ddns_force_label'>强制更新间隔:</label>
+			<label class='leftcolumn' for='ddns_force' id='ddns_force_label'>Force Update Interval:</label>
 			<input type='text' class='rightcolumn' id='ddns_force'  size='8' onkeyup='proofreadNumeric(this)'/>
-			<em>天</em>
+			<em>days</em>
 			<div class='indent'>
 				<p>
 				The force update interval specifies how often the router will connect to your dynamic DNS service provider and update their records,

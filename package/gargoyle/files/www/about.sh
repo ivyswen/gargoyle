@@ -10,7 +10,7 @@
 ?>
 
 <fieldset>
-	<legend class="sectionheader">鸣谢</legend>
+	<legend class="sectionheader">Credits</legend>
 
 	<p><span class="contributer">Eric Bishop (<a href="http://gargoyle-router.com">gargoyle-router.com</a>):</span> Project founder, lead developer of Gargoyle </p>
 
@@ -37,7 +37,7 @@
 </fieldset>
 
 <fieldset>
-	<legend class="sectionheader">许可</legend>
+	<legend class="sectionheader">License</legend>
 	<p>Gargoyle is copyright &copy; 2008, 2009 by Eric Bishop</p>
 
 	<p>Gargoyle is free software; you can redistribute it and/or modify it under the terms of the 
