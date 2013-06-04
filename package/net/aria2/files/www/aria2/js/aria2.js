@@ -67,9 +67,14 @@ if (typeof ARIA2=="undefined"||!ARIA2) var ARIA2=(function(){
     var title = "Unknown";
     if (result.bittorrent && result.bittorrent.info && result.bittorrent.info.name)
       title = result.bittorrent.info.name;
-    else if (result.files[0].path.replace(new RegExp("^"+dir.replace("\\", "[\\/]")+"/?"), "").split("/")[0])
-      title = result.files[0].path.replace(new RegExp("^"+dir.replace("\\", "[\\/]")+"/?"), "").split("/")[0]
-    else if (result.files.length && result.files[0].uris.length && result.files[0].uris[0].uri)
+    else if (result.files[0].path.replace(
+      new RegExp("^"+dir.replace(/\\/g, "[\\/]")+"/?"), "").split("/").length) {
+      title = result.files[0].path.replace(new RegExp("^"+dir.replace(/\\/g, "[\\/]")+"/?"), "").split("/");
+      if (result.bittorrent)
+        title = title[0];
+      else
+        title = title[title.length-1];
+    } else if (result.files.length && result.files[0].uris.length && result.files[0].uris[0].uri)
       title = result.files[0].uris[0].uri;
 
     if (result.files.length > 1) {
@@ -91,6 +96,7 @@ if (typeof ARIA2=="undefined"||!ARIA2) var ARIA2=(function(){
       $("#aria2-gsetting").empty().append(YAAW.tpl.aria2_global_setting({}));
 
       jsonrpc_interface = path || "http://"+(location.host.split(":")[0]||"localhost")+":6800"+"/jsonrpc";
+
       if (jsonrpc_interface.indexOf("http") == 0) {
         jsonrpc_protocol = "http";
         $.jsonRPC.setup({endPoint: jsonrpc_interface, namespace: 'aria2'});
@@ -438,7 +444,7 @@ if (typeof ARIA2=="undefined"||!ARIA2) var ARIA2=(function(){
           result.progress = 0;
         else
           result.progress = (result.completedLength * 1.0 / result.totalLength * 100).toFixed(2);
-        result.etc = (result.totalLength - result.completedLength)/result.downloadSpeed;
+        result.eta = (result.totalLength - result.completedLength)/result.downloadSpeed;
 
         result.downloadSpeed = parseInt(result.downloadSpeed);
         result.uploadSpeed = parseInt(result.uploadSpeed);
@@ -689,7 +695,7 @@ if (typeof ARIA2=="undefined"||!ARIA2) var ARIA2=(function(){
           result = result.result;
           for (var i=0; i<result.files.length; i++) {
             var file = result.files[i];
-            file.title = file.path.replace(new RegExp("^"+result.dir+"/?"), "");
+            file.title = file.path.replace(new RegExp("^"+result.dir.replace(/\\/g, "[\\/]")+"/?"), "");
             file.selected = file.selected == "true" ? true : false;
           };
           $("#ib-status").empty().append(YAAW.tpl.ib_status(result));

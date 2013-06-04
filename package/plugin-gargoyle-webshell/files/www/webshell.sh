@@ -12,12 +12,12 @@
 
 <fieldset id="webshell">
 	<legend class="sectionheader">Webshell</legend>
-	<label class='leftcolumn' for='cmd' id='cmd_label'>命令:</label>
+	<label class='leftcolumn' for='cmd' id='cmd_label'>Command:</label>
 	<span class="rightcolumn">
 		<input id="cmd" class="rightcolumn" type="text" size='80'/>
-		<input type='button' class='default_button' id='cmd_button' value='执行' onclick='runCmd()' />
+		<input type='button' class='default_button' id='cmd_button' value='Execute' onclick='runCmd()' />
 	</span>
-	<span class="nocolumn"><em>请不要执行任何交互的或未结束的命令！</em></span>
+	<span class="nocolumn"><em>Do not execute any interactive or endless command!</em></span>
 	<textarea style="width:100%" rows=30 id='output'></textarea>
 </fieldset>
 

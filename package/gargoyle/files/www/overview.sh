@@ -1,6 +1,6 @@
 #!/usr/bin/haserl
 <?
-	# This program is copyright © 2008-2011 Eric Bishop and is distributed under the terms of the GNU GPL
+	# This program is copyright © 2008-2013 Eric Bishop and is distributed under the terms of the GNU GPL
 	# version 2.0 with a special clarification/exception that permits adapting the program to
 	# configure proprietary "back end" software provided that all modifications to the web interface
 	# itself remain covered by the GPL.
@@ -13,9 +13,7 @@
 <script>
 <!--
 <?
-
-	uptime=$(cat /proc/uptime)
-	echo "uptime = \"$uptime\";"
+	echo "var uptime=\"$(cat /proc/uptime)\";"
 
 	if [ -h /etc/rc.d/S50qos_gargoyle ] ; then
 		echo "var qosEnabled = true;"
@@ -24,7 +22,7 @@
 	fi
 
 	gargoyle_version=$(cat data/gargoyle_version.txt)
-	echo "var gargoyleVersion=\"$gargoyle_version\""
+	echo "var gargoyleVersion=\"$gargoyle_version\";"
 
 	dateformat=$(uci get gargoyle.global.dateformat 2>/dev/null)
 	if [ "$dateformat" == "iso" ]; then
@@ -44,7 +42,7 @@
 	if [ -n "$timezone_is_utc" ] ; then
 		current_time=$(echo $current_time | sed "s/UTC/UTC-$timezone_is_utc/g" | sed 's/\-\-/+/g')
 	fi
-	echo "var currentTime = \"$current_time\";"
+	echo "var currentTime=\"$current_time\";"
 
 	total_mem="$(sed -e '/^MemTotal: /!d; s#MemTotal: *##; s# kB##g' /proc/meminfo)"
 	buffers_mem="$(sed -e '/^Buffers: /!d; s#Buffers: *##; s# kB##g' /proc/meminfo)"
@@ -88,85 +86,90 @@
 	echo "var ports = new Array();"
 	/usr/lib/gargoyle/switchinfo.sh
 
+	if [ -e /var/run/pppoe-wan.pid ]; then
+		deltatime=$((`date -r /var/run/crond.pid +%s`-`date -r /var/run/pppoe-wan.pid +%s`))
+		[ $deltatime -lt 60 ] && deltatime=0 || let deltatime-=30
+		echo "var pppoeUptime=\""$((`date +%s`-`date -r /var/run/pppoe-wan.pid +%s`-$deltatime))"\";"
+	fi
+
 	echo "var wifi_status = new Array();"
-	iwconfig 2>&1 | grep -v 'wireless' | sed '/^$/d' | awk -F'\n' '{print "wifi_status.push(\""$0"\");" }'
+	iwconfig 2>&1 | grep -v 'wireless' | sed '/^$/d;s/"//g' | awk -F'\n' '{print "wifi_status.push(\""$0"\");" }'
 ?>
 //-->
 </script>
 
 <fieldset>
-	<legend class="sectionheader">状态</legend>
+	<legend class="sectionheader">Status</legend>
 
 	<div id="device_container">
 		<div>
-			<span class='leftcolumn'>设备名称:</span><span id="device_name" class='rightcolumn'></span>
+			<span class='leftcolumn'>Device Name:</span><span id="device_name" class='rightcolumn'></span>
 		</div>
 		<div>
-			<span class='leftcolumn'>石像鬼版本:</span><span id="gargoyle_version" class='rightcolumn'></span>
+			<span class='leftcolumn'>Gargoyle Version:</span><span id="gargoyle_version" class='rightcolumn'></span>
 		</div>
 		<div>
-			<span class='leftcolumn'>型号:</span><span id="device_model" class='rightcolumn'></span>
+			<span class='leftcolumn'>Model:</span><span id="device_model" class='rightcolumn'></span>
 		</div>
 		<div>
-			<span class='leftcolumn'>设备配置:</span><span id="device_config" class='rightcolumn'></span>
+			<span class='leftcolumn'>Device Configuration:</span><span id="device_config" class='rightcolumn'></span>
 		</div>
 		<div>
-			<span class='leftcolumn'>内存使用率:</span><span id="memory" class='rightcolumn'></span>
+			<span class='leftcolumn'>Memory Usage:</span><span id="memory" class='rightcolumn'></span>
 		</div>
 		<div id="swap_container">
-			<span class='leftcolumn'>交换内存使用率:</span><span id="swap" class='rightcolumn'></span>
-		</div>
-
-		<div>
-			<span class='leftcolumn'>连接数:</span><span id="connections" class='rightcolumn'></span>
+			<span class='leftcolumn'>Swap Memory Usage:</span><span id="swap" class='rightcolumn'></span>
 		</div>
 		<div>
- 			<span class='leftcolumn'>CPU平均负载:</span><span id="load_avg" class='rightcolumn'></span><span>&nbsp;&nbsp;(1/5/15 分钟)</span>
+			<span class='leftcolumn'>Connections:</span><span id="connections" class='rightcolumn'></span>
+		</div>
+		<div>
+			<span class='leftcolumn'>CPU Load Averages:</span><span id="load_avg" class='rightcolumn'></span><span>&nbsp;&nbsp;(1/5/15 minutes)</span>
 		</div>
 		<div class="internal_divider"></div>
 	</div>
 
 	<div id="time_container">
 		<div>
-			<span class='leftcolumn'>运行时间:</span><span id="uptime" class='rightcolumn'></span>
+			<span class='leftcolumn'>Uptime:</span><span id="uptime" class='rightcolumn'></span>
 		</div>
 		<div>
-			<span class='leftcolumn'>当前日期 &amp; 时间:</span><span id="current_time" class='rightcolumn'></span>
+			<span class='leftcolumn'>Current Date &amp; Time:</span><span id="current_time" class='rightcolumn'></span>
 		</div>
 		<div class="internal_divider"></div>
 	</div>
 
 	<div id="bridge_container">
 		<div>
-			<span class='leftcolumn'>网桥 IP地址:</span><span id="bridge_ip" class='rightcolumn'></span>
+			<span class='leftcolumn'>Bridge IP Address:</span><span id="bridge_ip" class='rightcolumn'></span>
 		</div>
 		<div>
-			<span class='leftcolumn'>网桥 子网掩码:</span><span id="bridge_mask" class='rightcolumn'></span>
+			<span class='leftcolumn'>Bridge Netmask:</span><span id="bridge_mask" class='rightcolumn'></span>
 		</div>
 		<div>
-			<span class='leftcolumn'>网桥 MAC地址:</span><span id="bridge_mac" class='rightcolumn'></span>
+			<span class='leftcolumn'>Bridge MAC Address:</span><span id="bridge_mac" class='rightcolumn'></span>
 		</div>
 		<div>
-			<span class='leftcolumn'>LAN 网关IP:</span><span id="bridge_gateway" class='rightcolumn'></span>
+			<span class='leftcolumn'>LAN Gateway IP:</span><span id="bridge_gateway" class='rightcolumn'></span>
 		</div>
 		<div>
-			<span class='leftcolumn'>网桥 连接方式:</span><span id="bridge_mode" class='rightcolumn'></span>
+			<span class='leftcolumn'>Connected Via:</span><span id="bridge_mode" class='rightcolumn'></span>
 		</div>
 		<div>
-			<span class='leftcolumn'>网桥 SSID:</span><span id="bridge_ssid" class='rightcolumn'></span>
+			<span class='leftcolumn'>Bridge SSID:</span><span id="bridge_ssid" class='rightcolumn'></span>
 		</div>
 		<div class="internal_divider"></div>
 	</div>
 
 	<div id="lan_container">
 		<div>
-			<span class='leftcolumn'>LAN IP地址:</span><span id="lan_ip" class='rightcolumn'></span>
+			<span class='leftcolumn'>LAN IP Address:</span><span id="lan_ip" class='rightcolumn'></span>
 		</div>
 		<div>
-			<span class='leftcolumn'>LAN 子网掩码:</span><span id="lan_mask" class='rightcolumn'></span>
+			<span class='leftcolumn'>LAN Netmask:</span><span id="lan_mask" class='rightcolumn'></span>
 		</div>
 		<div>
-			<span class='leftcolumn'>LAN MAC地址:</span><span id="lan_mac" class='rightcolumn'></span>
+			<span class='leftcolumn'>LAN MAC Address:</span><span id="lan_mac" class='rightcolumn'></span>
 		</div>
 		<div>
 			<span class="rightcolumnonly"><div id="ports_table_container"></div></span>
@@ -176,25 +179,30 @@
 
 	<div id="wan_container">
 		<div>
-			<span class='leftcolumn'>WAN IP地址:</span><span id="wan_ip" class='rightcolumn'></span>
+			<span class='leftcolumn'>WAN IP Address:</span><span id="wan_ip" class='rightcolumn'></span>
 		</div>
 		<div>
-			<span class='leftcolumn'>WAN 子网掩码:</span><span id="wan_mask" class='rightcolumn'></span>
+			<span class='leftcolumn'>WAN Netmask:</span><span id="wan_mask" class='rightcolumn'></span>
 		</div>
 		<div>
-			<span class='leftcolumn'>WAN MAC地址:</span><span id="wan_mac" class='rightcolumn'></span>
+			<span class='leftcolumn'>WAN MAC Address:</span><span id="wan_mac" class='rightcolumn'></span>
 		</div>
 		<div>
-			<span class='leftcolumn'>WAN 网关IP:</span><span id="wan_gateway" class='rightcolumn'></span>
+			<span class='leftcolumn'>WAN Gateway IP:</span><span id="wan_gateway" class='rightcolumn'></span>
 		</div>
 		<div id="wan_dns_container">
-			<span class='leftcolumn'>WAN DNS服务器:</span><span id="wan_dns" class='rightcolumn'></span>
+			<span class='leftcolumn'>WAN DNS Server(s):</span><span id="wan_dns" class='rightcolumn'></span>
+		</div>
+		<div id="wan_pppoe_container">
+			<span class='leftcolumn'>WAN (PPPoE) Uptime:</span><span id="wan_pppoe_uptime" class='rightcolumn'></span>
 		</div>
 		<div id="wan_3g_container">
-			<span class='leftcolumn'>信号强度:</span><span id="wan_3g" class='rightcolumn'>
+			<span class='leftcolumn'>WAN (3G) Signal Strength:</span><span id="wan_3g" class='rightcolumn'>
 <?
 	if [ -e /tmp/strength.txt ]; then
 		awk -F[,\ ] '/^\+CSQ:/ {if ($2>31) {C=0} else {C=$2}} END {if (C==0) {printf "(no data)"} else {printf "%d%%, %ddBm\n", C*100/31, C*2-113}}' /tmp/strength.txt
+	else
+		echo "(no data)"
 	fi
 ?>
 			</span>
@@ -204,29 +212,29 @@
 
 	<div id="wifi_container">
 		<div>
-			<span class='leftcolumn'>无线 模式:</span><span id="wireless_mode" class='rightcolumn'></span>
+			<span class='leftcolumn'>Wireless Mode:</span><span id="wireless_mode" class='rightcolumn'></span>
 		</div>
 		<div id="wireless_mac_div">
-			<span class='leftcolumn'>无线 MAC地址:</span><span id="wireless_mac" class='rightcolumn'></span>
+			<span class='leftcolumn'>Wireless MAC Address:</span><span id="wireless_mac" class='rightcolumn'></span>
 		</div>
 		<div id="wireless_apssid_div">
-			<span class='leftcolumn' id="wireless_apssid_label">接入点 SSID:</span><span id="wireless_apssid" class='rightcolumn'></span>
+			<span class='leftcolumn' id="wireless_apssid_label">Access Point SSID:</span><span id="wireless_apssid" class='rightcolumn'></span>
 		</div>
 		<div id="wireless_apssid_5ghz_div">
-			<span class='leftcolumn' id="wireless_apssid_5ghz_label">5GHz 接入点 SSID:</span><span id="wireless_apssid_5ghz" class='rightcolumn'></span>
+			<span class='leftcolumn' id="wireless_apssid_5ghz_label">5GHz Access Point SSID:</span><span id="wireless_apssid_5ghz" class='rightcolumn'></span>
 		</div>
 		<div id="wireless_otherssid_div">
-			<span class='leftcolumn' id="wireless_otherssid_label">SSID 客户端加入:</span><span id="wireless_otherssid" class='rightcolumn'></span>
+			<span class='leftcolumn' id="wireless_otherssid_label">SSID Joined By Client:</span><span id="wireless_otherssid" class='rightcolumn'></span>
 		</div>
 		<div class="internal_divider"></div>
 	</div>
 
 	<div id="services_container">
 		<div>
-			<span class='leftcolumn'>QoS 上传:</span><span id="qos_upload" class='rightcolumn'></span>
+			<span class='leftcolumn'>QoS Upload:</span><span id="qos_upload" class='rightcolumn'></span>
 		</div>
 		<div>
-			<span class='leftcolumn'>QoS 下载:</span><span id="qos_download" class='rightcolumn'></span>
+			<span class='leftcolumn'>QoS Download:</span><span id="qos_download" class='rightcolumn'></span>
 		</div>
 	</div>
 

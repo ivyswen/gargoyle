@@ -9,32 +9,32 @@
 	gargoyle_header_footer -m -c "internal.css" -j "qos.js"
 ?>
 <fieldset id="edit_container">
-	<legend class="sectionheader">编辑QoS分类规则</legend>
+	<legend class="sectionheader">Edit QoS Classification Rule</legend>
 	<div>
 		<div class='leftcolumn'>
 			<input type='checkbox'  id='use_source_ip' onclick='enableAssociatedField(this,"source_ip", "")' />
-			<label id="source_ip_label" for='source_ip'>来源 IP:</label>
+			<label id="source_ip_label" for='source_ip'>Source IP:</label>
 		</div>
 		<input class='rightcolumn' type='text' id='source_ip' onkeyup='proofreadIpRange(this)' size='17' maxlength='31' />
 	</div>
 	<div>
 		<div class='leftcolumn'>
 			<input type='checkbox'  id='use_source_port' onclick='enableAssociatedField(this,"source_port", "")'/>
-			<label id="source_port_label" for='source_port'>来源端口(范围):</label>
+			<label id="source_port_label" for='source_port'>Source Port(s):</label>
 		</div>
 		<input class='rightcolumn' type='text' id='source_port' onkeyup='proofreadPortOrPortRange(this)' size='17' maxlength='11' />
 	</div>
 	<div>
 		<div class='leftcolumn'>
 			<input type='checkbox'  id='use_dest_ip' onclick='enableAssociatedField(this,"dest_ip", "")' />
-			<label id="dest_ip_label" for='dest_ip'>目标 IP:</label>
+			<label id="dest_ip_label" for='dest_ip'>Destination IP:</label>
 		</div>
 		<input class='rightcolumn' type='text' id='dest_ip' onkeyup='proofreadIpRange(this)' size='17' maxlength='31' />
 	</div>
 	<div>
 		<div class='leftcolumn'>
 			<input type='checkbox'  id='use_dest_port' onclick='enableAssociatedField(this,"dest_port", "")'  />
-			<label id="dest_port_label" for='dest_port'>目标端口(范围):</label>
+			<label id="dest_port_label" for='dest_port'>Destination Port(s):</label>
 		</div>
 		<input class='rightcolumn' type='text' id='dest_port' onkeyup='proofreadPortOrPortRange(this)' size='17' maxlength='11' />
 	</div>
@@ -42,7 +42,7 @@
 	<div>
 		<div class='leftcolumn'>
 			<input type='checkbox'  id='use_max_pktsize' onclick='enableAssociatedField(this,"max_pktsize", "")'  />
-			<label id="max_pktsize_label" for='max_pktsize'>最大包长:</label>
+			<label id="max_pktsize_label" for='max_pktsize'>Maximum Packet Length:</label>
 		</div>
 		<input class='rightcolumn' type='text' id='max_pktsize' onkeyup='proofreadNumericRange(this,1,1500)' size='17' maxlength='4' />
 		<em>bytes</em>
@@ -50,7 +50,7 @@
 	<div>
 		<div class='leftcolumn'>
 			<input type='checkbox'  id='use_min_pktsize' onclick='enableAssociatedField(this,"min_pktsize", "")'  />
-			<label id="min_pktsize_label" for='min_pktsize'>最小包长:</label>
+			<label id="min_pktsize_label" for='min_pktsize'>Minimum Packet Length:</label>
 		</div>
 		<input class='rightcolumn' type='text' id='min_pktsize' onkeyup='proofreadNumericRange(this,1,1500)' size='17' maxlength='4' />
 		<em>bytes</em>
@@ -71,7 +71,7 @@
 	<div>
 		<div class='leftcolumn'>
 			<input type='checkbox'  id='use_connbytes_kb' onclick='enableAssociatedField(this,"connbytes_kb", "")'  />
-			<label id="connbytes_kb_label" for='connbytes_kb'>连接字节:</label>
+			<label id="connbytes_kb_label" for='connbytes_kb'>Connection bytes reach:</label>
 		</div>
 		<input class='rightcolumn' type='text' id='connbytes_kb' onkeyup='proofreadNumeric(this)' size='17' maxlength='28' />
 		<em>kBytes</em>
@@ -79,7 +79,7 @@
 	<div>
 		<div class='leftcolumn'>
 			<input type='checkbox'  id='use_app_protocol' onclick='enableAssociatedField(this,"app_protocol", "")' />
-			<label id="app_protocol_label" for='app_protocol'>应用程序(Layer7)协议:</label>
+			<label id="app_protocol_label" for='app_protocol'>Application (Layer7) Protocol:</label>
 		</div>
 		<select class='rightcolumn' id="app_protocol">
 		<?

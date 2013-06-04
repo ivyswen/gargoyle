@@ -21,11 +21,12 @@
   <head>
     <meta charset=utf-8 />
     <title>Yet Another Aria2 Web Frontend</title>
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, width=device-width">
     <meta name="author" content="Binux" />
     
-    <link href="css/main.css" rel="stylesheet" />
     <link href="css/bootstrap.min.css" rel="stylesheet" />
     <link href="css/bootstrap-responsive.min.css" rel="stylesheet" />
+    <link href="css/main.css" rel="stylesheet" />
     <!--[if lt IE 9]>
       <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
@@ -41,7 +42,7 @@
         </div>
       </header>
 
-      <div class="clearfix" id="main-control">
+      <div class="clearfix hide" id="main-control">
         <div id="main-alert" class="hide">
           <div id="main-alert-inline" class="alert">
             <a href="###" onclick="$('#main-alert').hide();" class="close">×</a>
@@ -50,7 +51,7 @@
         </div>
 
         <div class="pull-left">
-          <div class="btn-group btn-inline" id="select-btn">
+          <div class="btn-group" id="select-btn">
             <button id="select-all-btn" class="btn" rel="tooltip" title="Select All">
               <i class="select-box"></i>
             </button>
@@ -67,12 +68,12 @@
         </div>
 
         <div class="pull-left" id="not-selected-grp">
-          <div class="btn-group btn-inline">
+          <div class="pull-left btn-group">
             <a class="btn" id="add-task-btn" data-toggle="modal" href="#add-task-modal" rel="tooltip" title="Add Task">
               <i class="icon-plus"></i> Add
             </a>
           </div>
-          <div class="btn-group btn-inline" id="do-all-btn">
+          <div class="pull-left btn-group" id="do-all-btn">
             <a href="###" onclick="ARIA2.unpause_all();" class="btn" id="unpause-all" rel="tooltip" title="Start All">
               <i class="icon-forward"></i>
             </a>
@@ -86,7 +87,7 @@
         </div>
 
         <div class="pull-left hide" id="selected-grp">
-          <div class="btn-group btn-inline">
+          <div class="btn-group">
             <a href="###" onclick="YAAW.tasks.unpause();YAAW.tasks.unSelectAll();" class="btn" rel="tooltip" title="Start">
               <i class="icon-play"></i>
             </a>
@@ -103,7 +104,7 @@
         </div>
 
         <div class="pull-right" id="other-grp">
-          <div class="btn-group btn-inline">
+          <div class="btn-group">
             <a href="#" class="btn" id="refresh-btn" rel="tooltip" title="Refresh">
               <i class="icon-refresh"></i> Refresh
             </a>
@@ -166,11 +167,11 @@
       </div>
       <form id="add-task-uri" onsubmit="YAAW.add_task.submit(this);return false;">
         <div class="input-append">
-          <input type="text" name="uri" id="uri-input" class="input-clear" placeholder="HTTP, FTP or Magnet" /><span><input type="file" id="torrent-up-input" /><a id="torrent-up-btn" class="btn" rel="tooltip" title="File API is Not Supported.">Upload Torrent</a></span>
+          <input type="text" name="uri" id="uri-input" class="input-clear" placeholder="HTTP, FTP or Magnet" /><span><a id="torrent-up-btn" class="btn">Upload Torrent<input type="file" id="torrent-up-input" /></a></span>
         </div>
         <textarea id="uri-textarea" rows=5 class="input-clear hide" placeholder="HTTP, FTP or Magnet"></textarea>
       </form>
-      <div id="uri-more">▚▞</div>
+      <div id="uri-more"><span class="or-and">&or;&or;&or;&or;&or;&or;</span><span class="or-and" style="display:none;">&and;&and;&and;&and;&and;&and;</span></div>
       <div id="add-task-option-wrap"></div>
     </div>
     <div class="modal-footer">
@@ -187,26 +188,28 @@
     <div class="modal-body">
       <form id="setting-form" class="form-horizontal" onsubmit="YAAW.setting.submit();return false;">
         <fieldset>
-          <div class="control-group">
+          <div class="control-group rpc-path-group">
             <label class="control-label" for="rpc-path">JSON-RPC Path</label>
             <div class="controls">
-              <input type="text" class="input-xlarge" id="rpc-path">
+              <div class="input-append btn-group rpc-path-wrap">
+                <input type="text" class="input-xlarge" id="rpc-path"><a class="add-on btn dropdown-toggle" href="#" disabled><b class="caret"></b></a>
+              </div>
             </div>
           </div>
           <div class="control-group">
             <label class="control-label">Auto Refresh</label>
             <div class="controls">
               <label class="radio inline">
-                <input type="radio" name="refresh_interval" value="5000"> 5s
+                <input type="radio" name="refresh_interval" value="1000"> 1s
               </label>
               <label class="radio inline">
-                <input type="radio" name="refresh_interval" value="10000" checked> 10s
+                <input type="radio" name="refresh_interval" value="5000" checked> 5s
               </label>
               <label class="radio inline">
-                <input type="radio" name="refresh_interval" value="30000"> 30s
+                <input type="radio" name="refresh_interval" value="10000"> 10s
               </label>
               <label class="radio inline">
-                <input type="radio" name="refresh_interval" value="300000"> 5min
+                <input type="radio" name="refresh_interval" value="60000"> 1min
               </label>
               <label class="radio inline">
                 <input type="radio" name="refresh_interval" value="0"> off 
@@ -243,11 +246,11 @@
             <span class="task-status" rel="tooltip" title="{{status}} {{#_v.error_msg}}{{errorCode}}{{/_v.error_msg}}"><i class="{{#_v.status_icon}}{{status}}{{/_v.status_icon}}"></i></span>
             <span>{{#_v.format_size}}{{completedLength}}{{/_v.format_size}} / {{#_v.format_size}}{{totalLength}}{{/_v.format_size}}</span>
             {{#uploadLength}}<span>(uploaded {{#_v.format_size}}{{uploadLength}}{{/_v.format_size}})</span>{{/uploadLength}}
-            {{#etc}}<span>ETC: {{#_v.format_time}}{{etc}}{{/_v.format_time}}</span>{{/etc}}
+            {{#eta}}<span>ETA: {{#_v.format_time}}{{eta}}{{/_v.format_time}}</span>{{/eta}}
           </div>
         </div>
         <div class="right-area">
-          <div class="progress progress-striped active">
+          <div class="progress">
             <div class="bar" style="width: {{progress}}%">{{progress}}%</div>
           </div>
           <div class="progress-info">
@@ -283,9 +286,12 @@
             <span>{{#_v.format_size}}{{totalLength}}{{/_v.format_size}}</span>
             {{#uploadLength}}<span>(up {{#_v.format_size}}{{uploadLength}}{{/_v.format_size}}){{/uploadLength}}
           </div>
-          <div class="progress progress-striped pull-right">
-            <div class="bar" style="width: {{progress}}%">{{progress}}%</div>
+          <div class="pull-right">
+            <div class="progress">
+              <div class="bar" style="width: {{progress}}%">{{progress}}%</div>
+            </div>
           </div>
+          <div class="clearfix"></div>
         </div>
       </li>
       {{/tasks}}
@@ -322,12 +328,12 @@
     </script>
 
     <script id="ib-files-tpl" type="text/mustache-template">
-      <div id="ib-file-btn">
-        <button id="ib-file-save" class="btn btn-primary">Save</button>
-        <button id="ib-file-select" class="btn">Select All</button>
-        <button id="ib-file-unselect" class="btn">Unselect All</button>
-      </div>
       <ul>
+        <li id="ib-file-btn">
+          <button id="ib-file-save" class="btn btn-primary">Save</button>
+          <button id="ib-file-select" class="btn">Select All</button>
+          <button id="ib-file-unselect" class="btn">Unselect All</button>
+        </li>
         {{#files}}
         <li>
           <i class="select-box{{#selected}} icon-ok{{/selected}}" data-index="{{index}}"></i>
@@ -339,11 +345,11 @@
     </script>
 
     <script id="ib-options-tpl" type="text/mustache-template">
-      <div id="ib-options-btn">
-        <button id="ib-options-save" class="btn btn-primary">Save</button>
-      </div>
       <form id="ib-options-form" class="form-horizontal" onsubmit="false">
       <ul>
+        <li id="ib-options-btn">
+          <button id="ib-options-save" class="btn btn-primary">Save</button>
+        </li>
         <li><span>Download Limit:</span><input name="max-download-limit" class="active-allowed" value="{{max-download-limit}}" /></li>
         <li><span>Upload Limit:</span><input name="max-upload-limit" class="active-allowed" value="{{max-upload-limit}}" /></li>
         <li><span>Split:</span><input name="split" value="{{split}}" /></li>

@@ -28,27 +28,27 @@ var currentTime;
 </script>
 
 <fieldset>
-	<legend>刷新频率</legend>
+	<legend>Refresh Rate</legend>
 	<select id="refresh_rate">
-		<option value="2000">2 秒</option>
-		<option value="10000">10 秒</option>
-		<option value="30000">30 秒</option>
-		<option value="60000">60 秒</option>
-		<option value="never">不刷新</option>
+		<option value="2000">2 Seconds</option>
+		<option value="10000">10 Seconds</option>
+		<option value="30000">30 Seconds</option>
+		<option value="60000">60 Seconds</option>
+		<option value="never">Never</option>
 	</select>
 	<br/>
-	<p><em>指定当前页面自动刷新频率</em></p>
+	<p><em>This specifies how frequently data on this page is reloaded</em></p>
 </fieldset>
 <fieldset id="dhcp_data">
-	<legend class="sectionHeader">当前的DHCP租约</legend>
+	<legend class="sectionHeader">Current DHCP Leases</legend>
 	<div id="lease_table_container"></div>
 </fieldset>
 <fieldset id="wifi_data">
-	<legend class="sectionheader">已连接的无线主机</legend>
+	<legend class="sectionheader">Connected Wireless Hosts</legend>
 	<div id="wifi_table_container"></div>
 </fieldset>
 <fieldset id="active_data">
-	<legend class="sectionheader">活动连接主机</legend>
+	<legend class="sectionheader">Hosts With Active Connections</legend>
 	<div id="active_table_container"></div>
 </fieldset>
 

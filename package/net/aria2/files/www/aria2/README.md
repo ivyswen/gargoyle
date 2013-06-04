@@ -10,7 +10,7 @@ No HTTP server, backend or server-side program. All you need is just a browser.
 Usage
 -----
 1. Run aria2 with RPC enabled
-> aria2c --enable-rpc --rpc-listen-all=true --rpc-allow-origin-all -c -D
+> aria2c --enable-rpc --rpc-listen-all=true --rpc-allow-origin-all
 >
 > Warning: This options will not verify the identity of caller. KEEP THE ADDRESS SECRET.
 
@@ -21,7 +21,7 @@ Usage
 Tips
 ----
 * All your settings on web is temporary. **Settings will be lost after aria2 restarted.**
-* Tasks(including which is not finished) will be lost after aria2 restarted. Using `--save-session=SOME/WHERE` and reload with `--continue=ture --input-file=SOME/WHERE` to continue.
+* Tasks(including which is not finished) will be lost after aria2 restarted. Using `--save-session=SOME/WHERE` and reload with `--continue=true --input-file=SOME/WHERE` to continue.
 * Using `$HOME/.aria2/aria2.conf` to save your options.
 * For more infomations about aria2, visit [Aria2 Manual](http://aria2.sourceforge.net/manual/en/html/)
 

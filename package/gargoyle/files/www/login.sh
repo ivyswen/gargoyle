@@ -81,7 +81,7 @@ var passInvalid = false;
 </script>
 
 <fieldset>
-	<legend class="sectionheader">登录</legend>
+	<legend class="sectionheader">Login</legend>
 	<span class="leftcolumn" >
 		<p>
 			<strong>
@@ -91,24 +91,24 @@ var passInvalid = false;
 	</span>
 
 	<div>
-		<label class="leftcolumn" for='password' id='password_label'>输入管理员密码:</label>
+		<label class="leftcolumn" for='password' id='password_label'>Enter Admin Password:</label>
 		<input class="rightcolumn" type='password' onkeyup='proofreadLengthRange(this,1,999)' onkeydown='checkKey(event)' id='password' size='25' />
 	</div>
 	<div>
-		<span class="leftcolumn"><input class="default_button" type="button" value="登录" onclick="doLogin()" /></span>
+		<span class="leftcolumn"><input class="default_button" type="button" value="Login" onclick="doLogin()" /></span>
 	</div>
 
 </fieldset>
 <fieldset id="local_quotas" style="display:none">
-	<legend class="sectionheader">您的配额</legend>
+	<legend class="sectionheader">Your Quota</legend>
 </fieldset>
 
 <fieldset id="global_quotas" style="display:none">
-	<legend class="sectionheader">全部流量配额</legend>
+	<legend class="sectionheader">Entire Network Quota</legend>
 </fieldset>
 
 <fieldset id="current_time" style="display:block">
-	<legend class="sectionheader">当前日期 & 时间</legend>
+	<legend class="sectionheader">Current Date & Time</legend>
 	<div class="nocolumn" id="current_time_date"></div>
 </fieldset>
 

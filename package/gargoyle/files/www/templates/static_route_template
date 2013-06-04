@@ -1,14 +1,14 @@
 				<table>
 					<tr class='table_row_add_header'>
-						<th><label id='add_dest_label' for='add_host'>目标地址/掩码</label></th>
-						<th><label id='add_iface_label' for='add_mac'>网络</label></th>
-						<th><label id='add_gateway_label' for='add_ip'>网关</label></th>
+						<th><label id='add_dest_label' for='add_host'>Destination/Mask</label></th>
+						<th><label id='add_iface_label' for='add_mac'>Network</label></th>
+						<th><label id='add_gateway_label' for='add_ip'>Gateway</label></th>
 						<th></th>
 					</tr>
 					<tr class='table_row_add'>
 						<td><input type='text' id='add_dest' size='26' onkeyup='proofreadRouteIp(this)' maxLength='35'/></td>
 						<td><select id='add_iface'><option value="wan">WAN</option><option value="lan">LAN</option></select></td>
 						<td><input type='text' id='add_gateway' size='20' onkeyup='proofreadGatewayIp(this)' maxLength='15'/></td>
-						<td><input type='button' id='add_button' value="添加" class='default_button' onclick='addStaticRoute()'/></td>
-					</tr>	
+						<td><input type='button' id='add_button' value="Add" class='default_button' onclick='addStaticRoute()'/></td>
+					</tr>
 				</table>

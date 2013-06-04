@@ -1,5 +1,5 @@
 while [ 1 ] ; do
-        if [ $(ps -ef | grep "/etc/wallproxy/startup.py" | grep -v "grep" | wc -l) -eq 1 ];
+        if [ $(ps | grep "/etc/wallproxy/startup.py" | grep -v "grep" | wc -l) -eq 1 ];
         then
                 sleep 3s
         else

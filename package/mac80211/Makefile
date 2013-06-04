@@ -26,7 +26,7 @@ PKG_DRIVERS = \
 	rtl8180 rtl8187 zd1211rw mac80211-hwsim carl9170 b43 b43legacy \
 	ath9k-common ath9k ath9k-htc ath net-libipw net-ipw2100 net-ipw2200 \
 	mwl8k net-hermes net-hermes-pci net-hermes-plx net-hermes-pcmcia \
-	iwl-legacy iwl3945 iwl4965 iwlagn wl12xx lib80211
+	iwl-legacy iwl3945 iwl4965 iwlagn wl12xx lib80211 r92su
 
 PKG_CONFIG_DEPENDS:= \
 	CONFIG_PACKAGE_kmod-mac80211 \
@@ -193,6 +193,33 @@ define KernelPackage/p54-spi
   FILES:=$(PKG_BUILD_DIR)/drivers/net/wireless/p54/p54spi.ko
   AUTOLOAD:=$(call AutoLoad,31,p54spi)
 endef
+
+define KernelPackage/r92su/config
+	menu "Configuration"
+		depends on PACKAGE_kmod-r92su
+
+	config R92SU_DEBUGFS
+		bool "R92SU Debugfs Support"
+		help
+		 Export several driver and device internals to user space.
+
+	endmenu
+endef
+
+define KernelPackage/r92su
+  $(call KernelPackage/mac80211/Default)
+  TITLE:=Realtek RTL8192SU USB driver
+  DEPENDS+= @USB_SUPPORT +kmod-mac80211
+  FILES:=$(PKG_BUILD_DIR)/drivers/net/wireless/r92su/r92su.ko
+  AUTOLOAD:=$(call AutoLoad,26,r92su)
+  MENU:=1
+endef
+
+define KernelPackage/r92su/install
+	$(INSTALL_DIR) $(1)/lib/firmware/rtlwifi
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/$(PKG_LINUX_FIRMWARE_SUBDIR)/rtlwifi/rtl8712u.bin $(1)/lib/firmware/rtlwifi
+endef
+
 
 NEED_RT2X00_LIB_CRYPTO:=y
 NEED_RT2X00_LIB_FIRMWARE:=y
@@ -1227,6 +1254,8 @@ MAKE_OPTS:= \
 	CONFIG_P54_USB=$(if $(CONFIG_PACKAGE_kmod-p54-usb),m) \
 	CONFIG_P54_SPI=$(if $(CONFIG_PACKAGE_kmod-p54-spi),m) \
 	CONFIG_P54_SPI_DEFAULT_EEPROM=n \
+	CONFIG_R92SU=$(if $(CONFIG_PACKAGE_kmod-r92su),m) \
+	CONFIG_R92SU_DEBUGFS=$(if $(CONFIG_PACKAGE_R92SU_DEBUGFS),n) \
 	CONFIG_RT2X00=$(if $(CONFIG_PACKAGE_kmod-rt2x00-lib),m) \
 	CONFIG_RT2X00_LIB=$(if $(CONFIG_PACKAGE_kmod-rt2x00-lib),m) \
 	CONFIG_RT2X00_LIB_PCI=$(if $(CONFIG_PACKAGE_kmod-rt2x00-pci),m) \
@@ -1591,6 +1620,7 @@ $(eval $(call KernelPackage,p54-common))
 $(eval $(call KernelPackage,p54-pci))
 $(eval $(call KernelPackage,p54-usb))
 $(eval $(call KernelPackage,p54-spi))
+$(eval $(call KernelPackage,r92su))
 $(eval $(call KernelPackage,rt2x00-lib))
 $(eval $(call KernelPackage,rt2x00-pci))
 $(eval $(call KernelPackage,rt2x00-usb))

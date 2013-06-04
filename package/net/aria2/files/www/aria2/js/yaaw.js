@@ -24,6 +24,8 @@ var YAAW = (function() {
   var torrent_file = null, file_type = null;
   return {
     init: function() {
+      $('#main-control').show();
+
       this.tpl.init();
       this.setting.init();
       this.contextmenu.init();
@@ -66,7 +68,7 @@ var YAAW = (function() {
       $("#uri-more").click(function() {
         $("#add-task-uri .input-append").toggle();
         $("#uri-textarea").toggle();
-        $("#uri-more").text($("#uri-more").text().split("").reverse().join(""));
+        $("#uri-more .or-and").toggle();
         $("#uri-input").val("");
         $("#uri-textarea").val("");
         $("#ati-out").parents(".control-group").val("").toggle();
@@ -161,7 +163,7 @@ var YAAW = (function() {
         }
       } else {
         $("#torrent-up-input").remove();
-        $("#torrent-up-btn").addClass("disabled");
+        $("#torrent-up-btn").addClass("disabled").tooltip({title: "File API is Not Supported."});
       }
 
       if (window.applicationCache) {
@@ -553,9 +555,11 @@ var YAAW = (function() {
           }
           return false;
         }).live("mouseout", function(ev) {
-          if ($.contains(this, ev.toElement) ||
-            $("#task-contextmenu").get(0) == ev.toElement ||
-            $.contains($("#task-contextmenu").get(0), ev.toElement)) {
+          // toElement is not available in Firefox, use relatedTarget instead.
+          var enteredElement = ev.toElement || ev.relatedTarget;
+          if ($.contains(this, enteredElement) ||
+            $("#task-contextmenu").get(0) == enteredElement ||
+            $.contains($("#task-contextmenu").get(0), enteredElement)) {
             return;
           }
           on_gid = null;
@@ -624,8 +628,20 @@ var YAAW = (function() {
         this.jsonrpc_path = $.Storage.get("jsonrpc_path") || "http://"+(location.host.split(":")[0]||"localhost")+":6800"+"/jsonrpc";
         this.refresh_interval = Number($.Storage.get("refresh_interval") || 10000);
         this.add_task_option = $.Storage.get("add_task_option");
+        this.jsonrpc_history = JSON.parse($.Storage.get("jsonrpc_history") || "[]");
         if (this.add_task_option) {
           this.add_task_option = JSON.parse(this.add_task_option);
+        }
+        // overwrite settings with hash
+        if (location.hash && location.hash.length) {
+          var args = location.hash.substring(1).split('&'), kwargs = {};
+          $.each(args, function(i, n) {
+            n = n.split('=', 2);
+            kwargs[n[0]] = n[1];
+          });
+
+          if (kwargs['path']) this.jsonrpc_path = kwargs['path'];
+          this.kwargs = kwargs;
         }
 
         var _this = this;
@@ -643,12 +659,29 @@ var YAAW = (function() {
 
       save: function() {
         $.Storage.set("jsonrpc_path", this.jsonrpc_path);
+        if (this.jsonrpc_history.indexOf(this.jsonrpc_path) == -1) {
+          if (this.jsonrpc_history.push(this.jsonrpc_path) > 10) {
+            this.jsonrpc_history.shift();
+          }
+          $.Storage.set("jsonrpc_history", JSON.stringify(this.jsonrpc_history));
+        }
         $.Storage.set("refresh_interval", String(this.refresh_interval));
       },
 
       update: function() {
         $("#setting-form #rpc-path").val(this.jsonrpc_path);
         $("#setting-form input:radio[name=refresh_interval][value="+this.refresh_interval+"]").attr("checked", true);
+        if (this.jsonrpc_history.length) {
+          var content = '<ul class="dropdown-menu">';
+          $.each(this.jsonrpc_history, function(n, e) {
+            content += '<li><a href="#">'+e+'</a></li>';
+          });
+          content += '</ul>';
+          $(".rpc-path-wrap").append(content).on("click", "li>a", function() {
+            $("#setting-form #rpc-path").val($(this).text());
+          });
+          $(".rpc-path-wrap .dropdown-toggle").removeAttr("disabled").dropdown();
+        }
       },
 
       submit: function() {
