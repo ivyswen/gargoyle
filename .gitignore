@@ -1,8 +1,6 @@
 *.o
 .DS_Store
 .*.swp
-/.subversion
-/.pc
 /env
 /dl
 /.config
