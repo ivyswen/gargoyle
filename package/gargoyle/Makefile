@@ -1,3 +1,4 @@
+OFFICIAL_VERSION:=1.5.10 
 include $(TOPDIR)/rules.mk
 include $(INCLUDE_DIR)/kernel.mk
 
