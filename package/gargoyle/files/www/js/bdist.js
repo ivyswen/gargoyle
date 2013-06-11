@@ -4,4 +4,379 @@
  * configure proprietary "back end" software provided that all modifications to the web interface
  * itself remain covered by the GPL. 
  * See http://gargoyle-router.com/faq.html#qfoss for more information
- */function initializePlotsAndTable(){updateInProgress=!1,initFunction()}function initFunction(){pieChart=document.getElementById("pie_chart"),pieChart!=null?(doUpdate(),setInterval(doUpdate,2e3)):setTimeout(initFunction,50)}function getEmbeddedSvgPlotFunction(e){return windowElement=getEmbeddedSvgWindow(e),windowElement!=null?windowElement.setPieChartData:null}function getHostDisplay(e){var t=getSelectedValue("host_display"),n=e;return t=="hostname"&&ipToHostname[e]!=null&&(n=ipToHostname[e],n=n.length<25?n:n.substr(0,22)+"..."),n}function getHostList(e){var t=[],n=0;for(n=0;n<e.length;n++)t.push(getHostDisplay(e[n]));return t}function doUpdate(){if(!updateInProgress&&pieChart!=null){var e=getSelectedValue("time_frame"),t="",n="",r=0;for(r=0;r<monitorNames.length;r++){var i=monitorNames[r];i.indexOf(e)>=0&&(i.indexOf("upload")>=0&&(n=""+i),i.indexOf("download")>=0&&(t=""+i))}var s=t+" "+n,o=getParameterDefinition("monitor",s)+"&"+getParameterDefinition("hash",document.cookie.replace(/^.*hash=/,"").replace(/[\t ;]+.*$/,"")),u=function(e){var t=null;if(e.readyState==4){if(!e.responseText.match(/ERROR/)){var r=parseMonitors(e.responseText),i=1,s=0,o=0,u=[];for(s=0;s<r.length;s++){var a=r[s];for(S in a){var f=a[S][0];o=parseInt(a[S][1]),i=f.length>i?f.length:i,u[S]=1}}idList=[];for(S in u)idList.push(S);var l=getSelectedValue("time_interval"),c=getSelectedText("time_interval"),h=[],p=[],d=new Date;d.setTime(o*1e3),d.setUTCMinutes(d.getUTCMinutes()+tzMinutes);var v=d.valueOf()/1e3;timeFrameIntervalData=[];var m=[],g;for(g=0;g<i;g++){var y=[],s,b=[];for(s=0;s<r.length;s++){var a=r[s],w=[],E;for(E=0;E<idList.length;E++){var S=idList[E];S=S==currentWanIp?currentLanIp:S;var x=0;if(a[S]!=null){var f=a[S][0];f!=null&&(x=f[f.length-1-g],x=x==null?0:parseFloat(x))}w.push(x),b[E]=b[E]==null?x:b[E]+x}y.push(w)}y.unshift(b),timeFrameIntervalData.push(y);var T=["January","February","March","April","May","June","July","August","September","October","November","December"],N=function(e){var t=""+e;return t=t.length==1?"0"+t:t,t};d.setTime(parseInt(v)*1e3);var C="";if(n.match("minute"))C=""+N(d.getUTCHours())+":"+N(d.getUTCMinutes()),d.setUTCMinutes(d.getUTCMinutes()-1);else if(n.match("hour"))C=""+N(d.getUTCHours())+":"+N(d.getUTCMinutes()),d.setUTCHours(d.getUTCHours()-1);else if(n.match("day"))C=T[d.getUTCMonth()]+" "+d.getUTCDate(),d.setUTCDate(d.getUTCDate()-1);else if(n.match("month"))C=T[d.getUTCMonth()]+" "+d.getUTCFullYear(),d.setUTCMonth(d.getUTCMonth()-1);else{var k=n.split(/-/),i=k.pop(),L=k.pop();parseInt(L)>=2419200?C=T[d.getUTCMonth()]+" "+d.getUTCFullYear()+" "+N(d.getUTCHours())+":"+N(d.getUTCMinutes()):parseInt(L)>=86400?C=T[d.getUTCMonth()]+" "+N(d.getUTCHours())+":"+N(d.getUTCMinutes()):C=""+N(d.getUTCHours())+":"+N(d.getUTCMinutes()),d.setTime(d.getTime()-parseInt(L)*1e3)}p.push(C),h.push(""+g),v=d.valueOf()/1e3}setAllowableSelections("time_interval",h,p),l==null||l==0?setSelectedValue("time_interval","0"):setSelectedText("time_interval",c)}updateInProgress=!1,resetDisplayInterval()}};runAjax("POST","utility/load_bandwidth.sh",o,u)}}function resetTimeFrame(){resetColors=!0,doUpdate()}function resetDisplayInterval(){var e=getEmbeddedSvgPlotFunction("pie_chart");if(e!=null&&pieChart!=null&&!updateInProgress&&timeFrameIntervalData.length>0){updateInProgress=!0;var t=getSelectedValue("time_interval");t=t==null?0:t;var n=timeFrameIntervalData[t],r=e(idList,["Total","Download","Upload"],getHostList(idList),n,0,9,resetColors);resetColors=!1;var i=[],s;for(s=0;s<idList.length;s++)i.push(s);var o=function(e,t){return idList[e]<idList[t]?1:-1};i.sort(o);var u=["Total","Down","Up"],a=[],f;zeroPies=[];for(f=0;f<u.length;f++){s=0;var l=!0;for(s=0;s<idList.length;s++)l=l&&n[f][s]==0;zeroPies.push(l)}var c=[0,0,0];for(s=0;s<i.length;s++){var h=i[s],p=idList[h];p=p==currentWanIp?currentLanIp:p;var d=[getHostDisplay(p)],f,v=!0;for(f=0;f<u.length;f++){var m=parseBytes(n[f][h]);m=m.replace("ytes",""),d.push(m),c[f]=c[f]+n[f][h]}for(f=0;f<u.length;f++){var g=zeroPies[f]?100/idList.length:n[f][h]*100/r[f],y=""+parseInt(g*10)/10+"%";d.push(y)}a.push(d)}a.push(["Sum",parseBytes(c[0]),parseBytes(c[1]),parseBytes(c[2]),"","",""]);var b=["Host"];for(f=0;f<u.length;f++)b.push(u[f]);for(f=0;f<u.length;f++)b.push(u[f]+" %");var w=createTable(b,a,"bandwidth_distribution_table",!1,!1),E=document.getElementById("bandwidth_distribution_table_container");E.firstChild!=null&&E.removeChild(E.firstChild),E.appendChild(w),updateInProgress=!1}}function parseMonitors(e){var t=[[],[]],n=e.split("\n"),r=parseInt(n.shift()),i;for(i=0;i<n.length;i++)if(n[i].length>0){var s=n[i].split(/[\t ]+/)[0];s=s.match(/download/)?0:1;var o=n[i].split(/[\t ]+/)[1];i++;var u=n[i];i++;var a=n[i];i++;var f=n[i];i++;var l=n[i].split(",");o!="COMBINED"&&(t[s][o]=[l,f])}return t}var plotsInitializedToDefaults=!1,updateInProgress=!1,pieChart=null,initialized=!1,timeFrameIntervalData=[],idList=[],resetColors=!1;
+ */
+
+var plotsInitializedToDefaults = false;
+var updateInProgress = false;
+var pieChart = null;
+var initialized = false;
+
+// data for current time frame
+//at each index, are 3 more arrays (combined, down, up) each of which is an array of values for that interval
+var timeFrameIntervalData = [];
+var idList = [];
+var resetColors = false;
+
+function initializePlotsAndTable()
+{
+	updateInProgress = false;
+	initFunction();
+}
+
+function initFunction()
+{	
+	pieChart = document.getElementById("pie_chart");
+	if(pieChart != null)
+	{
+		doUpdate(); 
+		setInterval( doUpdate, 2000);
+	}
+	else
+	{
+		setTimeout(initFunction, 50); 
+	} 
+}
+
+
+function getEmbeddedSvgPlotFunction(embeddedId)
+{
+	windowElement = getEmbeddedSvgWindow(embeddedId);
+	if( windowElement != null)
+	{
+		return windowElement.setPieChartData;
+	}
+	return null;
+}
+
+function getHostDisplay(ip)
+{
+	var hostDisplay = getSelectedValue("host_display");
+	var host = ip;
+	if(hostDisplay == "hostname" && ipToHostname[ip] != null)
+	{
+		host = ipToHostname[ip];
+		host = host.length < 25 ? host : host.substr(0,22)+"...";
+	}
+	return host;
+}
+
+
+function getHostList(ipList)
+{
+	var hostList = [];
+	var ipIndex =0;
+	for(ipIndex=0; ipIndex < ipList.length; ipIndex++)
+	{
+		hostList.push( getHostDisplay(ipList[ipIndex]));
+	}
+	return hostList;
+}
+
+
+function doUpdate()
+{
+	if(!updateInProgress && pieChart != null)
+	{
+		var bdistId = getSelectedValue("time_frame");
+
+		// get names of monitors to query (those that match bdistId)
+		var downloadName = "";
+		var uploadName = "";
+		var mIndex=0;
+		for(mIndex=0; mIndex < monitorNames.length; mIndex++)
+		{
+			var m = monitorNames[mIndex];
+			if(m.indexOf(bdistId) >= 0)
+			{
+				if(m.indexOf("upload") >= 0)
+				{
+					uploadName = "" + m;
+				}
+				if(m.indexOf("download") >= 0)
+				{
+					downloadName = "" + m;
+				}
+			}
+		}
+
+		//query monitor data
+		var queryNames = downloadName + " " + uploadName;
+		var param = getParameterDefinition("monitor", queryNames)  + "&" + getParameterDefinition("hash", document.cookie.replace(/^.*hash=/,"").replace(/[\t ;]+.*$/, ""));
+		var stateChangeFunction = function(req)
+		{
+			var monitors=null;
+			if(req.readyState == 4)
+			{
+				if(!req.responseText.match(/ERROR/))
+				{
+					var parsed = parseMonitors(req.responseText);
+					
+					
+					//calculate max intervals (we make everything this length by adding zeros)
+					//also, get a list of all ids, in case up/down don't have same set of ips
+					var numIntervals = 1;
+					var dirIndex = 0;
+					var latestTime = 0;
+					var allIds = [];
+					for(dirIndex=0; dirIndex < parsed.length; dirIndex++)
+					{
+						var dirData = parsed[dirIndex];
+						for (id in dirData)
+						{
+							var idPoints = dirData[id][0];
+							latestTime = parseInt(dirData[id][1]);
+							numIntervals = idPoints.length > numIntervals ? idPoints.length : numIntervals;
+							allIds[id] = 1;
+						}
+					}
+					
+					idList = [];
+					for (id in allIds)
+					{
+						idList.push(id);
+					}
+
+
+					var currentIntervalIndex = getSelectedValue("time_interval");
+					var currentIntervalText = getSelectedText("time_interval");
+					var timeIntervalValues = [];
+					var timeIntervalNames = [];
+
+					var nextDate = new Date();
+					nextDate.setTime(latestTime*1000);
+					nextDate.setUTCMinutes( nextDate.getUTCMinutes()+tzMinutes );
+					var nextIntervalStart = nextDate.valueOf()/1000;
+
+					timeFrameIntervalData = [];
+					var intervalNames = [];
+					var intervalIndex;
+					for (intervalIndex=0; intervalIndex < numIntervals; intervalIndex++)
+					{
+						var nextIntervalData = [];
+						var dirIndex;
+						var combinedData = [];
+						for(dirIndex=0; dirIndex < parsed.length; dirIndex++)
+						{
+							var dirData = parsed[dirIndex];
+							var nextDirData = [];
+							var idIndex;
+							for(idIndex=0; idIndex < idList.length; idIndex++)
+							{
+								var id = idList[idIndex];
+								id =  id == currentWanIp ? currentLanIp : id ;	
+								var value = 0;
+								if(dirData[id] != null)
+								{
+									var idPoints = dirData[id][0];
+									if(idPoints != null)
+									{
+										value = idPoints[idPoints.length-1-intervalIndex];
+										value = value==null? 0 : parseFloat(value);
+									}
+								}
+								nextDirData.push(value);
+								combinedData[idIndex] = combinedData[idIndex] == null ? value : combinedData[idIndex] + value;
+							}
+							nextIntervalData.push(nextDirData);
+						}
+						nextIntervalData.unshift(combinedData);
+						timeFrameIntervalData.push(nextIntervalData);
+						
+						
+						
+						var monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+						var twod = function(num) { var nstr = "" + num; nstr = nstr.length == 1 ? "0" + nstr : nstr; return nstr; }
+						
+						nextDate.setTime(parseInt(nextIntervalStart)*1000);
+						var intervalName = "";
+						if(uploadName.match("minute"))
+						{
+							intervalName = "" + twod(nextDate.getUTCHours()) + ":" + twod(nextDate.getUTCMinutes());
+							nextDate.setUTCMinutes( nextDate.getUTCMinutes()-1);
+							
+						}
+						else if(uploadName.match("hour"))
+						{
+							intervalName = "" + twod(nextDate.getUTCHours()) + ":" + twod(nextDate.getUTCMinutes());
+							nextDate.setUTCHours(nextDate.getUTCHours()-1);
+						}
+						else if(uploadName.match("day"))
+						{
+							intervalName = monthNames[nextDate.getUTCMonth()] + " " + nextDate.getUTCDate();
+							nextDate.setUTCDate(nextDate.getUTCDate()-1);
+						}
+						else if(uploadName.match("month"))
+						{
+							intervalName = monthNames[nextDate.getUTCMonth()] + " " + nextDate.getUTCFullYear();
+							nextDate.setUTCMonth(nextDate.getUTCMonth()-1);
+						}
+						else
+						{
+							var splitName = uploadName.split(/-/);
+							var numIntervals = splitName.pop();
+							var interval = splitName.pop();
+							if(parseInt(interval) >= 28*24*60*60)
+							{
+								intervalName = monthNames[nextDate.getUTCMonth()] + " " + nextDate.getUTCFullYear() + " " + twod(nextDate.getUTCHours()) + ":" + twod(nextDate.getUTCMinutes());
+							}
+							else if(parseInt(interval) >= 24*60*60)
+							{
+								intervalName = monthNames[nextDate.getUTCMonth()] + " " + twod(nextDate.getUTCHours()) + ":" + twod(nextDate.getUTCMinutes());
+							}
+							else
+							{
+								intervalName = "" + twod(nextDate.getUTCHours()) + ":" + twod(nextDate.getUTCMinutes());
+							}
+							nextDate.setTime(nextDate.getTime()-(parseInt(interval)*1000));
+						}
+						timeIntervalNames.push(intervalName);
+						timeIntervalValues.push(""+intervalIndex);
+						nextIntervalStart = nextDate.valueOf()/1000;
+					}
+					setAllowableSelections("time_interval", timeIntervalValues, timeIntervalNames);
+					if(currentIntervalIndex == null || currentIntervalIndex == 0)
+					{
+						setSelectedValue("time_interval", "0");
+					}	
+					else
+					{
+						setSelectedText("time_interval", currentIntervalText);
+					}
+				}
+				updateInProgress = false;
+				resetDisplayInterval();
+			}
+		}
+		runAjax("POST", "utility/load_bandwidth.sh", param, stateChangeFunction);
+	}
+}
+
+function resetTimeFrame()
+{
+	resetColors = true;
+	doUpdate();
+}
+
+
+
+
+function resetDisplayInterval()
+{
+	var plotFunction = getEmbeddedSvgPlotFunction("pie_chart");
+	if(plotFunction != null && pieChart != null && (!updateInProgress) && timeFrameIntervalData.length > 0 )
+	{
+		updateInProgress = true;
+		//first, update pie chart
+		var intervalIndex = getSelectedValue("time_interval");
+		intervalIndex = intervalIndex == null ? 0 : intervalIndex;
+		
+		var data = timeFrameIntervalData[intervalIndex];
+		var pieTotals = plotFunction(idList, ["Total", "Download", "Upload" ], getHostList(idList), data, 0, 9, resetColors);
+		resetColors = false;
+
+		//then update table, sorting ids alphabetically so order is consistant
+		var sortedIdIndices = [];
+		var idIndex;
+		for(idIndex=0; idIndex < idList.length; idIndex++) { sortedIdIndices.push(idIndex) };
+		var idSort = function(a,b) { return idList[a] < idList[b] ? 1 : -1; }	
+		sortedIdIndices.sort( idSort );
+		
+		var pieNames = ["Total", "Down", "Up"];
+		var tableRows = [];
+
+		var pieIndex;
+		zeroPies = [];
+		for(pieIndex=0; pieIndex<pieNames.length; pieIndex++)
+		{
+			idIndex=0;
+			var pieIsZero = true;
+			for(idIndex=0; idIndex < idList.length; idIndex++)
+			{
+				pieIsZero = pieIsZero && data[pieIndex][idIndex] == 0;
+			}
+			zeroPies.push(pieIsZero);
+		}
+
+		var sum = [0,0,0];
+		for(idIndex=0; idIndex < sortedIdIndices.length; idIndex++)
+		{
+			var index = sortedIdIndices[idIndex]; 
+			var id = idList[ index ];
+			id =  id == currentWanIp ? currentLanIp : id ;	
+			
+			var tableRow = [getHostDisplay(id)];
+			var pieIndex;
+			var allZero = true;
+			for(pieIndex=0;pieIndex < pieNames.length; pieIndex++)
+			{
+				var value = parseBytes(data[pieIndex][index]);
+				value = value.replace("ytes", "");
+				tableRow.push(value);
+				sum[pieIndex] = sum[pieIndex] + data[pieIndex][index];
+			}
+			for(pieIndex=0;pieIndex < pieNames.length; pieIndex++)
+			{
+				var percent = zeroPies[pieIndex] ? 100/idList.length : data[pieIndex][index]*100/pieTotals[pieIndex];
+				var pctStr = "" + (parseInt(percent*10)/10) + "%";
+				tableRow.push(pctStr);
+			}
+			tableRows.push(tableRow);
+		}
+		tableRows.push(["Sum",parseBytes(sum[0]),parseBytes(sum[1]),parseBytes(sum[2]),"","",""]);
+		
+		var columnNames = ["Host"];
+		for(pieIndex=0;pieIndex < pieNames.length; pieIndex++){ columnNames.push(pieNames[pieIndex]); }
+		for(pieIndex=0;pieIndex < pieNames.length; pieIndex++){ columnNames.push(pieNames[pieIndex] + " %"); }
+	
+		var distTable=createTable(columnNames, tableRows, "bandwidth_distribution_table", false, false);
+		var tableContainer = document.getElementById('bandwidth_distribution_table_container');
+		if(tableContainer.firstChild != null)
+		{
+			tableContainer.removeChild(tableContainer.firstChild);
+		}
+		tableContainer.appendChild(distTable);
+		updateInProgress = false;
+	}
+}
+
+
+
+
+
+
+// data for current time frame
+// at each index, are 3 more arrays (combined, down, up) each of which is an array of values for that interval
+// var timeFrameIntervalData = [];
+// var idList = [];
+
+function parseMonitors(outputData)
+{
+	var monitors = [ [],[] ];
+	var dataLines = outputData.split("\n");
+	var currentDate = parseInt(dataLines.shift());
+	var lineIndex;
+	for(lineIndex=0; lineIndex < dataLines.length; lineIndex++)
+	{
+		if(dataLines[lineIndex].length > 0)
+		{
+			var monitorType = (dataLines[lineIndex].split(/[\t ]+/))[0];
+			monitorType = monitorType.match(/download/) ? 0 : 1;
+			var monitorIp = (dataLines[lineIndex].split(/[\t ]+/))[1];
+
+			lineIndex++; 
+			var firstTimeStart = dataLines[lineIndex];
+			lineIndex++;
+			var firstTimeEnd = dataLines[lineIndex];
+			lineIndex++; 
+			var lastTimePoint = dataLines[lineIndex];
+			lineIndex++;
+			var points = dataLines[lineIndex].split(",");
+			if(monitorIp != "COMBINED")
+			{
+				monitors[monitorType][monitorIp] = [points, lastTimePoint ];
+			}
+		}
+	}
+	return monitors;
+}
+

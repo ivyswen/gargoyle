@@ -1,8 +1,2690 @@
 /*
- * This program is copyright ï¿½ 2008-2011 Eric Bishop and is distributed under the terms of the GNU GPL 
+ * This program is copyright © 2008-2011 Eric Bishop and is distributed under the terms of the GNU GPL 
  * version 2.0 with a special clarification/exception that permits adapting the program to 
  * configure proprietary "back end" software provided that all modifications to the web interface
  * itself remain covered by the GPL. 
  * See http://gargoyle-router.com/faq.html#qfoss for more information
- */function addLoadFunction(e){var t=window.onload;window.onload=typeof window.onload!="function"?e:function(){t(),e()}}function setControlsEnabled(e,t,n){var r=document.getElementById("darken"),i=document.getElementById("wait_msg");if(!e){var s="100%",o="100%";document.body.parentNode.scrollHeight?s=document.body.parentNode.scrollHeight+"px":document.height&&(s=document.height+"px"),document.body.parentNode.scrollWidth?(o=document.body.parentNode.scrollWidth,document.width&&(o=document.width>o?document.width:o),o+="px"):document.width&&(o=document.width+"px");var u,a;self.innerHeight?(u=window.innerHeight,viewportWidth=window.innerWidth):document.documentElement&&document.documentElement.clientHeight?(u=document.documentElement.clientHeight,viewportWidth=document.documentElement.clientWidth):document.body&&(u=document.body.clientHeight,viewportWidth=document.body.clientWidth);var f=Math.floor((viewportWidth-300)/2),l=Math.floor((u-150)/2),c=!1;document.all&&(c=!0);if(c){var h=document.getElementById("d_iframe");h.style.display="block",h.style.width=o,h.style.height=s;var p=document.getElementById("m_iframe");p.style.display="block",p.style.width="300px",p.style.height="150px",i.style.position="absolute",l+=document.documentElement.scrollTop,f+=document.documentElement.scrollLeft}r.style.height=s,r.style.width=o,i.style.left=f>=0?f+"px":"0px",i.style.top=l>=0?l+"px":"0px",r.style.display="block",t&&(i.style.display="block",n!=null&&(document.getElementById("wait_txt").firstChild.data=n))}else r.style.display="none",i.style.display="none";setBrowserTimeCookie()}function setBrowserTimeCookie(){var e=Math.floor((new Date).getTime()/1e3);document.cookie="browser_time="+e+"; path=/"}function getRequestObj(){var e;try{e=new XMLHttpRequest}catch(t){try{e=new ActiveXObject("Msxml2.XMLHTTP")}catch(t){try{e=new ActiveXObject("Microsoft.XMLHTTP")}catch(t){return!1}}}return e}function runAjax(e,t,n,r){setBrowserTimeCookie();var i=getRequestObj();return i&&(i.onreadystatechange=function(){r(i)},e=="POST"?(n=n==null?" ":n,i.open("POST",t,!0),i.setRequestHeader("Content-type","application/x-www-form-urlencoded"),i.send(n)):e=="GET"&&(i.open("GET",t+"?"+n,!0),i.send(null))),i}function UCIContainer(){this.keys=new Array,this.values=new Array,this.listOptions=new Array,this.createListOption=function(e,t,n,r){r=r==null?!0:!1;var i=e+"."+t+"."+n;if(this.listOptions[i]!=null)return;this.listOptions[i]=1;if(this.values[i]!=null){var s=this.values[i];this.values[i]=!r&&s!=null?[s]:[]}else this.keys.push(i),this.values[i]=[]},this.set=function(e,t,n,r,i){i=i==null?!1:i;var s=e+"."+t;n!=null&&n!=""&&(s=s+"."+n);if(this.values[s]!=null)if(this.listOptions[s]!=null){var o=this.values[s];while(o.length>0&&!i)o.pop();if(r instanceof Array){var u;for(u=0;u<r.length;u++)o.push(r[u])}else o.push(r);this.values[s]=o}else this.values[s]=r;else{this.keys.push(s);if(this.listOptions[s]!=null){var o=[];if(r instanceof Array){var a;for(a=0;a<r.length;a++)o.push(r[a])}else o=[r];this.values[s]=o}else this.values[s]=r}},this.get=function(e,t,n){var r=e+"."+t;n!=null&&n!=""&&(r=r+"."+n);var i=this.values[r];return i!=null?i:""},this.removeAllSectionsOfType=function(e,t){var n=this.getAllSectionsOfType(e,t),r=0;for(r=0;r<n.length;r++)this.removeSection(e,n[r])},this.getAllOptionsInSection=function(e,t,n){n=n==null?!1:n;var r=new Array;for(keyIndex in this.keys){var i=this.keys[keyIndex],s=e+"."+t;if(i.match(s)&&i.match(/^[^\.]+\.[^\.]+\.[^\.]+/)&&(n||this.listOptions[i]==null)){var o=i.match(/^[^\.]+\.[^\.]+\.([^\.]+)$/)[1];r.push(o)}}return r},this.getAllSectionsOfType=function(e,t){var n=new Array;for(keyIndex in this.keys){key=this.keys[keyIndex];if(key.match(e)&&key.match(/^[^\.]+\.[^\.]+$/)&&this.values[key]==t){var r=key.match(/^[^\.]+\.([^\.]+)$/)[1];n.push(r)}}return n},this.getAllSections=function(e){var t=new Array;for(keyIndex in this.keys){key=this.keys[keyIndex];if(key.match(e)&&key.match(/^[^\.]+\.[^\.]+$/)){var n=key.match(/^[^\.]+\.([^\.]+)$/)[1];t.push(n)}}return t},this.remove=function(e,t,n){var r=e+"."+t;n!=""&&(r=r+"."+n),this.listOptions[r]!=null&&(this.listOptions[r]=null);var i=this.values[r];if(i!=null){this.values[r]=null;var s=[];while(this.keys.length>0){var o=this.keys.shift();o!=r&&s.push(o)}this.keys=s}else i="";return i},this.removeSection=function(e,t){removeKeys=new Array,sectionDefined=!1;for(keyIndex in this.keys){key=this.keys[keyIndex],testExp=new RegExp(e+"\\."+t+"\\.");if(key.match(testExp)){var n=key.split(".");removeKeys.push(n[2])}key==e+"."+t&&(sectionDefined=!0)}for(rkIndex in removeKeys)this.remove(e,t,removeKeys[rkIndex]);sectionDefined&&this.remove(e,t,"")},this.clone=function(){var e=new UCIContainer,t=0;for(t=0;t<this.keys.length;t++){var n=this.keys[t],r=this.values[n];this.listOptions[n]!=null&&(e.listOptions[n]=1);var i=n.match(/^([^\.]+)\.([^\.]+)\.([^\.]+)$/);i==null&&(i=n.match(/^([^\.]+)\.([^\.]+)$/),i!=null&&i.push("")),e.set(i[1],i[2],i[3],r,!0)}return e},this.print=function(){var e="",t=0;for(t=0;t<this.keys.length;t++){var n=this.keys[t];this.values[n]instanceof Array?e=e+"\n"+n+' = "'+this.values[n].join(",")+'"':e=e+"\n"+n+' = "'+this.values[n]+'"'}return e},this.getScriptCommands=function(e){var t=new Array,n=[],r=0;for(r=0;r<e.keys.length;r++){var i=e.keys[r],s=e.values[i],o=this.values[i];if(s instanceof Array&&!(o instanceof Array)||o instanceof Array&&!(s instanceof Array))t.push("uci del "+i);else if(s instanceof Array&&o instanceof Array){var u=s.length==o.length;if(u){var a=s.sort(),f=o.sort(),l;for(l=0;u&&l<a.length;l++)u=a[l]==f[l]?!0:!1}u?n[i]=1:t.push("uci del "+i)}else(o==null||o=="")&&s!=null&&s!=""&&t.push("uci del "+i)}for(r=0;r<this.keys.length;r++){var i=this.keys[r],s=e.values[i],o=this.values[i];try{if(s instanceof Array||o instanceof Array)if(o instanceof Array){if(n[i]==null){var c;for(c=0;c<o.length;c++){var h=""+o[c]+"";t.push("uci add_list "+i+"='"+h.replace(/'/,"'\\''")+"'")}}}else o=""+o+"",t.push("uci set "+i+"='"+o.replace(/'/,"'\\''")+"'");else s!=o&&o!=null&&o!=""&&(o=""+o+"",t.push("uci set "+i+"='"+o.replace(/'/,"'\\''")+"'"))}catch(p){alert("bad key = "+i+"\n")}}return t.push("uci commit"),t.join("\n")}}function getParameterDefinition(e,t){return fullEscape(e)+"="+fullEscape(t)}function fullEscape(e){e=escape(e);var t=["*","@","-","_","+",".","/"],n=["2A","40","2D","5F","2B","2E","2F"];for(oeIndex=0;oeIndex<t.length;oeIndex++){var r=e.split(t[oeIndex]);r.length>1&&(e=r.join("%"+n[oeIndex]))}return e}function removeStringFromArray(e,t){var n,r=[];for(n=0;n<e.length;n++){var i=!1;typeof e[n]=="string"&&(i=e[n]==t),i||r.push(e[n])}return r}function setChildText(e,t,n,r,i,s){s=s==null?document:s,parentElement=s.getElementById(e);if(parentElement!=null){n!=null&&(parentElement.style.color=n),r!=null&&(parentElement.style.fontWeight=r?"bold":"normal"),i!=null&&(parentElement.style.fontSize=i);while(parentElement.firstChild!=null)parentElement.removeChild(parentElement.firstChild);t=t==null?"":t;var o=t.split("\n");while(o.length>0){var u=o.shift();parentElement.appendChild(s.createTextNode(u)),o.length>0&&parentElement.appendChild(s.createElement("br"))}}}function createInput(e,t){t=t==null?document:t;try{inp=t.createElement("input"),inp.type=e}catch(n){inp=t.createElement('<input type="'+e+'" />')}return inp}function trueAndVisible(e,t){return document.getElementById(e).checked&&document.getElementById(t).style.display!="none"}function getDhcpSection(e){var t=e.getAllSections("dhcp"),n=t.length>0?t[0]:"cfg1";for(dsecIndex=0;dsecIndex<t.length;dsecIndex++)e.get("dhcp",t[dsecIndex],"interface")=="lan"&&(n=t[dsecIndex]);return n}function getWirelessMode(e){var t=e.getAllSectionsOfType("wireless","wifi-device"),n=[],r;for(r=0;r<t.length;r++){var i=e.get("wireless",t[r],"disabled");if(i=="0"||i=="")n[t[r]]=1}var s="",o="",u=e.getAllSectionsOfType("wireless","wifi-iface"),a;for(a=0;a<u.length;a++){var f=e.get("wireless",u[a],"device");if(n[f]==1){var l=e.get("wireless",u[a],"mode");s=l=="ap"?l:s,o=l=="ap"?e.get("wireless",u[a],"wds")?"wds":o:l}}var c=s!=""&&o!=""?"+":"",h=s+c+o,h=h==""?"disabled":h;return h}function setDescriptionVisibility(e,t,n,r){t=t==null?"inline":t,n=n==null?"More Info":n,r=r==null?"Hide Text":r;var i=document.getElementById(e+"_ref"),s=document.getElementById(e+"_txt"),o="uci set gargoyle.help."+e+"=";i.firstChild.data==n?(s.style.display=t,i.firstChild.data=r,o+="1\n"):(s.style.display="none",i.firstChild.data=n,o+="0\n"),o+="\nuci commit\n";var u=getParameterDefinition("commands",o)+"&"+getParameterDefinition("hash",document.cookie.replace(/^.*hash=/,"").replace(/[\t ;]+.*$/,""));runAjax("POST","utility/run_commands.sh",u,function(){return 0})}function initializeDescriptionVisibility(e,t,n,r,i){n=n==null?"inline":n,r=r==null?"More Info":r,i=i==null?"Hide Text":i;var s=r,o="none";e.get("gargoyle","help",t)=="1"&&(s=i,o=n),document.getElementById(t+"_ref").firstChild.data=s,document.getElementById(t+"_txt").style.display=o}function getSubnetRange(e,t){var n=e.split(".");if(n.length!=4)return[];var r=["255","254","252","248","240","224","192","128","0"],i=[0,1,2,3,4,5,6,7,8],s=0;while(n.length>0){var o=n.shift(),u=-1;for(testIndex=0;testIndex<9&&u<0;testIndex++)u=r[testIndex]==o?i[testIndex]:u;if(u<0)return[];s+=u}var a=Math.pow(2,s),f=parseInt(t.split(".")[3]),l=0;while(l+a<f)l+=a;return[l,l+a-1]}function rangeInSubnet(e,t,n,r){var i=getSubnetRange(e,t),s=i[0],o=i[1];return s!=null&&o!=null&&s<=n&&o>=r?!0:!1}function proofreadFields(e,t,n,r,i,s){s=s==null?document:s;var o=new Array;for(idIndex in e)isVisible=!0,i!=null&&i[idIndex]!=null&&(visibilityElement=s.getElementById(i[idIndex]),isVisible=visibilityElement.style.display=="none"||visibilityElement.disabled==1?!1:!0),isVisible&&(input=s.getElementById(e[idIndex]),f=n[idIndex],proofreadText(input,f,r[idIndex]),f(input.value)!=r[idIndex]&&(labelStr=t[idIndex]+"",s.getElementById(t[idIndex])!=null?(labelStr=s.getElementById(t[idIndex]).firstChild.data,labelStr=labelStr.replace(/:/,"")):alert("error in proofread: label with id "+t[idIndex]+" is not defined"),o.push("There is an error in "+labelStr)));return o}function parseBytes(e,t){var n;return t=t!="KBytes"&&t!="MBytes"&&t!="GBytes"&&t!="TBytes"?"mixed":t,t=="mixed"&&e>1099511627776||t=="TBytes"?n=truncateDecimal(e/1099511627776)+" TBytes":t=="mixed"&&e>1073741824||t=="GBytes"?n=truncateDecimal(e/1073741824)+" GBytes":t=="mixed"&&e>1048576||t=="MBytes"?n=truncateDecimal(e/1048576)+" MBytes":n=truncateDecimal(e/1024)+" KBytes",n}function parseKbytesPerSecond(e,t){var n;return t=t!="bytes/s"&&t!="KBytes/s"&&t!="MBytes/s"?"mixed":t,t=="mixed"&&e>1024||t=="MBytes/s"?n=truncateDecimal(e/1024)+" MBytes/s":n=e+" KBytes/s",n}function truncateDecimal(e){return result=""+Math.floor(e*1e3)/1e3,decMatch=result.match(/.*\.(.*)$/),decMatch==null?result+=".000":decMatch[1].length==1?result+="00":decMatch[1].length==2&&(result+="0"),result}function enableAssociatedField(e,t,n,r){r=r==null?document:r,element=r.getElementById(t),setElementEnabled(element,e.checked,n)}function setElementEnabled(e,t,n){if(t){e.readonly=!1,e.disabled=!1;if(e.type=="text"||e.type=="textarea")e.style.color="#000000",e.className="";else if(e.type=="select-one"||e.type=="select-multiple"||e.type=="select")e.className="";else if(e.type=="button"){var r=e.className.replace(/_button.*$/,"_button");e.className=r}}else{e.disabled=!0;if(e.type=="text"||e.type=="textarea")e.value=n,e.style.color="#AAAAAA",e.className="text_disabled";else if(e.type=="select-one"||e.type=="select-multiple"||e.type=="select")setSelectedValue(e.id,n,e.ownerDocument),e.className="select_disabled";else if(e.type=="button"){var r=e.className.replace(/_button.*$/,"_button");e.className=r+"_disabled"}else e.type=="file"&&(e.value=n)}}function getSelectedValue(e,t){t=t==null?document:t;if(t.getElementById(e)==null){alert("ERROR:"+e+" does not exist");return}return selectedIndex=t.getElementById(e).selectedIndex,selectedValue="",selectedIndex>=0&&(selectedValue=t.getElementById(e).options[t.getElementById(e).selectedIndex].value),selectedValue}function getSelectedText(e,t){return t=t==null?document:t,selectedIndex=t.getElementById(e).selectedIndex,selectedText="",selectedIndex>=0&&(selectedText=t.getElementById(e).options[t.getElementById(e).selectedIndex].text),selectedText}function setSelectedValue(e,t,n){var n=n==null?document:n,r=n.getElementById(e);r==null&&alert("ERROR: "+e+" does not exist");var i=!1;for(optionIndex=0;optionIndex<r.options.length&&!i;optionIndex++)i=r.options[optionIndex].value==t,i&&(r.selectedIndex=optionIndex);!i&&r.options.length>0&&r.selectedIndex<0&&(r.selectedIndex=0)}function setSelectedText(e,t,n){n=n==null?document:n,selectElement=n.getElementById(e),selectionFound=!1;for(optionIndex=0;optionIndex<selectElement.options.length&&!selectionFound;optionIndex++)selectionFound=selectElement.options[optionIndex].text==t,selectionFound&&(selectElement.selectedIndex=optionIndex);!selectionFound&&selectElement.options.length>0&&selectElement.selectedIndex<0&&(selectElement.selectedIndex=0)}function addOptionToSelectElement(e,t,n,r,i){i=i==null?document:i,option=i.createElement("option"),option.text=t,option.value=n;try{i.getElementById(e).add(option,r)}catch(s){r==null?i.getElementById(e).add(option):i.getElementById(e).add(option,r.index)}}function removeOptionFromSelectElement(e,t,n){n=n==null?document:n,selectElement=n.getElementById(e),selectionFound=!1;for(optionIndex=0;optionIndex<selectElement.options.length&&!selectionFound;optionIndex++)selectionFound=selectElement.options[optionIndex].text==t,selectionFound&&selectElement.remove(optionIndex)}function removeAllOptionsFromSelectElement(e){while(e.length>0)try{e.remove(0)}catch(t){}}function setAllowableSelections(e,t,n,r){r==null&&(r=document);var i=r.getElementById(e);if(n!=null&&t!=null&&i!=null){var s=!0;if(t.length==i.options.length){s=!1;for(optionIndex=0;optionIndex<i.options.length&&!s;optionIndex++)s=s||i.options[optionIndex].text!=n[optionIndex]||i.options[optionIndex].value!=t[optionIndex]}if(s){currentSelection=getSelectedValue(e,r),removeAllOptionsFromSelectElement(i);for(addIndex=0;addIndex<t.length;addIndex++)addOptionToSelectElement(e,n[addIndex],t[addIndex],null,r);setSelectedValue(e,currentSelection,r)}}}function setSingleChild(e,t){while(e.firstChild!=null)e.removeChild(e.firstChild);e.appendChild(t)}function setVariableFromValue(e){elementId=e[0],visibilityId=e[1],uci=e[2],pkg=e[3],section=e[4],option=e[5],setIfBlank=e[6];var t=!0;visibilityId!=null&&(t=document.getElementById(visibilityId).style.display=="none"?!1:!0),t==1&&(value=document.getElementById(elementId).value,(value!=""||setIfBlank==1)&&uci.set(pkg,section,option,value))}function setVariableFromModifiedValue(e){elementId=e[0],visibilityId=e[1],uci=e[2],pkg=e[3],section=e[4],option=e[5],setIfBlank=e[6],modFunction=e[7],isVisible=!0,visibilityId!=null&&(isVisible=document.getElementById(visibilityId).style.display=="none"?!1:!0),isVisible==1&&(value=document.getElementById(elementId).value,(value!=""||setIfBlank==1)&&uci.set(pkg,section,option,modFunction(value)))}function setVariableFromCombined(e){elementIds=e[0],visibilityId=e[1],uci=e[2],pkg=e[3],section=e[4],option=e[5],setIfBlank=e[6],combineFunction=e[7],isVisible=!0,visibilityId!=null&&(isVisible=document.getElementById(visibilityId).style.display=="none"?!1:!0);if(isVisible==1){values=new Array;for(idIndex in elementIds)values.push(document.getElementById(elementIds[idIndex]).value);(value!=""||setIfBlank==1)&&uci.set(pkg,section,option,combineFunction(values))}}function setVariableFromConcatenation(e){elementIds=e[0],visibilityIds=e[1],uci=e[2],pkg=e[3],section=e[4],option=e[5],setIfBlank=e[6],concat="",nextIdIndex=0;while(nextIdIndex<elementIds.length)idVisible=!0,visibilityIds!=null&&(nextVisId=visibilityIds[nextIdIndex],nextVisId!=null&&(idVisible=document.getElementById(nextVisId).style.display=="none"?!1:!0)),value=document.getElementById(elementIds[nextIdIndex]).value,idVisible==1&&value!=""&&(value=document.getElementById(elementIds[nextIdIndex]).value,endSpace=nextIdIndex<elementIds.length-1?" ":"",concat=concat+value+endSpace),nextIdIndex++;(concat!=""||setIfBlank==1)&&uci.set(pkg,section,option,concat)}function setVariableConditionally(e){elementId=e[0],visibilityId=e[1],uci=e[2],pkg=e[3],section=e[4],option=e[5],testFunction=e[6],useValueFromElement=e[7],alternateValue=e[8],isVisible=!0,visibilityId!=null&&(isVisible=document.getElementById(visibilityId).style.display=="none"?!1:!0),isVisible==1&&(value=useValueFromElement==1?document.getElementById(elementId).value:alternateValue,testFunction(value)&&uci.set(pkg,section,option,value))}function setVariables(e,t,n,r,i,s,o,u){for(idIndex in e){nextId=e[idIndex],nextVisibilityId=t[idIndex],nextPkg=r[idIndex],nextSection=i[idIndex],nextOption=s[idIndex],nextParams=u[idIndex],nextFunction=o[idIndex];if(isArray(nextParams)){fullList=[nextId,nextVisibilityId,n,nextPkg,nextSection,nextOption];for(pIndex in nextParams)fullList.push(nextParams[pIndex]);nextFunction(fullList)}else nextFunction([nextId,nextVisibilityId,n,nextPkg,nextSection,nextOption,nextParams])}}function loadSelectedValueFromVariable(e){var t=e[0],n=e[1],r=e[2],i=e[3],s=e[4],o=e[5],u=n.get(r,i,s);u!=null&&u!=""?setSelectedValue(t,u):o!=null&&setSelectedValue(t,o)}function loadValueFromVariable(e){var t=e[0],n=e[1],r=e[2],i=e[3],s=e[4],o=e[5],u=n.get(r,i,s),a=document.getElementById(t);u!=null&&u!=""?a.value=u:o!=null&&(a.value=o)}function loadValueFromVariableMultiple(e){var t=e[6];loadValueFromVariable(e);var n=document.getElementById(e[0]);n.value=n.value*t}function loadValueFromModifiedVariable(e){var t=e[0],n=e[1],r=e[2],i=e[3],s=e[4],o=e[5],u=e[6],a=u(n.get(r,i,s)),f=document.getElementById(t);a!=null&&a!=""?f.value=a:o!=null&&(f.value=o)}function loadValueFromVariableAtIndex(e){var t=e[0],n=e[1],r=e[2],i=e[3],s=e[4],o=e[5],u=e[6],a=n.get(r,i,s),f=a.split(/[,\t ]+/),l;u<f.length?l=f[u]:l="";var c=document.getElementById(t);l!=null&&l!=""?c.value=l:o!=null&&(c.value=o)}function loadChecked(e){var t=e[0],n=e[1],r=e[2],i=e[3],s=e[4],o=e[5];document.getElementById(e[0]).checked=o(n.get(r,i,s))}function isArray(e){return e.constructor.toString().indexOf("Array")>=0||e instanceof Array?!0:!1}function loadVariables(e,t,n,r,i,s,o){for(idIndex in t){nextId=t[idIndex],nextPkg=n[idIndex],nextSection=r[idIndex],nextOption=i[idIndex],nextParams=s[idIndex],nextFunc=o[idIndex];if(isArray(nextParams)){fullList=[nextId,e,nextPkg,nextSection,nextOption];for(pIndex in nextParams)fullList.push(nextParams[pIndex]);nextFunc(fullList)}else nextFunc([nextId,e,nextPkg,nextSection,nextOption,nextParams])}}function loadValueFromMultipleVariables(e){var t=e[0],n=e[1],r=e[2],i=e[3],s=e[4],o=e[5],u=e[6],a=new Array;for(pkgIndex in r)a.push(n.get(r[pkgIndex],i[pkgIndex],s[pkgIndex]));var f=o(a),l=document.getElementById(t);f!=null&&f!=""?l.value=f:u!=null&&(l.value=u)}function setVisibility(e,t,n,r){r==null&&(r=document);for(index in e)element=r.getElementById(e[index]),t[index]==0?element.style.display="none":n?element.style.display=n[index]:element.style.display="block"}function validateIP(e){var t=0;if(e=="0.0.0.0")t=1;else if(e=="255.255.255.255")t=2;else{var n=e.match(/^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/);if(n==null)t=5;else for(field=1;field<=4;field++)n[field]>255&&(t=4),n[field]==255&&field==4&&(t=3)}return t}function validateMac(e){var t=0,n=e.split(/:/);if(n.length!=6)t=2;else for(fieldIndex=0;fieldIndex<6&&t==0;fieldIndex++)field=n[fieldIndex],field.match(/^[0123456789ABCDEFabcdef]{2}$/)==null&&(t=1);return t}function validateMultipleIps(e){e=e.replace(/^[\t ]+/g,""),e=e.replace(/[\t ]+$/g,"");var t=e.split(/[\t ]*,[\t ]*/),n=t.length>0?0:1;while(n==0&&t.length>0){var r=t.pop();if(r.match(/-/)){var i=r.split(/[\t ]*-[\t ]*/);if(i.length==2&&validateIP(i[0])==0&&validateIP(i[1])==0){var s=getIpInteger(i[0]),o=getIpInteger(i[1]);n=s<=o?0:1}else n=1}else n=validateIpRange(r)}return n}function validateMultipleIpsOrMacs(e){var t=e.replace(/^[\t ]+/g,"");t=t.replace(/[\t ]+$/g,"");var n=t.split(/[\t ]*,[\t ]*/),r=n.length>0?0:1;while(r==0&&n.length>0){var i=n.pop();if(i.match(/-/)){var s=i.split(/[\t ]*-[\t ]*/);if(s.length==2&&validateIP(s[0])==0&&validateIP(s[1])==0){var o=getIpInt(s[0]),u=getIpInt(s[1]);r=o<=u?0:1}else r=1}else i.match(/:/)?r=validateMac(i):r=validateIpRange(i)}return r}function validateDecimal(e){var t=e.match(/^[\d]*\.?[\d]+$/)!=null||e.match(/^[\d]+\.?[\d]*$/)!=null?0:1;return t}function validateNumeric(e){var t=e.match(/^[\d]+$/)==null?1:0;return t}function validatePort(e){return validateNumericRange(e,1,65535)}function validateNumericRange(e,t,n){var r=e.match(/^[\d]+$/)==null?1:0;return r==0&&(r=e<t?2:0),r==0&&(r=e>n?3:0),r}function validatePortOrPortRange(e){var t=0;if(e.match(/-/)!=null){var n=e.split(/-/);n.length>2?t=5:(error1=validateNumericRange(n[0],1,65535),error2=validateNumericRange(n[1],1,65535),t=error1+10*error2,t==0&&(t=n[1]-n[0]>=0?0:4))}else t=validateNumericRange(e,1,65535);return t}function validateNetMask(e){var t=0,n=e.match(/^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/);if(n==null)t=4;else{previousField=255;for(field=1;field<=4;field++)n[field]>255&&(t=3),previousField<255&&n[field]!=0&&t<2&&(t=2),n[field]!=255&&n[field]!=254&&n[field]!=252&&n[field]!=248&&n[field]!=240&&n[field]!=224&&n[field]!=192&&n[field]!=128&&n[field]!=0&&t<1&&(t=1),previousField=n[field]}return t}function validateIpRange(e){var t=1;if(e.indexOf("/")>0){var n=e.split("/");if(n.length==2){var r=validateIP(n[0]),i=validateNetMask(n[1])==0||validateNumericRange(n[1],1,31)==0?0:1;t=r==0&&i==0?0:1}}else t=validateIP(e);return t}function validateLengthRange(e,t,n){var r=0;return e.length<t&&(r=1),e.length>n&&(r=2),r}function validateHex(e){var t=0;return e.match(/^[0123456789AaBbCcDdEeFf]*$/)||(t=1),t}function validateHours(e){var t=e.match(/,/)?e.split(/,/):[e],n=!0;for(commaIndex=0;commaIndex<t.length&&n;commaIndex++){var r=t[commaIndex].split(/-/),i=r.length==2;i&&(i=i&&r[0].match(/^[\t ]*([0-1]?[0-9]|2[0-3])(:[0-5][0-9])?[\t ]*$/),i=i&&r[1].match(/^[\t ]*([0-1]?[0-9]|2[0-3])(:[0-5][0-9])?[\t ]*$/)),n=n&&i}return n?0:1}function validateWeeklyRange(e){var t=e.match(/,/)?e.split(/,/):[e],n=!0;for(commaIndex=0;commaIndex<t.length&&n;commaIndex++){var r=t[commaIndex].split(/-/),i=r.length==2;i&&(r[0]=r[0].toLowerCase(),r[1]=r[1].toLowerCase(),i=i&&r[0].match(/^[\t ]*(sun|mon|tue|wed|thu|fri|sat)[\t ]*([0-1]?[0-9]|2[0-3])(:[0-5]?[0-9])?(:[0-5]?[0-9])?[\t ]*$/),i=i&&r[1].match(/^[\t ]*(sun|mon|tue|wed|thu|fri|sat)[\t ]*([0-1]?[0-9]|2[0-3])(:[0-5]?[0-9])?(:[0-5]?[0-9])?[\t ]*$/)),n=n&&i}return n?0:1}function proofreadHours(e){proofreadText(e,validateHours,0)}function proofreadWeeklyRange(e){proofreadText(e,validateWeeklyRange,0)}function proofreadLengthRange(e,t,n){var r=function(e){return validateLengthRange(e,t,n)};proofreadText(e,r,0)}function proofreadIp(e){proofreadText(e,validateIP,0)}function proofreadMask(e){proofreadText(e,validateNetMask,0)}function proofreadIpRange(e){proofreadText(e,validateIpRange,0)}function proofreadMac(e){proofreadText(e,validateMac,0)}function proofreadMultipleIps(e){proofreadText(e,validateMultipleIps,0)}function proofreadMultipleIpsOrMacs(e){proofreadText(e,validateMultipleIpsOrMacs,0)}function proofreadDecimal(e){proofreadText(e,validateDecimal,0)}function proofreadNumeric(e){proofreadText(e,validateNumeric,0)}function proofreadNumericRange(e,t,n){proofreadText(e,function(e){return validateNumericRange(e,t,n)},0)}function proofreadPort(e){proofreadText(e,validatePort,0)}function proofreadPortOrPortRange(e){proofreadText(e,validatePortOrPortRange,0)}function proofreadText(e,t,n){e.disabled!=1&&(e.style.color=t(e.value)==n?"black":"red")}function getEmbeddedSvgWindow(e,t){t==null&&(t=document);var n=t.getElementById(e),r=null;try{var i=n.getSVGDocument();r=i.defaultView}catch(s){}if(r==null){try{r=n.window}catch(o){}if(r==null)try{r=n.getWindow()}catch(u){}}return r}function getBridgeSection(e){var t=uciOriginal.getAllSections("wireless"),n=uciOriginal.get("network","wan",""),r="",i;for(i=0;i<t.length&&r=="";i++){var s=function(n){return e.get("wireless",t[i],n).toLowerCase()};s("mode")=="wds"&&n==""?r=t[i]:s("mode")=="sta"&&s("wds")=="1"&&n==""?r=t[i]:s("mode")=="sta"&&s("client_bridge")=="1"&&(r=t[i])}return r}function isBridge(e){var t=getBridgeSection(e)==""?!1:!0;return t}function parseTimezones(e){timezoneList=[],timezoneRegions=[],timezoneDefinitions=[],definitionTimezones=[];for(lineIndex=0;lineIndex<e.length;lineIndex++)line=e[lineIndex],!line.match(/^[\t ]*#/)&&line.length>0&&(splitLine=line.split(/[\t]+/),region=stripQuotes(splitLine.pop()),definition=stripQuotes(splitLine.pop()),timezone=stripQuotes(splitLine.pop()),timezoneList.push(timezone),timezoneDefinitions[timezone]=definition,definitionTimezones[definition]=timezone,timezoneRegions[timezone]=region);return[timezoneList,timezoneRegions,timezoneDefinitions,definitionTimezones]}function stripQuotes(e){return e.match(/\".*\"/)&&(e=e.match(/^[^\"]*\"([^\"]*)\"/)[1]),e}function textListToSpanElement(e,t,n){t=t==null?!1:t,n=n==null?document:n;var r=n.createElement("span"),i;for(i=0;i<e.length;i++)i>0&&r.appendChild(n.createElement("br")),r.appendChild(n.createTextNode(e[i]+(i<e.length-1&&t?",":"")));return r}function addAddressStringToTable(e,t,n,r,i,s,o,u){i=i==null?!0:!1,s=s==null?3:s;var a;s==0?a=function(){return 1}:s==1?a=validateIP:s==2?a=validateIpRange:a=validateMultipleIps;var f=[],l=[],c=e.getElementById(n);if(c.firstChild!=null){var h=c.firstChild,p=getTableDataArray(h,!0,!1),d;for(d=0;d<p.length;d++){var v=p[d][0];validateMac(v)==0?f.push(v):l.push(v)}}e=e==null?document:e,o=o==null?!0:o;var m=t.split(/[\t ]*,[\t ]*/),g=m.length>0?0:1,y;for(y=0;y<m.length&&g==0;y++){var v=m[y],b=i&&validateMac(v)==0,w=a(v)==0;if(b||w){var E=b?f:l;g=E.length==0||!testAddrOverlap(v,E.join(","))?0:1,g==0&&E.push(v)}else g=1}if(g==0){var h=c.childNodes.length>0?c.firstChild:createTable([""],[],r,!0,!1,null,null,e);t=t.replace(/^[\t ]*/,""),t=t.replace(/[\t ]*$/,"");var S=t.split(/[\t ]*,[\t ]*/);while(S.length>0)addTableRow(h,[S.shift()],!0,!1,null,null,e);c.childNodes.length==0&&c.appendChild(h),u!=null&&(h.style.width=""+u+"px")}else o&&alert("ERROR: Invalid Address\n");return g==0?!0:!1}function addAddressesToTable(e,t,n,r,i,s,o,u){var a=e.getElementById(t).value,f=addAddressStringToTable(e,a,n,r,i,s,o,u);return f&&(e.getElementById(t).value=""),f}function parsePaddedInt(e){e=e==null?"":e,e=e.replace(/[\t ]+/,"");while(e.length>1&&e.match(/^0/)||e.length>2&&e.match(/^\-0/))e=e.replace(/^0/,""),e=e.replace(/^\-0/,"-");return parseInt(e)}function getIpInteger(e){e=e==null?"":e;var t=e.match(/^(\d+)\.(\d+)\.(\d+)\.(\d+)$/);return t?(+parsePaddedInt(t[1])<<24)+(+parsePaddedInt(t[2])<<16)+(+parsePaddedInt(t[3])<<8)+ +parsePaddedInt(t[4]):parseInt("")}function getMaskInteger(e){return-1<<32-parsePaddedInt(e)}function getIpRangeIntegers(e){var t=0,n=0;if(e.match(/\//)){var r=e.split(/[\t ]*\/[\t ]*/),i=getIpInteger(r[0]),s=r[1].match(/\./)?getIpInteger(r[1]):getMaskInteger(r[1]);t=i&s,n=t|~s}else if(e.match(/-/)){var r=e.split(/[\t ]*\-[\t ]*/);t=getIpInteger(r[0]),n=getIpInteger(r[1])}else t=getIpInteger(e),n=t;return[t,n]}function testSingleAddrOverlap(e,t){var n=function(e){e=e==""?"ALL":e.toUpperCase();if(e=="ALL_OTHERS_COMBINED"||e=="ALL_OTHERS_INDIVIDUAL")e="ALL_OTHERS_COMBINED";return e};e=n(e),t=n(t);var r=!1;if(e==t)r=!0;else if(validateMultipleIps(e)>0||validateMultipleIps(t)>0||e.match(",")||t.match(","))r=!1;else{var i=getIpRangeIntegers(e),s=getIpRangeIntegers(t);r=i[0]<=s[1]&&i[1]>=s[0]}return r}function testAddrOverlap(e,t){e=e.replace(/^[\t ]+/,""),e=e.replace(/[\t ]+$/,""),t=t.replace(/^[\t ]+/,""),t=t.replace(/[\t ]+$/,"");var n=e.split(/[,\t ]+/),r=t.split(/[,\t ]+/),i,s=!1;for(i=0;i<n.length&&!s;i++){var o;for(o=0;o<r.length&&!s;o++)s=s||testSingleAddrOverlap(n[i],r[o])}return s}function setInvisibleIfIdMatches(e,t,n,r,i){i=i==null?document:i,r=r==null?"block":r;var s=i.getElementById(n),o=!1,u=0;if(s!=null){for(u=0;u<t.length;u++)o=getSelectedValue(e,i)==t[u]?!0:o;o?s.style.display="none":s.style.display=r}}function arrToHash(e){var t=[],n;for(n=0;n<e.length;n++)t[e[n]]=1;return t}function confirmPassword(e,t,n){e=e==null?"Confirm Password:":e;if(typeof confirmWindow!="undefined")try{confirmWindow.close()}catch(r){}try{xCoor=window.screenX+225,yCoor=window.screenY+225}catch(r){xCoor=window.left+225,yCoor=window.top+225}var i="password_confirm.sh";confirmWindow=window.open(i,"password","width=560,height=260,left="+xCoor+",top="+yCoor);var s=createInput("button",confirmWindow.document),o=createInput("button",confirmWindow.document);s.value="OK",s.className="default_button",o.value="Cancel",o.className="default_button",runOnEditorLoaded=function(){updateDone=!1,confirmWindow.document!=null&&confirmWindow.document.getElementById("bottom_button_container")!=null&&(confirmWindow.document.getElementById("bottom_button_container").appendChild(s),confirmWindow.document.getElementById("bottom_button_container").appendChild(o),setChildText("confirm_text",e,null,null,null,confirmWindow.document),o.onclick=function(){confirmWindow.close()},s.onclick=function(){setControlsEnabled(!1,!0,"Verifying Password...");var e='gargoyle_session_validator -p "'+confirmWindow.document.getElementById("password").value+'" -a "dummy.browser" -i "127.0.0.1"',r=getParameterDefinition("commands",e)+"&"+getParameterDefinition("hash",document.cookie.replace(/^.*hash=/,"").replace(/[\t ;]+.*$/,"")),i=function(e){if(e.readyState==4){confirmWindow.close();var r=e.responseText.split("\n")[0];r.match(/^echo \"invalid\"/)?n.call(null):t.call(null)}};runAjax("POST","utility/run_commands.sh",r,i)},confirmWindow.moveTo(xCoor,yCoor),confirmWindow.focus(),updateDone=!0),updateDone||setTimeout("runOnEditorLoaded()",250)},runOnEditorLoaded()}function getUsedPorts(){var e=uciOriginal.getAllSections("dropbear"),t=uciOriginal.get("dropbear",e[0],"Port"),n=uciOriginal.get("httpd_gargoyle","server","http_port"),r=uciOriginal.get("httpd_gargoyle","server","https_port"),i=[];i.tcp=[],i.udp=[];var s=[];s.push([t,"tcp","SSH port"]),i.tcp[t]=1,n!=""&&(s.push([n,"tcp","web server port"]),i.tcp[n]=1),r!=""&&(s.push([r,"tcp","web server port"]),i.tcp[r]=1);var o=uciOriginal.getAllSectionsOfType("firewall","remote_accept"),u;for(u=0;u<o.length;u++){var a=o[u],f=uciOriginal.get("firewall",a,"local_port"),l=uciOriginal.get("firewall",a,"remote_port"),c=uciOriginal.get("firewall",a,"start_port"),h=uciOriginal.get("firewall",a,"end_port"),p=uciOriginal.get("firewall",a,"proto").toLowerCase(),d=uciOriginal.get("firewall",a,"zone").toLowerCase();if(d=="wan"||d==""){var v;l=l==""?f:l;for(v=0;v<s.length;v++)v[0]==f&&(v[1]==p||p==""||p=="tcpudp")&&localport!=l&&localport!=""&&(p==""||p=="tcpudp"?(s.push([l,"tcp",v[2]]),s.push([l,"udp",v[2]]),i.tcp[l]=1,i.udp[l]=1):(s.push([l,p,v[2]]),i[p][l]=1));if(f!=""){var m=p==""||p=="tcpudp"?["tcp","udp"]:[p];while(m.length>0){var g=m.shift();i[g][l]==null&&(s.push([l,g,"port redirected to router"]),i[g][l]=1,i[g][f]==null&&(s.push([f,g,"port in use by router"]),i[g][f]=1))}}if(f==""&&c!=""&&h!=""){var m=p==""||p=="tcpudp"?["tcp","udp"]:[p];while(m.length>0){var g=m.shift();s.push([c+"-"+h,g,"port redirected to router"])}}}}var y=uciOriginal.getAllSectionsOfType("firewall","redirect"),b;for(b=0;b<y.length;b++){var a=o[u],f=uciOriginal.get("firewall",a,"local_port"),l=uciOriginal.get("firewall",a,"remote_port"),p=uciOriginal.get("firewall",a,"proto").toLowerCase(),w=uciOriginal.get("firewall",a,"src").toLowerCase(),E=uciOriginal.get("firewall",a,"dest").toLowerCase(),S=uciOriginal.get("firewall",a,"src_dport"),x=uciOriginal.get("firewall",a,"dest_ip");s.push([l,p,"port forwarded to "+x])}return s}function checkForPortConflict(e,t,n){var r=null,i=null,s=!1;if(e.match(/-/)){var o=e.split(/-/);r=parseInt(o[0]),i=parseInt(o[1]),s=!0}else e=parseInt(e);if(n!=null){n.tcp=n["tcp"]==null?[]:n.tcp,n.udp=n["udp"]==null?[]:n.udp;if(n[t][e]!=null&&n[t][""+e]!=null)return"";var u;for(u in n[t])if(u.match(/-/)){var a=u.split(/-/);if(!s&&e>=parseInt(a[0])&&e<=parseInt(a[1]))return"";if(s&&r<=parseInt(a[1])&&i>=parseInt(a[0]))return""}}var f=getUsedPorts(),l,c="";for(l=0;l<f.length&&c=="";l++){var h=f[l];if(t==h[1]){var p=h[0];if(p.match(/\-/)){var o=
-p.split(/\-/);!s&&e>=parseInt(o[0])&&e<=parseInt(o[1])&&(c=h[2]),s&&r<=parseInt(o[1])&&i>=parseInt(o[0])&&(c=h[2])}else!s&&e==parseInt(p)&&(c=h[2]),s&&parseInt(p)>=r&&parseInt(p)<=i&&(c=h[2])}}return c}function query(e,t,n,r){document.getElementById("wait_icon").style.display="none",document.getElementById("wait_txt").style.display="none",wmOldTxt=document.getElementById("wait_txt").style=="none"?!1:!0,wmOldBack=document.getElementById("wait_msg").style.background,wmOldWidth=document.getElementById("wait_msg").style.width,wmOldHeight=document.getElementById("wait_msg").style.height,wmOldTop=document.getElementById("wait_msg").style.top,document.getElementById("wait_msg").style.background="white",document.getElementById("wait_msg").style.width="585px",document.getElementById("wait_msg").style.height="500px",setControlsEnabled(!1,!1),document.getElementById("wait_msg").style.top="20px",queryFieldset=document.createElement("fieldset"),queryFieldset.innerHTML='<legend class="sectionheader" id="query_header">'+e+'</legend><div style="clear:both;display:block"><span class="nocolumn" id="query_text">'+t+'</span></div><div id="spacer_div" style="display:block; mrgin:8px;">&nbsp;</div><div id="query_button_container"></div>',document.getElementById("wait_msg").appendChild(queryFieldset);var i=[],s;for(s=0;s<n.length;s++)b=createInput("button",document),b.value=n[s],b.className="default_button",b.onclick=function(){document.getElementById("wait_msg").removeChild(queryFieldset),document.getElementById("wait_msg").style.background=wmOldBack,document.getElementById("wait_msg").style.width=wmOldWidth,document.getElementById("wait_msg").style.height=wmOldHeight,document.getElementById("wait_msg").style.top=wmOldTop,document.getElementById("wait_icon").style.display="block",document.getElementById("wait_txt").style.display="block",setControlsEnabled(!1,wmOldTxt),r(this.value)},document.getElementById("query_button_container").appendChild(b),document.getElementById("query_button_container").appendChild(document.createElement("br"))}window.onresize=function(){try{document.getElementById("darken").style.display=="block"&&setControlsEnabled(!1,document.getElementById("wait_msg").style.display=="block")}catch(t){}};
+ */
+
+
+window.onresize = function onresize()
+{
+	//in case this gets called while initializing page, you may get error if element isnt defined,
+	//so use a try/catch
+	try
+	{
+		if(document.getElementById("darken").style.display == "block")
+		{
+			setControlsEnabled(false, document.getElementById("wait_msg").style.display == "block");
+		}
+	}
+	catch(e){}
+}
+
+// should be called by hooks
+// main page code can just use regular resetData() function
+// which should get called first
+function addLoadFunction(func)
+{
+	var old_load = window.onload;
+	window.onload = (typeof window.onload != 'function') ? func : function() { old_load() ; func() ; }
+}
+
+
+function setControlsEnabled(enabled, showWaitMessage, waitText)
+{
+	var dark = document.getElementById("darken");
+	var msg  = document.getElementById("wait_msg");
+	if (!enabled)
+	{
+		var totalHeight="100%";
+		var totalWidth="100%";
+		if(document.body.parentNode.scrollHeight)
+		{
+			totalHeight = document.body.parentNode.scrollHeight + "px";
+		}
+		else if(document.height)
+		{
+			totalHeight = document.height + "px";
+		}
+		if(document.body.parentNode.scrollWidth)
+		{
+			totalWidth  = document.body.parentNode.scrollWidth;
+			if(document.width)
+			{
+				totalWidth = document.width > totalWidth ? document.width : totalWidth;
+			}
+			totalWidth = totalWidth + "px";
+		}
+		else if(document.width)
+		{
+			totalWidth = document.width + "px";
+		}
+
+		var viewportHeight;
+		var vewportWidth;
+		if(self.innerHeight)
+		{
+			viewportHeight = window.innerHeight;
+			viewportWidth = window.innerWidth;
+		}
+		else if(document.documentElement && document.documentElement.clientHeight)
+		{
+			viewportHeight = document.documentElement.clientHeight;
+			viewportWidth = document.documentElement.clientWidth;
+		}
+		else if(document.body)
+		{
+			viewportHeight = document.body.clientHeight;
+			viewportWidth = document.body.clientWidth;
+		}
+
+		var leftOffset = Math.floor((viewportWidth-300)/2);
+		var topOffset  = Math.floor((viewportHeight-150)/2); 
+		var is_ie = false;
+		if(document.all)
+		{
+			is_ie = true;
+		}
+		if(is_ie)
+		{
+			var di = document.getElementById("d_iframe");
+			di.style.display="block";
+			di.style.width=totalWidth;
+			di.style.height=totalHeight;
+
+			var dm = document.getElementById("m_iframe");
+			dm.style.display="block";
+			dm.style.width="300px";
+			dm.style.height="150px";
+
+			msg.style.position="absolute";
+			topOffset  = topOffset  + document.documentElement.scrollTop;
+			leftOffset = leftOffset + document.documentElement.scrollLeft;
+		}
+
+		dark.style.height=totalHeight;
+		dark.style.width=totalWidth;
+
+
+
+		msg.style.left = leftOffset >= 0 ? leftOffset+"px" : "0px";
+		msg.style.top  = topOffset >=0 ? topOffset+"px" : "0px";
+
+		
+		dark.style.display="block";
+
+		if(showWaitMessage)
+		{
+			msg.style.display= "block";
+			if(waitText != null)
+			{
+				document.getElementById("wait_txt").firstChild.data = waitText;
+			}
+		}
+	}
+	else
+	{
+		dark.style.display="none";
+		msg.style.display= "none";
+	}
+
+	//let's be sneaky -- instead of adding setBrowserTimeCookie() to the saveChanges() function on every page
+	//just add it to this function which almost always gets called just before we set parameters
+	//This covers all instances not taken care of by the runAjax() function, e.g. when submitting a form
+	setBrowserTimeCookie();
+}
+
+function setBrowserTimeCookie()
+{
+	var browserSecondsUtc = Math.floor( ( new Date() ).getTime() / 1000 );
+	document.cookie="browser_time=" +browserSecondsUtc + "; path=/"; //don't bother with expiration -- who cares when the cookie was set? It just contains the current time, which the browser already knows
+}
+
+function getRequestObj()
+{
+	var req;
+	try
+	{
+
+		// standards compliant browsers
+		req = new XMLHttpRequest();
+	}
+	catch (ex)
+	{
+		// MicroShit Browsers
+		try
+		{
+			req = new ActiveXObject("Msxml2.XMLHTTP");
+		}
+		catch (ex) 
+		{
+			try
+			{
+				req = new ActiveXObject("Microsoft.XMLHTTP");
+			} 
+			catch (ex)
+			{
+				// Browser is not Ajax compliant
+				return false;
+			}
+		}
+	}
+	return req;
+}
+
+function runAjax(method, url, params, stateChangeFunction)
+{
+
+	//let's be sneaky -- instead of adding setBrowserTimeCookie() to the saveChanges() function on every page
+	//add it to this function, which gets run on every ajax call.  This covers all instances not taken care of
+	//by the setControlsEnabled() function
+	setBrowserTimeCookie();
+	var req = getRequestObj();
+	if(req)
+	{
+		req.onreadystatechange = function()
+		{
+			stateChangeFunction(req);
+		}
+
+		if(method == "POST")
+		{
+			//for some reason we need at least one character of data, so use a space if params == null
+			params = (params == null) ? " " : params;
+			
+			req.open("POST", url, true);
+			req.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+			//req.setRequestHeader("Content-length", params.length);
+			//req.setRequestHeader("Connection", "close");
+			req.send(params);
+		}
+		else if(method == "GET")
+		{
+			req.open("GET", url + "?" + params, true);
+			req.send(null);
+		}
+	}
+	return req;
+}
+
+// The way we store keys is massively inefficient, but
+// there are generally few enough keys defined that
+// the O(N) time we're using doesn't impact performance.
+//
+// This implementation is necessary so we can control order
+// of sections, i.e. sections will be added in the order
+// they are defined with set method
+function UCIContainer()
+{
+	this.keys = new Array();
+	this.values = new Array();
+	this.listOptions = new Array();
+
+
+	this.createListOption = function(pkg,section,option,destroy_existing_nonlist)
+	{
+		destroy_existing_nonlist = destroy_existing_nonlist == null ? true : false;
+		var  list_key = pkg + "\." + section + "\." + option;
+		if( this.listOptions[ list_key ] != null )
+		{
+			return;
+		}
+
+		this.listOptions[ list_key ] = 1;
+		if( this.values[list_key] != null )
+		{
+			var old = this.values[list_key];
+			this.values[list_key] = (!destroy_existing_nonlist) && old != null ? [old] : [] ; 
+		}
+		else
+		{
+			this.keys.push(list_key);
+			this.values[list_key] = [];
+		}
+	}
+	this.set = function(pkg, section, option, value, preserveExistingListValues)
+	{
+		preserveExistingListValues = preserveExistingListValues == null ? false : preserveExistingListValues;
+		var next_key = pkg + "\." + section;
+	       	if(option != null && option != "" )
+		{
+			next_key = next_key + "\." + option;
+		}
+		if(this.values[next_key] != null)
+		{
+			if (this.listOptions[ next_key ] != null)
+			{
+				var set = this.values[next_key];
+				while(set.length > 0 && (!preserveExistingListValues))
+				{
+					set.pop();
+				}
+				if( value instanceof Array )
+				{
+					var vi;
+					for(vi=0; vi<value.length; vi++)
+					{
+						set.push( value[vi] );
+					}
+				}
+				else
+				{
+					set.push(value);
+				}
+				this.values[next_key] = set;
+			}
+			else
+			{
+				this.values[next_key] = value;
+			}
+		}
+		else
+		{
+			this.keys.push(next_key);
+			if (this.listOptions[ next_key ] != null)
+			{
+				var set = [];
+				if(value instanceof Array)
+				{
+					var setIndex;
+					for(setIndex=0;setIndex < value.length; setIndex++)
+					{
+						set.push( value[setIndex] )
+					}
+				}
+				else
+				{
+					set = [ value ]
+				}
+				this.values[next_key] = set
+			}
+			else
+			{
+				this.values[next_key] = value;
+			}
+		}
+	}
+
+	this.get = function(pkg, section, option)
+	{
+		
+		var next_key = pkg + "\." + section;
+		if(option != null && option != '')
+		{
+			next_key = next_key + "\." + option;
+		}
+		var value = this.values[next_key];
+		return value != null ? value : '';
+	}
+	this.removeAllSectionsOfType = function(pkg, type)
+	{
+		var removeSections = this.getAllSectionsOfType(pkg, type);
+		var rmIndex=0;
+		for(rmIndex=0; rmIndex < removeSections.length; rmIndex++)
+		{
+			this.removeSection(pkg, removeSections[rmIndex]);
+		}
+	}
+	this.getAllOptionsInSection = function(pkg, section, includeLists)
+	{
+		includeLists = includeLists == null ? false : includeLists;
+		var matches = new Array();
+		for (keyIndex in this.keys)
+		{
+			var key = this.keys[keyIndex];
+			var test = pkg + "." + section;
+			if(key.match(test) && key.match(/^[^\.]+\.[^\.]+\.[^\.]+/) && (includeLists || this.listOptions[key] == null) )
+			{
+				var option = key.match(/^[^\.]+\.[^\.]+\.([^\.]+)$/)[1];
+				matches.push(option);
+			}
+		}
+		return matches;
+	}
+	this.getAllSectionsOfType = function(pkg, type)
+	{
+		var matches = new Array();
+		for (keyIndex in this.keys)
+		{
+			key = this.keys[keyIndex];
+			if(key.match(pkg) && key.match(/^[^\.]+\.[^\.]+$/))
+			{
+				if(this.values[key] == type)
+				{
+					var section = key.match(/^[^\.]+\.([^\.]+)$/)[1];
+					matches.push(section);
+				}
+			}
+		}
+		return matches;
+	}
+	this.getAllSections = function(pkg)
+	{
+		var matches = new Array();
+		for (keyIndex in this.keys)
+		{
+			key = this.keys[keyIndex];
+			if(key.match(pkg) && key.match(/^[^\.]+\.[^\.]+$/))
+			{
+				var section = key.match(/^[^\.]+\.([^\.]+)$/)[1];
+				matches.push(section);
+			}
+		}
+		return matches;
+	}
+
+	this.remove = function(pkg, section, option)
+	{
+		var removeKey = pkg + "\." + section;
+	       	if(option != "")
+		{
+			removeKey = removeKey + "\." + option;
+		}
+		if( this.listOptions[ removeKey ] != null )
+		{
+			this.listOptions[ removeKey ] = null;
+		}
+
+		var value = this.values[removeKey];
+		if(value != null)
+		{
+			this.values[removeKey] = null;
+			var newKeys = [];
+			while(this.keys.length > 0)
+			{
+				var nextKey = this.keys.shift();
+				if(nextKey != removeKey){ newKeys.push(nextKey); }
+			}
+			this.keys = newKeys;
+		}
+		else
+		{
+			value = ''
+		}
+		return value;
+	}
+	this.removeSection = function(pkg, section)
+	{
+		removeKeys = new Array();
+		sectionDefined = false;
+		for (keyIndex in this.keys)
+		{
+			key = this.keys[keyIndex];
+			testExp = new RegExp(pkg + "\\." + section + "\\.");
+			if(key.match(testExp))
+			{
+				var splitKey = key.split("\.");
+				removeKeys.push(splitKey[2]);
+			}
+			if(key == pkg + "." + section)
+			{
+				sectionDefined = true;
+			}
+
+		}
+		for (rkIndex in removeKeys)
+		{
+			this.remove(pkg, section, removeKeys[rkIndex]);
+		}
+		if(sectionDefined)
+		{
+			this.remove(pkg, section, "");
+		}
+	}
+
+	this.clone = function()
+	{
+		var copy = new UCIContainer();
+		var keyIndex = 0;
+		for(keyIndex = 0; keyIndex < this.keys.length; keyIndex++)
+		{
+			var key = this.keys[keyIndex];
+			var val = this.values[key]
+			if( this.listOptions[ key ] != null )
+			{
+				copy.listOptions[ key ] = 1;
+			}
+
+			var splitKey = key.match(/^([^\.]+)\.([^\.]+)\.([^\.]+)$/);
+			if(splitKey == null)
+			{
+				splitKey = key.match(/^([^\.]+)\.([^\.]+)$/);
+				if(splitKey != null)
+				{
+					splitKey.push("");
+				}
+				else
+				{
+					//should never get here -- if problems put debugging code here
+				}
+			}
+			copy.set(splitKey[1], splitKey[2], splitKey[3], val, true);
+		}
+		return copy;
+	}
+
+	this.print = function()
+	{
+		var str="";
+		var keyIndex=0;
+		for(keyIndex=0; keyIndex < this.keys.length; keyIndex++)
+		{
+			var key = this.keys[keyIndex]
+			if(this.values[key] instanceof Array )
+			{
+				str=str+ "\n" + key + " = \"" + this.values[key].join(",") + "\"";
+			}
+			else
+			{
+				str=str+ "\n" + key + " = \"" + this.values[key] + "\"";
+			}
+		}
+		return str;
+	}
+
+	// sections are printed in the same order they were added (with the set method)
+	this.getScriptCommands = function(oldSettings)
+	{
+		var commandArray = new Array();
+		
+		var listsWithoutUpdates = [];
+
+		var keyIndex=0;	
+		for(keyIndex=0; keyIndex < oldSettings.keys.length; keyIndex++)
+		{
+			var key = oldSettings.keys[keyIndex];
+			var oldValue = oldSettings.values[key];
+			var newValue = this.values[key];
+
+			if( (oldValue instanceof Array && !(newValue instanceof Array)) || (newValue instanceof Array   && !(oldValue instanceof Array))  ) 
+			{
+				commandArray.push( "uci del " + key);
+			}
+			else if (oldValue instanceof Array && newValue instanceof Array)
+			{
+				var matches = oldValue.length == newValue.length;
+				if(matches)
+				{
+					var sortedOld = oldValue.sort()
+					var sortedNew = newValue.sort()
+					var sortedIndex;
+					for(sortedIndex=0; matches && sortedIndex <sortedOld.length; sortedIndex++)
+					{
+						matches = sortedOld[sortedIndex] == sortedNew[sortedIndex] ? true : false
+					}
+				}
+				if(matches)
+				{
+					listsWithoutUpdates[key] = 1
+				}
+				else
+				{
+					commandArray.push( "uci del " + key);
+				}
+
+			}
+			else if((newValue == null || newValue == '') && (oldValue != null && oldValue !=''))
+			{
+				commandArray.push( "uci del " + key);
+			}
+		}
+
+		for(keyIndex=0; keyIndex < this.keys.length; keyIndex++)
+		{
+			var key = this.keys[keyIndex];
+			var oldValue = oldSettings.values[key];
+			var newValue = this.values[key];
+			try
+			{
+
+				if( (oldValue instanceof Array) || (newValue instanceof Array) )
+				{
+					if(newValue instanceof Array)
+					{
+						if(listsWithoutUpdates[key] == null)
+						{
+							var vi;
+							for(vi=0; vi< newValue.length ; vi++)
+							{
+								var nv = "" + newValue[vi] + "";
+								commandArray.push( "uci add_list " + key + "=\'" + nv.replace(/'/, "'\\''") + "\'" );
+							}
+						}
+					}
+					else
+					{
+						newValue = "" + newValue + ""
+						commandArray.push( "uci set " + key + "=\'" + newValue.replace(/'/, "'\\''") + "\'" );
+					}
+				}
+				else if(oldValue != newValue && (newValue != null && newValue !=''))
+				{		
+					newValue = "" + newValue + ""
+					commandArray.push( "uci set " + key + "=\'" + newValue.replace(/'/, "'\\''") + "\'" );
+				}
+			}
+			catch(e)
+			{
+				alert("bad key = " + key + "\n");
+			}
+		}
+
+		commandArray.push("uci commit");
+		
+		return commandArray.join("\n");
+	}
+}
+
+
+
+
+function getParameterDefinition(parameter, definition)
+{
+	return(fullEscape(parameter) + "=" + fullEscape(definition));
+}
+
+
+function fullEscape(str)
+{
+	str = escape(str);
+	var otherEscape = [ '*', '@', '-', '_', '+', '.', '/' ];
+	var otherEscaped= [ '2A','40','2D','5F','2B','2E','2F'];
+	for(oeIndex=0; oeIndex < otherEscape.length; oeIndex++)
+	{
+		var splitStr = str.split( otherEscape[oeIndex] );
+		if(splitStr.length > 1)
+		{
+			str = splitStr.join( "%" + otherEscaped[oeIndex] );
+		}
+	}
+	return str;
+}
+
+function removeStringFromArray(arr, str)
+{
+	var arrIndex;
+	var newArr = [];
+	for(arrIndex=0;arrIndex<arr.length; arrIndex++)
+	{
+		var elFound = false;
+		if(typeof(arr[arrIndex]) == "string" )
+		{
+			elFound = (arr[arrIndex] == str)
+		}
+		if(!elFound)
+		{
+			newArr.push(arr[arrIndex]);
+		}
+	}
+	return newArr;
+}
+
+
+function setChildText(parentId, text, color, isBold, fontSize, controlDocument)
+{
+	controlDocument = controlDocument == null ? document : controlDocument;
+	parentElement = controlDocument.getElementById(parentId);
+	if(parentElement != null)
+	{
+		if(color != null)
+		{
+			parentElement.style.color = color;
+		}
+		if(isBold != null)
+		{
+			parentElement.style.fontWeight = isBold ? "bold" : "normal";
+		}
+		if(fontSize != null)
+		{
+			parentElement.style.fontSize = fontSize;
+
+		}
+		while(parentElement.firstChild != null)
+		{
+			parentElement.removeChild(parentElement.firstChild);
+		}
+
+		text = text == null ? "" : text;
+		var textParts = text.split("\n");
+		while(textParts.length > 0)
+		{
+			var txt = textParts.shift()
+			parentElement.appendChild(controlDocument.createTextNode(txt));
+			if(textParts.length > 0)
+			{
+				parentElement.appendChild(controlDocument.createElement('br'));
+
+			}
+		}
+	}
+}
+
+function createInput(type, controlDocument)
+{
+	controlDocument = controlDocument == null ? document : controlDocument;
+	try
+	{
+		inp = controlDocument.createElement('input');
+		inp.type = type;
+	}
+	catch(e)
+	{
+		inp = controlDocument.createElement('<input type="' + type + '" />');
+	}
+	return inp;
+}
+
+function trueAndVisible(elementId, visibilityId)
+{
+	return (document.getElementById(elementId).checked && document.getElementById(visibilityId).style.display != 'none');
+}
+
+function getDhcpSection(uciData)
+{
+	var allDhcpSections = uciData.getAllSections("dhcp");
+	var dhcpSection = allDhcpSections.length > 0 ? allDhcpSections[0] : "cfg1";
+	for(dsecIndex=0; dsecIndex < allDhcpSections.length; dsecIndex++)
+	{
+		if(uciData.get("dhcp", allDhcpSections[dsecIndex], "interface") == "lan")
+		{
+			dhcpSection = allDhcpSections[dsecIndex];
+		}
+	}
+	return dhcpSection;
+}
+
+
+function getWirelessMode(uciTest)
+{
+	var deviceSections = uciTest.getAllSectionsOfType("wireless", "wifi-device");
+	var validDevices = [];
+	var di;
+	for(di=0; di < deviceSections.length; di++)
+	{
+		var disabled = uciTest.get("wireless", deviceSections[di], "disabled");
+		if(disabled == "0" || disabled == "")
+		{
+			validDevices[ deviceSections[di] ] = 1
+		}
+	}
+
+	var ap = '';
+	var other = '';
+	var ifSections =  uciTest.getAllSectionsOfType("wireless", "wifi-iface");
+	var ifi;
+	for(ifi=0; ifi < ifSections.length; ifi++)
+	{
+		var dev  = uciTest.get("wireless", ifSections[ifi], "device");
+		if( validDevices[ dev ]  == 1)
+		{
+			var mode = uciTest.get("wireless", ifSections[ifi], "mode");
+			ap    = mode == "ap" ? mode : ap;
+			other = mode == "ap" ? (uciTest.get("wireless",  ifSections[ifi], "wds") ? "wds" : other) : mode;
+		}
+	}
+
+	
+	var p = ap != '' && other != '' ? '+' : '';
+	var wirelessMode = ap + p + other;
+	var wirelessMode= wirelessMode == '' ? 'disabled' : wirelessMode;
+	return wirelessMode;
+}
+
+
+function setDescriptionVisibility(descriptionId, defaultDisplay, displayText, hideText)
+{
+	defaultDisplay = (defaultDisplay == null) ? "inline" : defaultDisplay;
+	displayText = (displayText == null) ? "More Info" : displayText;
+	hideText = (hideText == null) ? "Hide Text" : hideText;
+
+	var ref = document.getElementById( descriptionId + "_ref" );
+	var txt = document.getElementById( descriptionId + "_txt" );
+	var command = "uci set gargoyle.help." + descriptionId + "=";
+	if(ref.firstChild.data == displayText)
+	{
+		txt.style.display=defaultDisplay;
+		ref.firstChild.data = hideText;
+		command = command + "1\n";
+	}
+	else
+	{
+		txt.style.display="none";
+		ref.firstChild.data = displayText;
+		command = command + "0\n";
+	}
+	command = command + "\nuci commit\n";
+
+	// we don't wait/notify user on completion so update seems instant
+	var param = getParameterDefinition("commands", command)  + "&" + getParameterDefinition("hash", document.cookie.replace(/^.*hash=/,"").replace(/[\t ;]+.*$/, ""));
+
+	runAjax("POST", "utility/run_commands.sh", param, function(){ return 0; }); 
+}
+
+function initializeDescriptionVisibility(testUci, descriptionId, defaultDisplay, displayText, hideText)
+{
+	defaultDisplay = (defaultDisplay == null) ? "inline" : defaultDisplay;
+	displayText = (displayText == null) ? "More Info" : displayText;
+	hideText = (hideText == null) ? "Hide Text" : hideText;
+
+	var descLinkText = displayText;
+	var descDisplay = "none";
+	if(testUci.get("gargoyle", "help", descriptionId) == "1")
+	{
+		descLinkText = hideText
+		descDisplay = defaultDisplay;
+	}
+	document.getElementById(descriptionId + "_ref").firstChild.data = descLinkText;
+	document.getElementById(descriptionId + "_txt").style.display = descDisplay;
+}
+
+
+function getSubnetRange(mask, ip)
+{
+	//first we need to get size of subnet
+	var splitMask = mask.split(".");
+	if(splitMask.length != 4)
+	{
+		return [];
+	}
+	var masks = [ "255","254","252","248","240","224","192","128", "0" ];
+	var bits  = [ 0,  1,  2,  3,  4,  5,  6,  7,   8 ];
+	var subnetBits = 0;
+	while(splitMask.length > 0)
+	{
+		var nextPart = splitMask.shift();
+		var nextBits = -1;
+		for(testIndex=0 ; testIndex < 9 && nextBits < 0; testIndex++)
+		{
+			nextBits = masks[testIndex] == nextPart ? bits[testIndex] : nextBits;
+		}
+		if(nextBits < 0)
+		{
+			return [];
+		}
+		subnetBits = subnetBits + nextBits;
+	}
+	
+	var subnetLength = Math.pow(2, subnetBits);
+	var testIpEnd = parseInt( (ip.split("."))[3] );
+
+	var subnetStart = 0;
+	while(subnetStart + subnetLength < testIpEnd)
+	{
+		subnetStart = subnetStart + subnetLength;
+	}
+	return [subnetStart, (subnetStart + subnetLength - 1) ];
+}
+
+function rangeInSubnet(mask, ip, start, end)
+{
+	var range = getSubnetRange(mask, ip);
+	var subnetStart = range[0];
+	var subnetEnd = range[1];
+
+	if(subnetStart != null && subnetEnd != null)
+	{
+		if(subnetStart <= start && subnetEnd >= end)
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+
+function proofreadFields(inputIds, labelIds, functions, validReturnCodes, visibilityIds, fieldDocument )
+{
+	fieldDocument = fieldDocument == null ? document : fieldDocument;
+
+	var errorArray= new Array();
+	for (idIndex in inputIds)
+	{
+		isVisible = true;
+		if(visibilityIds != null)
+		{
+			if(visibilityIds[idIndex] != null)
+			{
+				visibilityElement = fieldDocument.getElementById(visibilityIds[idIndex]);
+				isVisible = visibilityElement.style.display == 'none' || visibilityElement.disabled == true ? false : true;
+			}
+		}
+		if(isVisible)
+		{
+			input = fieldDocument.getElementById(inputIds[idIndex]);
+			
+			f = functions[idIndex];
+			proofreadText(input, f, validReturnCodes[idIndex]);
+
+			if(f(input.value) != validReturnCodes[idIndex])
+			{
+				labelStr = labelIds[idIndex] + "";
+				if( fieldDocument.getElementById(labelIds[idIndex]) != null)
+				{
+					labelStr = fieldDocument.getElementById(labelIds[idIndex]).firstChild.data;
+					labelStr = labelStr.replace(/:/, "");
+				}
+				else
+				{
+					alert("error in proofread: label with id " +  labelIds[idIndex] + " is not defined");
+				}
+				errorArray.push("There is an error in " + labelStr);
+			}
+		}
+	}
+	return errorArray;
+}
+
+function parseBytes(bytes, units)
+{
+	var parsed;
+	units = units != "KBytes" && units != "MBytes" && units != "GBytes" && units != "TBytes" ? "mixed" : units;
+	if( (units == "mixed" && bytes > 1024*1024*1024*1024) || units == "TBytes")
+	{
+		parsed = truncateDecimal(bytes/(1024*1024*1024*1024)) + " TBytes";
+	}
+	else if( (units == "mixed" && bytes > 1024*1024*1024) || units == "GBytes")
+	{
+		parsed = truncateDecimal(bytes/(1024*1024*1024)) + " GBytes";
+	}
+	else if( (units == "mixed" && bytes > 1024*1024) || units == "MBytes" )
+	{
+		parsed = truncateDecimal(bytes/(1024*1024)) + " MBytes";
+	}
+	else
+	{
+		parsed = truncateDecimal(bytes/(1024)) + " KBytes";
+	}
+	
+	return parsed;
+}
+
+function parseKbytesPerSecond(kbytes, units)
+{
+	var parsed;
+	units = units != "bytes/s" && units != "KBytes/s" && units != "MBytes/s" ? "mixed" : units;
+	
+	if( (units == "mixed" && kbytes > 1024) || units == "MBytes/s")
+	{
+		parsed = truncateDecimal(kbytes/(1024)) + " MBytes/s";
+	}
+	else
+	{
+		parsed = kbytes + " KBytes/s";
+	}
+	return parsed;
+}
+
+function truncateDecimal(dec)
+{
+	result = "" + ((Math.floor(dec*1000))/1000);
+	
+	//make sure we have exactly three decimal places so 
+	//results line up properly in table presentation
+	decMatch=result.match(/.*\.(.*)$/);
+	if(decMatch == null)
+	{
+		result = result + ".000"
+	}
+	else 
+	{
+		if(decMatch[1].length==1)
+		{
+			result = result + "00";
+		}
+		else if(decMatch[1].length==2)
+		{
+			result = result + "0";
+		}
+	}
+	return result;
+}
+
+function enableAssociatedField(checkbox, associatedId, defaultValue, controlDocument)
+{
+	controlDocument = controlDocument == null ? document : controlDocument;
+
+	element=controlDocument.getElementById(associatedId);
+	setElementEnabled(element, checkbox.checked, defaultValue);
+}
+
+function setElementEnabled(element, enabled, defaultValue)
+{
+	
+	if(enabled)
+	{
+		element.readonly=false;
+		element.disabled=false;
+		if(element.type == "text" || element.type == "textarea")
+		{
+			element.style.color="#000000";
+			element.className="" ;
+		}
+		else if(element.type == "select-one" || element.type == "select-multiple" || element.type == "select" )
+		{
+			element.className="";
+		}
+		else if(element.type == "button")
+		{
+			var activeClassName = element.className.replace(/_button.*$/, "_button");
+			element.className=activeClassName;
+		}
+	}
+	else
+	{
+		element.disabled=true;
+		if(element.type == "text" || element.type == "textarea")
+		{
+			element.value=defaultValue;
+			element.style.color="#AAAAAA";
+			element.className="text_disabled";
+		}
+		else if(element.type == "select-one" || element.type == "select-multiple" || element.type == "select" )
+		{
+			setSelectedValue(element.id, defaultValue, element.ownerDocument);
+			element.className="select_disabled";
+		}
+		else if(element.type == "button")
+		{
+			var activeClassName = element.className.replace(/_button.*$/, "_button");
+			element.className= activeClassName + "_disabled";
+		}
+		else if(element.type == "file")
+		{
+			element.value=defaultValue;
+		}
+	}
+}
+
+
+
+function getSelectedValue(selectId, controlDocument)
+{
+	controlDocument = controlDocument == null ? document : controlDocument;
+	
+	if(controlDocument.getElementById(selectId) == null)
+	{
+		alert("ERROR:" + selectId + " does not exist");
+		return;
+	}
+
+	selectedIndex = controlDocument.getElementById(selectId).selectedIndex;
+	selectedValue = "";
+	if(selectedIndex >= 0)
+	{
+		selectedValue= controlDocument.getElementById(selectId).options[ controlDocument.getElementById(selectId).selectedIndex ].value;
+	}
+	return selectedValue;
+
+}
+
+function getSelectedText(selectId, controlDocument)
+{
+	controlDocument = controlDocument == null ? document : controlDocument;
+	
+	selectedIndex = controlDocument.getElementById(selectId).selectedIndex;
+	selectedText = "";
+	if(selectedIndex >= 0)
+	{
+		selectedText= controlDocument.getElementById(selectId).options[ controlDocument.getElementById(selectId).selectedIndex ].text;
+	}
+	return selectedText;
+
+}
+function setSelectedValue(selectId, selection, controlDocument)
+{
+	var controlDocument = controlDocument == null ? document : controlDocument;
+	
+	var selectElement = controlDocument.getElementById(selectId);
+	if(selectElement == null){ alert("ERROR: " + selectId + " does not exist"); }
+
+	var selectionFound = false;
+	for(optionIndex = 0; optionIndex < selectElement.options.length && (!selectionFound); optionIndex++)
+	{
+		selectionFound = (selectElement.options[optionIndex].value == selection);
+		if(selectionFound)
+		{
+			selectElement.selectedIndex = optionIndex;
+		}
+	}
+	if(!selectionFound && selectElement.options.length > 0 && selectElement.selectedIndex < 0)
+	{
+		selectElement.selectedIndex = 0;
+	}
+}
+
+
+
+function setSelectedText(selectId, selection, controlDocument)
+{
+	controlDocument = controlDocument == null ? document : controlDocument;
+	
+	selectElement = controlDocument.getElementById(selectId);
+	selectionFound = false;
+	for(optionIndex = 0; optionIndex < selectElement.options.length && (!selectionFound); optionIndex++)
+	{
+		selectionFound = (selectElement.options[optionIndex].text == selection);
+		if(selectionFound)
+		{
+			selectElement.selectedIndex = optionIndex;
+		}
+	}
+	if(!selectionFound && selectElement.options.length > 0 && selectElement.selectedIndex < 0)
+	{
+		selectElement.selectedIndex = 0;
+	}
+}
+
+function addOptionToSelectElement(selectId, optionText, optionValue, before, controlDocument)
+{
+	controlDocument = controlDocument == null ? document : controlDocument;
+
+	option = controlDocument.createElement("option");
+	option.text=optionText;
+	option.value=optionValue;
+	
+	//FUCK M$ IE, FUCK IT UP THE ASS WITH A BASEBALL BAT.  A BIG WOODEN ONE. WITH SPLINTERS.
+	try
+	{
+		controlDocument.getElementById(selectId).add(option, before);
+	}
+	catch(e)
+	{
+		if(before == null)
+		{
+			controlDocument.getElementById(selectId).add(option);
+		}
+		else
+		{
+			controlDocument.getElementById(selectId).add(option, before.index);	
+		}
+	}
+}
+function removeOptionFromSelectElement(selectId, optionText, controlDocument)
+{
+	controlDocument = controlDocument == null ? document : controlDocument;
+	
+	selectElement = controlDocument.getElementById(selectId);
+	selectionFound = false;
+	for(optionIndex = 0; optionIndex < selectElement.options.length && (!selectionFound); optionIndex++)
+	{
+		selectionFound = (selectElement.options[optionIndex].text == optionText);
+		if(selectionFound)
+		{
+			selectElement.remove(optionIndex);
+		}
+	}
+}
+
+function removeAllOptionsFromSelectElement(selectElement)
+{
+	while(selectElement.length > 0)
+	{
+		try { selectElement.remove(0); } catch(e){}
+	}
+}
+
+function setAllowableSelections(selectId, allowableValues, allowableNames, controlDocument)
+{
+	if(controlDocument == null) { controlDocument = document; }
+
+	var selectElement = controlDocument.getElementById(selectId);
+	if(allowableNames != null && allowableValues != null && selectElement != null)
+	{
+
+		var doReplace = true;
+		if(allowableValues.length == selectElement.options.length)
+		{
+			doReplace = false;
+			for(optionIndex = 0; optionIndex < selectElement.options.length && (!doReplace); optionIndex++)
+			{
+				doReplace = doReplace || (selectElement.options[optionIndex].text != allowableNames[optionIndex]) || (selectElement.options[optionIndex].value != allowableValues[optionIndex]) ;
+			}
+		}
+		if(doReplace)
+		{
+			currentSelection=getSelectedValue(selectId, controlDocument);
+			removeAllOptionsFromSelectElement(selectElement);
+			for(addIndex=0; addIndex < allowableValues.length; addIndex++)
+			{
+				addOptionToSelectElement(selectId, allowableNames[addIndex], allowableValues[addIndex], null, controlDocument);
+			}
+			setSelectedValue(selectId, currentSelection, controlDocument); //restore original settings if still valid
+		}
+	}
+}
+
+function setSingleChild(container, child)
+{
+	while(container.firstChild != null)
+	{
+		container.removeChild( container.firstChild);
+	}
+	container.appendChild(child);
+}
+
+function setVariableFromValue(params)
+{
+	elementId    = params[0];
+	visibilityId = params[1];
+	uci          = params[2];
+	pkg          = params[3];
+	section      = params[4];
+	option       = params[5];
+	setIfBlank   = params[6];
+
+	var isVisible = true;
+	if(visibilityId != null)
+	{
+		isVisible = document.getElementById(visibilityId).style.display == 'none' ? false : true;
+	}
+
+
+	if(isVisible == true)
+	{
+		value = document.getElementById(elementId).value;
+		if(value != '' || setIfBlank == true)
+		{
+			uci.set(pkg, section, option, value);
+		}
+	}
+}
+function setVariableFromModifiedValue(params)
+{
+	elementId    = params[0];
+	visibilityId = params[1];
+	uci          = params[2];
+	pkg          = params[3];
+	section      = params[4];
+	option       = params[5];
+	setIfBlank   = params[6];
+	modFunction  = params[7];
+
+	isVisible = true;
+	if(visibilityId != null)
+	{
+		isVisible = document.getElementById(visibilityId).style.display == 'none' ? false : true;
+	}
+	if(isVisible==true)
+	{
+		value = document.getElementById(elementId).value;
+		if(value != '' || setIfBlank == true)
+		{
+			uci.set(pkg, section, option, modFunction(value));
+		}
+	}	
+}
+function setVariableFromCombined(params)
+{
+	elementIds	 = params[0]
+	visibilityId     = params[1];
+	uci              = params[2];
+	pkg              = params[3];
+	section          = params[4];
+	option           = params[5];
+	setIfBlank       = params[6];
+	combineFunction  = params[7];
+	
+	isVisible = true;
+	if(visibilityId != null)
+	{
+		isVisible = document.getElementById(visibilityId).style.display == 'none' ? false : true;
+	}
+	if(isVisible==true)
+	{
+		values = new Array();
+		for (idIndex in elementIds)
+		{
+			values.push(document.getElementById(elementIds[idIndex]).value);
+		}
+		if(value != '' || setIfBlank == true)
+		{
+			uci.set(pkg, section, option, combineFunction(values));
+		}
+	}
+}
+
+function setVariableFromConcatenation(params)
+{
+	elementIds   = params[0];
+	visibilityIds= params[1];
+	uci          = params[2];
+	pkg          = params[3];
+	section      = params[4];
+	option       = params[5];
+	setIfBlank   = params[6];
+
+	concat = '';
+	nextIdIndex = 0;
+	while(nextIdIndex < elementIds.length)
+	{
+		idVisible = true;
+		if(visibilityIds != null)
+		{
+			nextVisId = visibilityIds[nextIdIndex];
+			if(nextVisId!= null)
+			{
+				idVisible = document.getElementById(nextVisId).style.display == 'none' ? false : true;
+			}
+		}
+		value = document.getElementById(elementIds[nextIdIndex]).value;
+		if(idVisible==true && value != '')
+		{
+			value = document.getElementById(elementIds[nextIdIndex]).value;
+			endSpace = nextIdIndex < elementIds.length - 1 ? " " : "";
+			concat = concat + value + endSpace;
+		}
+		nextIdIndex++;
+	}
+	if(concat != '' || setIfBlank == true)
+	{
+		uci.set(pkg, section, option, concat);
+	}
+}
+function setVariableConditionally(params)
+{
+	elementId    = params[0]; 
+	visibilityId = params[1];
+	uci          = params[2];
+	pkg          = params[3];
+	section      = params[4];
+	option       = params[5];
+	testFunction = params[6];
+	useValueFromElement = params[7];
+	alternateValue =      params[8];
+	
+	isVisible = true;
+	if(visibilityId != null)
+	{
+		isVisible = document.getElementById(visibilityId).style.display == 'none' ? false : true;
+	}
+	if(isVisible==true)
+	{
+		value = useValueFromElement == true ? document.getElementById(elementId).value : alternateValue;
+		
+		if(testFunction(value))
+		{
+			uci.set(pkg, section, option, value);
+		}
+	}
+}
+
+
+function setVariables(inputIds, visibilityIds, uci, pkgs, sections, options, setFunctions, additionalParameters)
+{
+	for (idIndex in inputIds)
+	{
+		nextId             = inputIds[idIndex];
+		nextVisibilityId   = visibilityIds[idIndex];
+		nextPkg            = pkgs[idIndex];
+		nextSection        = sections[idIndex];
+		nextOption         = options[idIndex];
+		nextParams         = additionalParameters[idIndex];
+		nextFunction       = setFunctions[idIndex];
+		if(isArray(nextParams))
+		{
+			fullList = [nextId, nextVisibilityId, uci, nextPkg, nextSection, nextOption];
+			for (pIndex in nextParams)
+			{
+				fullList.push(nextParams[pIndex]);
+			}
+			nextFunction(fullList);
+
+		}
+		else
+		{
+			nextFunction([nextId, nextVisibilityId, uci, nextPkg, nextSection, nextOption, nextParams]);
+		}
+	}
+}
+
+
+function loadSelectedValueFromVariable(params)
+{
+	var elementId    = params[0];
+	var uci          = params[1];
+	var pkg          = params[2];
+	var section      = params[3];
+	var option       = params[4];
+	var defaultValue = params[5];
+	
+	var v=uci.get(pkg, section, option);
+	if(v != null && v != '')
+	{
+		setSelectedValue(elementId, v);
+	}
+	else if(defaultValue != null)
+	{
+		setSelectedValue(elementId, defaultValue);
+	}
+
+}
+
+function loadValueFromVariable(params)
+{
+
+	var elementId    = params[0];
+	var uci          = params[1];
+	var pkg          = params[2];
+	var section      = params[3];
+	var option       = params[4];
+	var defaultValue = params[5];
+	
+	var v=uci.get(pkg, section, option);
+	var e=document.getElementById(elementId);
+	if(v != null && v != '')
+	{
+		e.value = v;
+	}
+	else if(defaultValue != null)
+	{
+		e.value = defaultValue;
+	}
+}
+function loadValueFromVariableMultiple(params)
+{
+	var multiple = params[6];
+	loadValueFromVariable(params);
+	var e=document.getElementById(params[0]);
+	e.value=e.value*multiple;
+}
+function loadValueFromModifiedVariable(params)
+{
+	var elementId    = params[0];
+	var uci          = params[1];
+	var pkg          = params[2];
+	var section      = params[3];
+	var option       = params[4];
+	var defaultValue = params[5];
+	var modificationFunction = params[6];
+	
+	var v=modificationFunction(uci.get(pkg, section, option));
+	var e=document.getElementById(elementId);
+	if(v != null && v != '')
+	{
+		e.value = v;
+	}
+	else if(defaultValue != null)
+	{
+		e.value = defaultValue;
+	}	
+
+}
+function loadValueFromVariableAtIndex(params)
+{
+	var elementId    = params[0];
+	var uci          = params[1];
+	var pkg          = params[2];
+	var section      = params[3];
+	var option       = params[4];
+	var defaultValue = params[5];
+	var index        = params[6];
+	
+	var vStr=uci.get(pkg, section, option);
+	var vSplit = vStr.split(/[,\t ]+/);
+	
+
+	var v;
+	if(index < vSplit.length)
+	{
+		v=vSplit[index];
+	}
+	else
+	{
+		v = '';
+	}
+	
+	var e=document.getElementById(elementId);
+	if(v != null && v != '')
+	{
+		e.value = v;
+	}
+	else if(defaultValue != null)
+	{
+		e.value = defaultValue;
+	}
+}
+function loadChecked(params)
+{
+	var elementId    = params[0];
+	var uci          = params[1];
+	var pkg          = params[2];
+	var section      = params[3];
+	var option       = params[4];
+	var test         = params[5];
+	document.getElementById(params[0]).checked = test(uci.get(pkg,section,option));
+}
+
+
+
+function isArray(obj)
+{
+	return (obj.constructor.toString().indexOf('Array') >= 0 || obj instanceof Array ? true : false);
+}
+
+function loadVariables(uci, varIds, varPkgs, varSections, varOptions, varParams, varFunctions)
+{	
+	for (idIndex in varIds)
+	{
+		nextId      = varIds[idIndex];
+		nextPkg     = varPkgs[idIndex];
+		nextSection = varSections[idIndex];
+		nextOption  = varOptions[idIndex];
+		nextParams  = varParams[idIndex];
+		nextFunc    = varFunctions[idIndex];
+		if(isArray(nextParams))
+		{
+			fullList = [nextId, uci, nextPkg, nextSection, nextOption]
+			for (pIndex in nextParams)
+			{
+				fullList.push(nextParams[pIndex]);
+			}
+			nextFunc(fullList);
+
+		}
+		else
+		{
+			nextFunc([nextId, uci, nextPkg, nextSection, nextOption, nextParams]);
+		}
+	}
+}	
+function loadValueFromMultipleVariables(params)
+{
+	var elementId   = params[0];
+	var uci          = params[1];
+	var pkgs         = params[2];
+	var sections     = params[3];
+	var options      = params[4];
+	var combineFunc   = params[5];
+	var defaultValue = params[6];
+
+	var values = new Array();
+	for (pkgIndex in pkgs)
+	{
+		values.push(uci.get(pkgs[pkgIndex], sections[pkgIndex], options[pkgIndex]));
+	}
+	var combined = combineFunc(values);
+	var e=document.getElementById(elementId);
+	if(combined != null && combined != '')
+	{
+		e.value = combined;
+	}
+	else if(defaultValue != null)
+	{
+		e.value = defaultValue;
+	}
+
+}
+
+function setVisibility(ids, visibility, defaultDisplays, controlDocument)
+{
+	if(controlDocument == null)
+	{
+		controlDocument = document;
+	}
+	for (index in ids)
+	{
+		element = controlDocument.getElementById(ids[index]);
+		if(visibility[index] == 0)
+		{
+			element.style.display = "none";
+		}
+		else
+		{
+			if(defaultDisplays)
+			{
+				element.style.display = defaultDisplays[index];
+			}
+			else
+			{
+				element.style.display = "block";
+			}
+		}
+	}
+}
+
+
+function validateIP(address)
+{
+	//return codes:
+	//0 == valid IP
+	//1 = 0.0.0.0
+	//2 = 255.255.255.255
+	//3 = ends with 255 (actually, broadcast address can end with other value if subnet smaller than 255... but let's not worry about that)
+	//4 = value >255 in at least one field
+	//5 = improper format
+
+	var errorCode = 0;
+	if(address == "0.0.0.0")
+	{
+		errorCode = 1;
+	}
+	else if(address == "255.255.255.255")
+	{
+		errorCode = 2;
+	}
+	else
+	{
+		var ipFields = address.match(/^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/);
+		if(ipFields == null)
+		{
+			errorCode = 5;
+		}
+		else
+		{
+			for(field=1; field <= 4; field++)
+			{
+				if(ipFields[field] > 255)
+				{
+					errorCode = 4;
+				}
+				if(ipFields[field] == 255 && field==4)
+				{
+					errorCode = 3;
+				}
+			}
+		}
+	}
+	return errorCode;
+}
+
+function validateMac(mac)
+{
+	var errorCode = 0;
+	var macFields = mac.split(/:/);
+	if(macFields.length != 6)
+	{
+		errorCode = 2;
+	}
+	else
+	{
+		for(fieldIndex=0; fieldIndex < 6 && errorCode == 0; fieldIndex++)
+		{
+			field = macFields[fieldIndex];
+			if(field.match(/^[0123456789ABCDEFabcdef]{2}$/) == null)
+			{
+				errorCode = 1;
+			}
+		}
+	}
+	return errorCode;
+}
+
+function validateMultipleIps(ips)
+{
+	ips = ips.replace(/^[\t ]+/g, "");
+	ips = ips.replace(/[\t ]+$/g, "");
+	var splitIps = ips.split(/[\t ]*,[\t ]*/);
+	var valid = splitIps.length > 0 ? 0 : 1; //1= error, 0=true
+	while(valid == 0 && splitIps.length > 0)
+	{
+		var nextIp = splitIps.pop();
+		if(nextIp.match(/-/))
+		{
+			var nextSplit = nextIp.split(/[\t ]*-[\t ]*/);
+			if( nextSplit.length==2 && validateIP(nextSplit[0]) == 0 && validateIP(nextSplit[1]) == 0)
+			{
+				var ipInt1 = getIpInteger(nextSplit[0]);
+				var ipInt2 = getIpInteger(nextSplit[1]);
+				valid = ipInt1 <= ipInt2 ? 0 : 1;
+			}
+			else
+			{
+				valid = 1;
+			}		
+		}
+		else
+		{
+			valid = validateIpRange(nextIp);
+		}
+	}
+	return valid;
+}
+function validateMultipleIpsOrMacs(addresses)
+{
+	var addr = addresses.replace(/^[\t ]+/g, "");
+	addr = addr.replace(/[\t ]+$/g, "");
+	var splitAddr = addr.split(/[\t ]*,[\t ]*/);
+	var valid = splitAddr.length > 0 ? 0 : 1; //1= error, 0=true
+	while(valid == 0 && splitAddr.length > 0)
+	{
+		var nextAddr = splitAddr.pop();
+		if(nextAddr.match(/-/))
+		{
+			var nextSplit = nextAddr.split(/[\t ]*-[\t ]*/);
+			if( nextSplit.length==2 && validateIP(nextSplit[0]) == 0 && validateIP(nextSplit[1]) == 0)
+			{
+				var ipInt1 = getIpInt(nextSplit[0]);
+				var ipInt2 = getIpInt(nextSplit[1]);
+				valid = ipInt1 <= ipInt2 ? 0 : 1;
+			}
+			else
+			{
+				valid = 1;
+			}		
+		}
+		else if(nextAddr.match(/:/))
+		{
+			valid = validateMac(nextAddr);
+		}
+		else
+		{
+			valid = validateIpRange(nextAddr);
+		}
+	}
+	return valid;
+
+}
+
+function validateDecimal(num)
+{
+	var errorCode = num.match(/^[\d]*\.?[\d]+$/) != null || num.match(/^[\d]+\.?[\d]*$/) != null ? 0 : 1;
+	return errorCode;
+}
+
+function validateNumeric(num)
+{
+	var errorCode = num.match(/^[\d]+$/) == null ? 1 : 0;
+	return errorCode;
+}
+
+function validatePort(port)
+{
+	return validateNumericRange(port, 1, 65535)
+}
+
+function validateNumericRange(num, min, max)
+{
+	var errorCode = num.match(/^[\d]+$/) == null ? 1 : 0;
+	if(errorCode == 0)
+	{
+		errorCode = num < min ? 2 : 0;
+	}
+	if(errorCode == 0)
+	{
+		errorCode = num > max ? 3 : 0;
+	}
+	return errorCode;
+}
+
+function validatePortOrPortRange(ports)
+{
+	var errorCode = 0;
+	if(ports.match(/-/) != null)
+	{
+		var splitPorts=ports.split(/-/);
+
+		if(splitPorts.length > 2)
+		{
+			errorCode =  5;
+		}
+		else
+		{
+			error1 = validateNumericRange(splitPorts[0], 1, 65535);
+			error2 = validateNumericRange(splitPorts[1], 1, 65535);
+			errorCode = error1 + (10*error2);
+			if(errorCode == 0)
+			{
+				errorCode = splitPorts[1] - splitPorts[0] >= 0 ? 0 : 4;
+			}
+		}
+	}
+	else
+	{
+		errorCode = validateNumericRange(ports, 1, 65535);
+	}
+	return errorCode;
+}
+
+
+function validateNetMask(mask)
+{
+	//return codes:
+	//0 = valid mask
+	//1 = invalid digit
+	//2 = invalid field order 
+	//3 = fields > 255
+	//4 = invalid format
+
+	var errorCode = 0;
+	var ipFields = mask.match(/^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/);
+	if(ipFields == null)
+	{
+		errorCode = 4;
+	}
+	else
+	{
+		previousField = 255;
+		for(field=1; field <= 4; field++)
+		{
+			if(ipFields[field] > 255)
+			{
+				errorCode = 3;
+			}
+			if(previousField < 255 && ipFields[field] != 0 && errorCode < 2)
+			{
+				errorCode = 2;
+			}
+			if(	ipFields[field] != 255 && 
+				ipFields[field] != 254 && 
+				ipFields[field] != 252 && 
+				ipFields[field] != 248 &&
+				ipFields[field] != 240 && 
+				ipFields[field] != 224 && 
+				ipFields[field] != 192 &&
+				ipFields[field] != 128 &&
+				ipFields[field] != 0 &&
+				errorCode <  1
+			)
+			{
+				errorCode = 1;
+			}
+
+			previousField = ipFields[field];
+		}
+	}
+	return errorCode;
+}
+
+//this is for source/destination in iptables
+//netmask can optionally be specified with / after ip to indicate range
+function validateIpRange(range)
+{
+	var valid = 1; //initially invalid, 0=valid, 1=invalid
+	if(range.indexOf("/") > 0)
+	{
+		var split=range.split("/");
+		if(split.length == 2)
+		{
+			var ipValid = validateIP(split[0]);
+			var maskValid = validateNetMask(split[1]) == 0 || validateNumericRange(split[1],1,31) == 0 ? 0 : 1;
+			valid = ipValid == 0 && maskValid == 0 ? 0 : 1;
+		}	
+	}
+	else 
+	{
+		valid = validateIP(range);
+	}
+	return valid;
+}
+
+
+function validateLengthRange(text,min,max)
+{
+	var errorcode = 0;
+	if(text.length < min)
+	{
+		errorcode = 1;
+	}
+	if(text.length > max)
+	{
+		errorcode = 2;
+	}
+	return errorcode;
+}
+function validateHex(text)
+{
+	var errorcode = 0;
+	if(!text.match(/^[0123456789AaBbCcDdEeFf]*$/))
+	{
+		errorcode = 1;
+	}
+	return errorcode;
+}
+
+
+
+function validateHours(hoursStr)
+{
+	var commaSplit = hoursStr.match(/,/) ? hoursStr.split(/,/) : [ hoursStr ] ;
+	var valid = true;
+	for(commaIndex = 0; commaIndex < commaSplit.length && valid; commaIndex++)
+	{
+		var splitStr = commaSplit[commaIndex].split(/-/);
+		var nextValid = splitStr.length == 2;
+		if(nextValid)
+		{
+			nextValid = nextValid && splitStr[0].match(/^[\t ]*([0-1]?[0-9]|2[0-3])(:[0-5][0-9])?[\t ]*$/)
+			nextValid = nextValid && splitStr[1].match(/^[\t ]*([0-1]?[0-9]|2[0-3])(:[0-5][0-9])?[\t ]*$/)
+		}
+		valid = valid && nextValid;
+	}
+	return valid ? 0 : 1;
+}
+
+function validateWeeklyRange(weeklyStr)
+{
+	var commaSplit = weeklyStr.match(/,/) ? weeklyStr.split(/,/) : [ weeklyStr ] ;
+	var valid = true;
+	for(commaIndex = 0; commaIndex < commaSplit.length && valid; commaIndex++)
+	{
+		var splitStr = commaSplit[commaIndex].split(/-/);
+		var nextValid = splitStr.length == 2;
+		if(nextValid)
+		{
+			splitStr[0] = splitStr[0].toLowerCase();
+			splitStr[1] = splitStr[1].toLowerCase();
+			nextValid = nextValid && splitStr[0].match(/^[\t ]*(sun|mon|tue|wed|thu|fri|sat)[\t ]*([0-1]?[0-9]|2[0-3])(:[0-5]?[0-9])?(:[0-5]?[0-9])?[\t ]*$/);
+			nextValid = nextValid && splitStr[1].match(/^[\t ]*(sun|mon|tue|wed|thu|fri|sat)[\t ]*([0-1]?[0-9]|2[0-3])(:[0-5]?[0-9])?(:[0-5]?[0-9])?[\t ]*$/);
+		}
+		valid = valid && nextValid;
+	}
+	return valid ? 0 : 1;
+}
+
+function proofreadHours(input)
+{
+	proofreadText(input, validateHours, 0);
+}
+
+function proofreadWeeklyRange(input)
+{
+	proofreadText(input, validateWeeklyRange, 0);
+}
+
+
+function proofreadLengthRange(input,min,max)
+{
+	var vlr = function(text){return validateLengthRange(text,min,max);};
+	proofreadText(input, vlr, 0);
+}
+function proofreadIp(input)
+{
+	proofreadText(input, validateIP, 0);
+}
+function proofreadMask(input)
+{
+	proofreadText(input, validateNetMask, 0);
+}
+function proofreadIpRange(input)
+{
+	proofreadText(input, validateIpRange, 0);
+}
+function proofreadMac(input)
+{
+	proofreadText(input, validateMac, 0);
+}
+function proofreadMultipleIps(input)
+{
+	proofreadText(input, validateMultipleIps, 0);
+}
+function proofreadMultipleIpsOrMacs(input)
+{
+	proofreadText(input, validateMultipleIpsOrMacs, 0);
+}
+
+function proofreadDecimal(input)
+{
+	proofreadText(input, validateDecimal, 0);
+}
+function proofreadNumeric(input)
+{
+	proofreadText(input, validateNumeric, 0);
+}
+function proofreadNumericRange(input, min, max)
+{
+	proofreadText(input, function(text){return validateNumericRange(text,min,max)}, 0);
+}
+function proofreadPort(input)
+{
+	proofreadText(input, validatePort, 0);
+}
+function proofreadPortOrPortRange(input)
+{
+	proofreadText(input, validatePortOrPortRange, 0);
+}
+function proofreadText(input, proofFunction, validReturnCode)
+{
+	if(input.disabled != true)
+	{
+		input.style.color = (proofFunction(input.value) == validReturnCode) ? "black" : "red";
+	}
+}
+
+
+function getEmbeddedSvgWindow(embeddedId, controlDocument)
+{
+	if(controlDocument == null) { controlDocument = document; }
+
+	var embedElement = controlDocument.getElementById( embeddedId );
+	var windowElement = null;
+
+	try
+	{
+		var docElement = embedElement.getSVGDocument();
+		windowElement = docElement.defaultView;
+	}
+	catch(ex1){}
+	if(windowElement == null)
+	{
+		try { windowElement = embedElement.window; } catch(ex2){}
+		if( windowElement == null)
+		{
+			try { windowElement = embedElement.getWindow(); } catch(ex3){}
+		}
+	}
+	return windowElement;
+}
+
+
+function getBridgeSection(testUci)
+{
+	//all bridges will have either option wds=1, option mode=wds, or option client_bridge=1 in one of the wireless sections
+	//in the case of broadcom, the client_bridge=1 doesn't do anything, but we put it there for convenience anyway.
+	//however, if wds is in an AP section, it isn't a bridge
+
+	var allWirelessSections = uciOriginal.getAllSections("wireless");
+	var wanDef = uciOriginal.get("network", "wan", "");
+	var bridgeSection = "";
+	var sectionIndex;
+	
+	
+	for(sectionIndex=0; sectionIndex < allWirelessSections.length && bridgeSection == ""; sectionIndex++)
+	{
+		var getWirelessVar = function(varName) 
+		{
+			return testUci.get("wireless", allWirelessSections[sectionIndex], varName).toLowerCase() 
+		}
+		
+		if( getWirelessVar("mode") == "wds" && wanDef == "")
+		{
+			bridgeSection = allWirelessSections[sectionIndex];
+		}
+		else if( getWirelessVar("mode") == "sta" &&  getWirelessVar("wds") == "1" && wanDef == "")
+		{
+			bridgeSection = allWirelessSections[sectionIndex];
+		}
+		else if(getWirelessVar("mode") == "sta" && getWirelessVar("client_bridge") == "1" )
+		{
+			bridgeSection = allWirelessSections[sectionIndex];
+		}
+	}
+
+	return bridgeSection;
+}
+
+function isBridge(testUci)
+{
+	//is it a router or a bridge configuration?
+	var bridgeTest = getBridgeSection(testUci) == "" ? false : true;
+	return bridgeTest;
+}
+
+function parseTimezones(timezoneLines)
+{
+	timezoneList = [];
+	timezoneRegions = [];
+	timezoneDefinitions = [];
+	definitionTimezones = [];
+	for(lineIndex = 0; lineIndex < timezoneLines.length; lineIndex++)
+	{
+		line = timezoneLines[lineIndex];
+		if(!line.match(/^[\t ]*#/) && line.length > 0)
+		{
+			splitLine = line.split(/[\t]+/);
+			region = stripQuotes( splitLine.pop() );
+			definition = stripQuotes( splitLine.pop() );
+			timezone = stripQuotes( splitLine.pop() );
+			
+
+			timezoneList.push(timezone);
+			timezoneDefinitions[timezone] = definition;
+			definitionTimezones[definition] = timezone;
+			timezoneRegions[timezone] = region;
+		}
+	}
+	return [timezoneList, timezoneRegions, timezoneDefinitions, definitionTimezones];
+}
+function stripQuotes(str)
+{
+	if(str.match(/\".*\"/))
+	{
+		str = str.match(/^[^\"]*\"([^\"]*)\"/)[1];
+	}
+	return str;
+}
+
+function textListToSpanElement(textList, addCommas, controlDocument)
+{
+	addCommas = addCommas == null ? false : addCommas;
+	controlDocument = controlDocument == null ? document : controlDocument;
+
+	var spanEl = controlDocument.createElement("span");
+	var tlIndex;
+	for(tlIndex=0; tlIndex < textList.length ; tlIndex++)
+	{
+		if(tlIndex > 0)
+		{
+			spanEl.appendChild( controlDocument.createElement("br") );
+		}
+		
+		spanEl.appendChild(controlDocument.createTextNode(  textList[tlIndex] + (tlIndex < textList.length-1 && addCommas ? "," : "")  ));
+	}
+	return spanEl;
+}
+
+function addAddressStringToTable(controlDocument, newAddrs, tableContainerId, tableId, macsValid, ipValidType, alertOnError, tableWidth)
+{
+	//ipValidType: 0=none, 1=ip only, 2=ip or ip subnet, 3>=ip, ip subnet or ip range
+	macsValid = macsValid == null ? true : false;
+	ipValidType = ipValidType == null ? 3 : ipValidType;
+	var ipValidFunction;
+	if(ipValidType == 0)
+	{
+		ipValidFunction = function(){ return 1; };
+	}
+	else if(ipValidType == 1)
+	{
+		ipValidFunction = validateIP;
+	}
+	else if(ipValidType == 2)
+	{
+		ipValidFunction = validateIpRange;
+	}
+	else
+	{
+		ipValidFunction = validateMultipleIps;
+	}
+
+	var allCurrentMacs = [];
+	var allCurrentIps = [];
+	var tableContainer = controlDocument.getElementById(tableContainerId);
+	if(tableContainer.firstChild != null)
+	{
+		var table = tableContainer.firstChild;
+		var data = getTableDataArray(table, true, false);
+		var rowIndex;
+		for(rowIndex=0; rowIndex < data.length; rowIndex++)
+		{
+			var addr = data[rowIndex][0];
+			if(validateMac(addr) == 0)
+			{
+				allCurrentMacs.push(addr);
+			}
+			else
+			{
+				allCurrentIps.push(addr);
+			}
+		}
+	}
+
+	controlDocument = controlDocument == null ? document : controlDocument;
+	alertOnError = alertOnError == null ? true : alertOnError;
+
+	var splitAddrs = newAddrs.split(/[\t ]*,[\t ]*/);
+	var valid = splitAddrs.length > 0 ? 0 : 1; //1=error, 0=valid
+	var splitIndex;
+	for(splitIndex=0; splitIndex < splitAddrs.length && valid == 0; splitIndex++)
+	{
+		var addr = splitAddrs[splitIndex];
+		var macValid = (macsValid && validateMac(addr) == 0);
+		var ipValid = (ipValidFunction(addr) == 0);
+		if(macValid || ipValid)
+		{
+			var currAddrs = macValid ? allCurrentMacs : allCurrentIps;
+			valid = currAddrs.length == 0 || (!testAddrOverlap(addr, currAddrs.join(","))) ? 0 : 1;
+			if(valid == 0)
+			{
+				currAddrs.push(addr); //if we're adding multiple addrs and there's overlap, this will allow us to detect it
+			}
+		}
+		else 
+		{
+			valid = 1;
+		}
+	}
+
+
+	if(valid == 0)
+	{
+		var table = tableContainer.childNodes.length > 0 ? tableContainer.firstChild : createTable([""], [], tableId, true, false, null, null, controlDocument);
+		newAddrs = newAddrs.replace(/^[\t ]*/, "");
+		newAddrs = newAddrs.replace(/[\t ]*$/, "");
+		var addrs = newAddrs.split(/[\t ]*,[\t ]*/);
+		
+		while(addrs.length > 0)
+		{
+			addTableRow(table, [ addrs.shift() ], true, false, null, null, controlDocument);
+		}
+		
+		if(tableContainer.childNodes.length == 0)
+		{
+			tableContainer.appendChild(table);
+		}
+		if(tableWidth != null)
+		{
+			table.style.width = "" + tableWidth + "px";
+		}
+	}
+	else if(alertOnError)
+	{
+		alert("ERROR: Invalid Address\n");
+	}
+
+	return valid == 0 ? true : false;
+
+}
+
+
+function addAddressesToTable(controlDocument, textId, tableContainerId, tableId, macsValid, ipValidType, alertOnError, tableWidth)
+{
+	
+	var newAddrs = controlDocument.getElementById(textId).value;
+	var valid = addAddressStringToTable(controlDocument, newAddrs, tableContainerId, tableId, macsValid, ipValidType, alertOnError, tableWidth)
+	if(valid)
+	{
+		controlDocument.getElementById(textId).value = "";
+	}
+	return valid;
+}
+
+
+function parsePaddedInt(intStr)
+{
+	intStr = intStr == null ? "" : intStr;
+	intStr = intStr.replace(/[\t ]+/, "");
+	while( (intStr.length > 1 && intStr.match(/^0/)) || (intStr.length > 2 && intStr.match(/^\-0/)) )
+	{
+		intStr = intStr.replace(/^0/, "");
+		intStr = intStr.replace(/^\-0/, "-");
+	}
+	return parseInt(intStr);
+}
+
+function getIpInteger(ipStr)
+{
+	ipStr = ipStr == null ? "" : ipStr;
+	var ip = ipStr.match(/^(\d+)\.(\d+)\.(\d+)\.(\d+)$/);
+	if(ip)
+	{
+		return (+parsePaddedInt(ip[1])<<24) + (+parsePaddedInt(ip[2])<<16) + (+parsePaddedInt(ip[3])<<8) + (+parsePaddedInt(ip[4]));
+	}
+	return parseInt(""); //will return NaN
+}
+function getMaskInteger(maskSize)
+{
+	return -1<<(32-parsePaddedInt(maskSize))
+}
+
+function getIpRangeIntegers(ipStr)
+{
+	var startInt = 0;
+	var endInt = 0;
+	if(ipStr.match(/\//))
+	{
+		var split = ipStr.split(/[\t ]*\/[\t ]*/);
+		var ipInt = getIpInteger(split[0]);
+		var ipMaskInt = (split[1]).match(/\./) ? getIpInteger(split[1]) : getMaskInteger(split[1]);
+		startInt = ipInt & ipMaskInt;
+		endInt = startInt | ( ~ipMaskInt );
+	}
+	else if(ipStr.match(/-/))
+	{
+		var split = ipStr.split(/[\t ]*\-[\t ]*/);
+		startInt = getIpInteger(split[0]);
+		endInt = getIpInteger(split[1]);
+	}
+	else
+	{
+		startInt = getIpInteger(ipStr);
+		endInt = startInt;
+	}
+	return [startInt, endInt];
+
+}
+
+
+function testSingleAddrOverlap(addrStr1, addrStr2)
+{
+	/* 
+	 * this adjustment is useful in multiple places, particularly quotas
+	 * if you don't want these conversions, just validate quota BEFORE you
+	 * try calling this function
+	 */
+	var adj = function(addrStr)
+	{
+		addrStr = addrStr == "" ? "ALL" : addrStr.toUpperCase();	
+		if(addrStr == "ALL_OTHERS_COMBINED" || addrStr == "ALL_OTHERS_INDIVIDUAL")
+		{
+			addrStr = "ALL_OTHERS_COMBINED";
+		}
+		return addrStr;
+	}
+	addrStr1 = adj(addrStr1);
+	addrStr2 = adj(addrStr2);
+
+	var matches = false;
+	if(addrStr1 == addrStr2) //can test MAC addr equality as well as ALL/OTHER variables we use sometimes
+	{
+		matches = true;
+	}
+	else //assume we're dealing with an actual IP / IP subnet / IP Range
+	{
+		if(validateMultipleIps(addrStr1) > 0 || validateMultipleIps(addrStr2) > 0 || addrStr1.match(",") || addrStr2.match(",") )
+		{
+			matches = false;
+		}
+		else
+		{
+			var parsed1 = getIpRangeIntegers(addrStr1);
+			var parsed2 = getIpRangeIntegers(addrStr2);
+			matches = parsed1[0] <= parsed2[1] && parsed1[1] >= parsed2[0]; //test range overlap, inclusive
+		}
+	}
+	return matches;
+}
+
+function testAddrOverlap(addrStr1, addrStr2)
+{
+	addrStr1 = addrStr1.replace(/^[\t ]+/, "");
+	addrStr1 = addrStr1.replace(/[\t ]+$/, "");
+	addrStr2 = addrStr2.replace(/^[\t ]+/, "");
+	addrStr2 = addrStr2.replace(/[\t ]+$/, "");
+
+	var split1 = addrStr1.split(/[,\t ]+/);
+	var split2 = addrStr2.split(/[,\t ]+/);
+	var index1;
+	var overlapFound = false;
+	for(index1=0; index1 < split1.length && (!overlapFound); index1++)
+	{
+		var index2;
+		for(index2=0; index2 <split2.length && (!overlapFound); index2++)
+		{
+			overlapFound = overlapFound || testSingleAddrOverlap(split1[index1], split2[index2]);
+		}
+	}
+	return overlapFound;
+}
+
+//validateIP -- tests IP only, and that it's not a broadcast address
+//validateIpRange -- tests if it's a valid Ip or a valid Ip/netmask combination
+//validateMultipleIps -- tests whether we have a comma separated list of valid Ips or Ip/mask or Ip-Ip range definitions
+//validateMac -- test if arg is a valid MAC
+
+
+
+function setInvisibleIfIdMatches(selectId, invisibleOptionValues, associatedElementId, defaultDisplayMode, controlDocument )
+{
+	controlDocument = controlDocument == null ? document : controlDocument;
+	defaultDisplayMode = defaultDisplayMode == null ? "block" : defaultDisplayMode;
+	var visElement = controlDocument.getElementById(associatedElementId);
+	var matches = false;
+	var matchIndex=0;
+	if(visElement != null)
+	{
+		for (matchIndex=0; matchIndex < invisibleOptionValues.length; matchIndex++)
+		{
+			matches = getSelectedValue(selectId, controlDocument) == invisibleOptionValues[matchIndex] ? true : matches;
+		}
+		if(matches)
+		{
+			visElement.style.display = "none";
+		}
+		else
+		{
+			visElement.style.display = defaultDisplayMode;
+		}
+	}
+}
+
+function arrToHash(arr)
+{
+	var h = []
+	var i
+	for(i=0; i < arr.length; i++) { h[ arr[i] ] = 1; }
+	return h
+}
+
+
+function confirmPassword(confirmText, validatedFunc, invalidFunc)
+{
+	confirmText = confirmText == null ? "Confirm Password:" : confirmText;
+	if( typeof(confirmWindow) != "undefined" )
+	{
+		//opera keeps object around after
+		//window is closed, so we need to deal
+		//with error condition
+		try
+		{
+			confirmWindow.close();
+		}
+		catch(e){}
+	}
+	try
+	{
+		xCoor = window.screenX + 225;
+		yCoor = window.screenY+ 225;
+	}
+	catch(e)
+	{
+		xCoor = window.left + 225;
+		yCoor = window.top + 225;
+	}
+	var wlocation = "password_confirm.sh";
+	confirmWindow = window.open(wlocation, "password", "width=560,height=260,left=" + xCoor + ",top=" + yCoor );
+	
+	var okButton = createInput("button", confirmWindow.document);
+	var cancelButton = createInput("button", confirmWindow.document);
+	
+	okButton.value         = "OK";
+	okButton.className     = "default_button";
+	cancelButton.value     = "Cancel";
+	cancelButton.className = "default_button";
+
+
+	runOnEditorLoaded = function () 
+	{
+		updateDone=false;
+		if(confirmWindow.document != null)
+		{
+			if(confirmWindow.document.getElementById("bottom_button_container") != null)
+			{
+				confirmWindow.document.getElementById("bottom_button_container").appendChild(okButton);
+				confirmWindow.document.getElementById("bottom_button_container").appendChild(cancelButton);
+				setChildText("confirm_text", confirmText, null, null, null, confirmWindow.document);
+			
+				cancelButton.onclick = function()
+				{
+					confirmWindow.close();
+				}
+				okButton.onclick = function()
+				{
+					setControlsEnabled(false, true, "Verifying Password...");
+	
+					var commands = "gargoyle_session_validator -p \"" + confirmWindow.document.getElementById("password").value + "\" -a \"dummy.browser\" -i \"127.0.0.1\""
+					var param = getParameterDefinition("commands", commands) + "&" + getParameterDefinition("hash", document.cookie.replace(/^.*hash=/,"").replace(/[\t ;]+.*$/, ""));
+					var stateChangeFunction = function(req)
+					{
+						if(req.readyState == 4)
+						{
+							confirmWindow.close();
+							var result = req.responseText.split("\n")[0]
+							if(result.match(/^echo \"invalid\"/))
+							{
+								invalidFunc.call(null);
+							}
+							else
+							{
+								validatedFunc.call(null);
+							}
+						}
+					}
+					runAjax("POST", "utility/run_commands.sh", param, stateChangeFunction);
+
+				}
+				confirmWindow.moveTo(xCoor,yCoor);
+				confirmWindow.focus();
+				updateDone = true;
+			}
+		}
+		if(!updateDone)
+		{
+			setTimeout( "runOnEditorLoaded()", 250);
+		}
+	}
+	runOnEditorLoaded();
+}
+
+
+
+function getUsedPorts()
+{
+	var dropbearSections = uciOriginal.getAllSections("dropbear"); 
+	var sshPort   = uciOriginal.get("dropbear", dropbearSections[0], "Port")
+	var httpPort  = uciOriginal.get("httpd_gargoyle", "server", "http_port")
+	var httpsPort = uciOriginal.get("httpd_gargoyle", "server", "https_port")
+
+	var foundPorts = []
+	foundPorts["tcp"] = []
+	foundPorts["udp"] = []
+
+	var portDefs=[]
+	portDefs.push( [ sshPort, "tcp", "SSH port" ] )
+	foundPorts["tcp"][sshPort] = 1
+	if(httpPort != "")
+	{
+		portDefs.push( [ httpPort, "tcp", "web server port" ] )
+		foundPorts["tcp"][httpPort] = 1
+	}
+	if(httpsPort != "")
+	{
+		portDefs.push( [ httpsPort, "tcp", "web server port" ] )
+		foundPorts["tcp"][httpsPort] = 1
+	}
+
+
+
+	var remoteAcceptSections = uciOriginal.getAllSectionsOfType("firewall", "remote_accept")
+	var acceptIndex;
+	for(acceptIndex=0; acceptIndex < remoteAcceptSections.length; acceptIndex++)
+	{
+		var section    = remoteAcceptSections[acceptIndex];
+		var localPort  = uciOriginal.get("firewall", section, "local_port");
+		var remotePort = uciOriginal.get("firewall", section, "remote_port");
+		var startPort  = uciOriginal.get("firewall", section, "start_port");
+		var endPort    = uciOriginal.get("firewall", section, "end_port");
+		var proto      = uciOriginal.get("firewall", section, "proto").toLowerCase();
+		var zone       = uciOriginal.get("firewall", section, "zone").toLowerCase();
+		if(zone == "wan" || zone == "")
+		{
+			var defIndex;
+			remotePort = remotePort == "" ? localPort : remotePort;
+			for(defIndex=0; defIndex<portDefs.length ; defIndex++)
+			{
+				if(defIndex[0] == localPort && (defIndex[1] == proto || proto == "" || proto == "tcpudp"))
+				{
+					if(localport != remotePort && localport != "")
+					{
+						if(proto == "" || proto == "tcpudp")
+						{	
+							portDefs.push([remotePort, "tcp", defIndex[2] ])
+							portDefs.push([remotePort, "udp", defIndex[2] ])
+							foundPorts["tcp"][remotePort] = 1;
+							foundPorts["udp"][remotePort] = 1;
+
+						}
+						else
+						{
+							portDefs.push([remotePort, proto, defIndex[2] ])
+							foundPorts[proto][remotePort]= 1
+						}
+					}
+				}
+			}
+			if( localPort != "" ) //handle ports other than ssh, http, https
+			{
+				var protoList = proto == "" || proto == "tcpudp" ? [ "tcp", "udp" ] : [ proto ];
+				while(protoList.length > 0)
+				{
+					var nextProto = protoList.shift();
+					if(foundPorts[nextProto][remotePort] == null) //bypasses adding second instance defs if already defined above as part of ssh/http/https
+					{
+						portDefs.push( [ remotePort, nextProto, "port redirected to router" ])
+						foundPorts[nextProto][remotePort] = 1;
+						if(foundPorts[nextProto][localPort] == null) //implies localPort != remotePort, since we just set this for remotePort
+						{
+							portDefs.push([localPort, nextProto, "port in use by router" ])
+							foundPorts[nextProto][localPort] = 1
+						}
+					}
+				}
+			}
+			if(localPort == "" && startPort != "" && endPort != "")
+			{
+				var protoList = proto == "" || proto == "tcpudp" ? [ "tcp", "udp" ] : [ proto ];
+				while(protoList.length > 0)
+				{
+					var nextProto = protoList.shift();
+					portDefs.push([startPort + "-" + endPort, nextProto, "port redirected to router" ])
+				}
+			}
+		}
+	}
+
+	var redirectSections = uciOriginal.getAllSectionsOfType("firewall", "redirect")
+	var redirectIndex;
+	for(redirectIndex=0; redirectIndex < redirectSections.length; redirectIndex++)
+	{
+		var section    = remoteAcceptSections[acceptIndex];
+		var localPort  = uciOriginal.get("firewall", section, "local_port");
+		var remotePort = uciOriginal.get("firewall", section, "remote_port");
+		var proto      = uciOriginal.get("firewall", section, "proto").toLowerCase();
+		var srcZone    = uciOriginal.get("firewall", section, "src").toLowerCase();
+		var dstZone    = uciOriginal.get("firewall", section, "dest").toLowerCase();
+		var port       = uciOriginal.get("firewall", section, "src_dport")
+		var ip         = uciOriginal.get("firewall", section, "dest_ip");
+
+		//note range notation already part of remotePort here, so range is handled properly by this code
+		portDefs.push([remotePort, proto, "port forwarded to " + ip ])
+	}
+
+	//for debugging only
+	/*
+	var portStr = [];
+	var pi;
+	for(pi=0; pi< portDefs.length; pi++)
+	{
+		portStr.push( (portDefs[pi]).join(",") );
+	}
+	alert(portStr.join("\n"));
+	*/
+
+
+	return portDefs;
+
+}
+
+// ignorePorts should be 2d-associateive array with first dimension being proto, second port, eg. ignorePorts[proto][port or port range] = 1 if port is to be ignored
+function checkForPortConflict(port, proto, ignorePorts)
+{
+	var portStart = null
+	var portEnd = null
+	var isRange = false
+	if(port.match(/-/))
+	{
+		var splitPort = port.split(/-/)
+		portStart = parseInt(splitPort[0])
+		portEnd   = parseInt(splitPort[1])
+		isRange = true;
+	}
+	else
+	{
+		port = parseInt(port)
+	}
+
+
+	if(ignorePorts != null)
+	{
+		ignorePorts["tcp"] = ignorePorts["tcp"] == null ? [] : ignorePorts["tcp"]
+		ignorePorts["udp"] = ignorePorts["udp"] == null ? [] : ignorePorts["udp"]
+		if(ignorePorts[proto][port] != null && ignorePorts[proto][(""+port)] != null)
+		{
+			return ""
+		}
+		else
+		{
+			var range
+			for(range in ignorePorts[proto])
+			{
+				if(range.match(/-/))
+				{
+					var splitRange = range.split(/-/);
+					if((!isRange) && port >= parseInt(splitRange[0]) && port <= parseInt(splitRange[1]))
+					{
+						return ""
+					}
+					if(isRange && portStart <= parseInt(splitRange[1]) && portEnd >= parseInt(splitRange[0]))
+					{
+						return ""
+					}
+				}
+			}
+		}
+	}
+
+
+	var usedPorts = getUsedPorts()
+
+	var portIndex;
+	var portConflict = ""
+	for(portIndex=0; portIndex < usedPorts.length && portConflict == ""; portIndex++)
+	{
+		var portDef = usedPorts[portIndex];
+		if(proto == portDef[1])
+		{
+			var portStr = portDef[0]
+			if(portStr.match(/\-/))
+			{
+				var splitPort = portStr.split(/\-/)
+				if((!isRange) && port >= parseInt(splitPort[0]) && port <= parseInt(splitPort[1]))
+				{
+					portConflict = portDef[2]
+				}
+				if(isRange && portStart <= parseInt(splitPort[1]) && portEnd >= parseInt(splitPort[0]))
+				{
+					portConflict = portDef[2]
+				}
+			}
+			else
+			{
+				if((!isRange) && port == parseInt(portStr))
+				{
+					portConflict = portDef[2]
+				}
+				if(isRange && parseInt(portStr) >= portStart && parseInt(portStr) <= portEnd)
+				{
+					portConflict = portDef[2]
+				}
+			}
+		}
+	}
+	return portConflict;
+}
+
+
+
+function query(queryHeader, queryText, buttonNameList, continueFunction )
+{
+	document.getElementById("wait_icon").style.display="none"
+	document.getElementById("wait_txt").style.display="none"
+
+	wmOldTxt    = document.getElementById("wait_txt").style == "none" ? false : true;
+	wmOldBack   = document.getElementById("wait_msg").style.background
+	wmOldWidth  = document.getElementById("wait_msg").style.width;
+	wmOldHeight = document.getElementById("wait_msg").style.height
+	wmOldTop    = document.getElementById("wait_msg").style.top
+	document.getElementById("wait_msg").style.background="white"
+	document.getElementById("wait_msg").style.width="585px"
+	document.getElementById("wait_msg").style.height="500px"
+	setControlsEnabled(false,false)
+	document.getElementById("wait_msg").style.top="20px"
+
+	queryFieldset = document.createElement("fieldset");
+	queryFieldset.innerHTML='<legend class="sectionheader" id="query_header">' + queryHeader + '</legend><div style="clear:both;display:block"><span class="nocolumn" id="query_text">' + queryText + '</span></div><div id="spacer_div" style="display:block; mrgin:8px;">&nbsp;</div><div id="query_button_container"></div>'
+	
+	document.getElementById("wait_msg").appendChild(queryFieldset)
+	
+	var buttonList = [];
+	var bIndex;
+	for(bIndex=0; bIndex < buttonNameList.length ; bIndex++)
+	{
+		b           = createInput("button", document);
+		b.value     = buttonNameList[bIndex];
+		b.className = "default_button"
+		b.onclick   = function()
+		{
+			document.getElementById("wait_msg").removeChild(queryFieldset)
+			document.getElementById("wait_msg").style.background=wmOldBack
+			document.getElementById("wait_msg").style.width=wmOldWidth
+			document.getElementById("wait_msg").style.height=wmOldHeight
+			document.getElementById("wait_msg").style.top=wmOldTop
+			document.getElementById("wait_icon").style.display="block"
+			document.getElementById("wait_txt").style.display="block"
+			setControlsEnabled(false,wmOldTxt)
+			continueFunction(this.value)
+		}
+		document.getElementById("query_button_container").appendChild(b);
+		document.getElementById("query_button_container").appendChild( document.createElement("br") )
+	}
+}
+

@@ -1,7 +1,295 @@
 /*
- * This program is copyright ï¿½ 2008,2009 Eric Bishop and is distributed under the terms of the GNU GPL 
+ * This program is copyright © 2008,2009 Eric Bishop and is distributed under the terms of the GNU GPL 
  * version 2.0 with a special clarification/exception that permits adapting the program to 
  * configure proprietary "back end" software provided that all modifications to the web interface
  * itself remain covered by the GPL. 
  * See http://gargoyle-router.com/faq.html#qfoss for more information
- */function doLogin(){var e=document.getElementById("password").value;if(e.length==0)alert("ERROR: You must enter a password");else{setControlsEnabled(!1,!0,"Logging In"),sessionExpired=!1,passInvalid=!1,loggedOut=!1;var t=getParameterDefinition("password",e),n=function(e){if(e.readyState==4){if(e.responseText.match(/^invalid/))passInvalid=!0,setStatusAndQuotas();else{var t=e.responseText.split(/[\n\r]+/),n=0;for(n=0;n<t.length;n++){var r=t[n].replace(/^.*ookie:/,"").replace(/\";.*$/,"");r.match(/=/)&&(document.cookie=r)}window.location.href=window.location.href}setControlsEnabled(!0)}};runAjax("POST","/utility/get_password_cookie.sh",t,n)}}function checkKey(e){var t=0;window.event?t=window.event.keyCode:e&&(t=e.which),t==13&&doLogin()}function setStatusAndQuotas(){setChildText("current_time_date",currentTime),sessionExpired?setChildText("login_status","Session Expired","red"):passInvalid?setChildText("login_status","Invalid Password","red"):loggedOut?setChildText("login_status","Logged Out","black"):setChildText("login_status","","black");var e=[],t=[],n=[],r;for(r=0;r<quotaIdList.length;r++){var i=quotaIdList[r],s=quotaIpLists[i];s.length>0&&(s[0]=="ALL"?e.push(i):s[0]=="ALL_OTHERS_COMBINED"?n.push(i):testAddrOverlap(connectedIp,s.join(","))&&(t.push(i),localIpName=connectedIp))}t=t.length==0?n:t;var o=["black",!1,"11px"],u=["red",!0,"12px"],a=[t,e],f=["local_quotas","global_quotas"],l;for(l=0;l<a.length;l++){var c=a[l],h=f[l],p=l==0?connectedIp:"ALL";clearFieldset(h);if(c.length>0){var d;for(d=0;d<c.length;d++){var v=c.length>1?d+1:-1,m=createQuotaDiv(c[d],p,v,o,u);document.getElementById(h).appendChild(m)}}document.getElementById(h).style.display=c.length>0?"block":"none"}}function clearFieldset(e){var t=document.getElementById(e);if(t!=null){var n=null;while(t.firstChild!=null){var r=t.firstChild;n=r.className=="sectionheader"?r:n,t.removeChild(r)}n!=null&&t.appendChild(n)}}function createQuotaDiv(e,t,n,r,i){var s="ALL_OTHERS_COMBINED",o=quotaIpLists[e],u=0;for(u=0;u<o.length;u++)s=testAddrOverlap(t,o[u])?o[u]:s;var a=quotaUsed[e][s],f=quotaPercents[e][s],l=quotaLimits[e][s],c=document.createElement("div");if(n>0){var h=document.createElement("span");h.style.fontSize=i[2],h.style.display="block",h.style.fontStyle="italic",h.style.textDecoration="underline",h.appendChild(document.createTextNode("Quota"+n+":")),c.appendChild(h);var p=timeParamsToLines(quotaTimes[e]),d=document.createElement("span"),v=document.createElement("span"),m=document.createElement("span");v.appendChild(document.createTextNode("Active "+(quotaTimes[e][3]=="only"?"Only:":"All Times Except:"))),v.style.fontSize=r[2],v.style.marginLeft="25px",v.style.display="block",v.style.width="150px",v.style.cssFloat="left",v.style.styleFloat="left",m.appendChild(document.createTextNode(p.shift())),m.style.fontSize=r[2],m.style.marginLeft="25px",m.style.display="inline",d.appendChild(v),d.appendChild(m),c.appendChild(d);while(p.length>0){var m=document.createElement("span");m.appendChild(document.createTextNode(p.shift())),m.style.fontSize=r[2],m.style.marginLeft="200px",m.style.display="block",v.style.clear="left",v.style.clear="left",c.appendChild(m)}}var g=["total up+down","download","upload"],y;for(y=0;y<3;y++)if(l[y]>=0){var b=g[y],w=parseBytes(l[y]),E=w.replace(/^.* /,""),S=parseBytes(a[y],E).replace(/ .*$/,""),x=truncateDecimal(f[y]);S=a[y]>l[y]?w.replace(/ .*$/,""):S;var T=document.createElement("span"),N=document.createElement("p");n>0?N.appendChild(document.createTextNode(x+"% of "+b+" for Quota"+n+" has been used ("+S+"/"+w+")")):N.appendChild(document.createTextNode(x+"% of "+b+" quota has been used ("+S+"/"+w+")"));var C=f[y]==100?i:r;N.style.color=C[0],N.style.fontWeight=C[1]?"bold":"normal",N.style.fontSize=C[2],T.appendChild(N),T.style.display="block",T.style.clear="left",n>0&&(T.style.marginLeft=n>0?"25px":"0px"),c.appendChild(T)}return c}function timeParamsToLines(e){var t=e[0],n=e[1],r=e[2],i=e[3],s=[];return i=="always"?s.unshift("Always"):r!=""?s=r.match(",")?r.split(/[\t ]*,[\t ]*/):[r]:(t!=""&&(s=t.match(",")?t.split(/[\t ]*,[\t ]*/):[t]),n!=""&&s.unshift(n)),s};
+ */
+
+function doLogin()
+{
+	var password = document.getElementById("password").value;
+	if(password.length == 0)
+	{
+		alert("ERROR: You must enter a password");
+	}
+	else
+	{
+		setControlsEnabled(false, true, "Logging In");
+		
+		sessionExpired=false;
+		passInvalid=false;
+		loggedOut=false;
+
+		var param = getParameterDefinition("password", password);
+		var stateChangeFunction = function(req)
+		{
+			if(req.readyState == 4)
+			{
+				if(req.responseText.match(/^invalid/))
+				{
+					passInvalid = true;
+					setStatusAndQuotas();
+				}
+				else
+				{
+					var cookieLines=req.responseText.split(/[\n\r]+/);
+					var cIndex=0;
+					for(cIndex=0; cIndex < cookieLines.length; cIndex++)
+					{
+						var cookie = cookieLines[cIndex].replace(/^.*ookie:/, "").replace(/\";.*$/, "");
+						if(cookie.match(/=/))
+						{
+							document.cookie=cookie;	
+						}
+					}
+					window.location.href = window.location.href;
+				}
+				setControlsEnabled(true);
+					
+			}
+		}
+		runAjax("POST", "/utility/get_password_cookie.sh", param, stateChangeFunction);
+	}
+}
+
+function checkKey(e)
+{
+	var keycode = 0;
+
+	if ( window.event )
+		keycode = window.event.keyCode;
+	else if ( e )
+		keycode = e.which;
+	if ( keycode == 13 )
+		doLogin();
+}
+
+function setStatusAndQuotas()
+{
+	setChildText("current_time_date", currentTime);
+
+	if(sessionExpired)
+	{
+		setChildText("login_status", "Session Expired", "red");
+	}
+	else if(passInvalid)
+	{
+		setChildText("login_status", "Invalid Password", "red");
+	}
+	else if(loggedOut)
+	{
+		setChildText("login_status", "Logged Out", "black");
+	}
+	else
+	{
+		setChildText("login_status", "", "black");
+	}
+
+	var globalQuotas = [];
+	var localQuotas = [];
+	var otherQuotas = [];
+	var idIndex;
+	for(idIndex=0;idIndex < quotaIdList.length; idIndex++)
+	{
+		var id=quotaIdList[idIndex];
+		var testIps = quotaIpLists[id];
+		if(testIps.length > 0)
+		{
+			if(testIps[0] == "ALL")
+			{
+				globalQuotas.push(id);
+			}
+			else if(testIps[0] == "ALL_OTHERS_COMBINED")
+			{
+				otherQuotas.push(id)
+			}
+			else if(testAddrOverlap(connectedIp, testIps.join(",")))
+			{
+				localQuotas.push(id);
+				localIpName = connectedIp;
+			}
+		}
+	}
+	localQuotas = localQuotas.length == 0 ? otherQuotas : localQuotas;
+
+	var normalFontParams = ["black", false, "11px"];
+	var usedFontParams = ["red", true, "12px"];
+
+	var qTypes = [ localQuotas, globalQuotas ];
+	var qFieldsets = [ "local_quotas", "global_quotas" ];
+	var typeIndex;
+	for(typeIndex=0; typeIndex < qTypes.length; typeIndex++)
+	{
+		var qIds = qTypes[typeIndex];
+		var qFieldset = qFieldsets[typeIndex];
+		var qIp = typeIndex == 0 ? connectedIp : "ALL";
+
+		clearFieldset(qFieldset);
+		if(qIds.length > 0)
+		{
+			var quotaIndex;
+			for(quotaIndex=0; quotaIndex < qIds.length; quotaIndex++)
+			{
+				var quotaNumber = qIds.length > 1 ? quotaIndex+1 : -1;
+				var div = createQuotaDiv(qIds[quotaIndex], qIp, quotaNumber, normalFontParams, usedFontParams);
+				document.getElementById(qFieldset).appendChild(div);
+			}
+		}
+		document.getElementById(qFieldset).style.display = qIds.length > 0 ? "block" :"none";
+	}
+}
+
+function clearFieldset(fieldsetId)
+{
+	var fieldsetEl = document.getElementById(fieldsetId);
+	if(fieldsetEl != null)
+	{
+		var sectionHeader = null;
+		while(fieldsetEl.firstChild != null)
+		{
+			var rmEl = fieldsetEl.firstChild;
+			sectionHeader = rmEl.className == "sectionheader" ? rmEl : sectionHeader;
+			fieldsetEl.removeChild(rmEl);
+		}
+		if(sectionHeader != null)
+		{
+			fieldsetEl.appendChild(sectionHeader);
+		}
+	}
+}
+
+function createQuotaDiv(quotaId, fieldsetIp, quotaNumber, normalFontParams, usedFontParams)
+{
+	var ip = "ALL_OTHERS_COMBINED";
+	var testIps = quotaIpLists[quotaId];
+	var ipIndex=0;
+	for(ipIndex=0; ipIndex < testIps.length; ipIndex++)
+	{
+		ip = testAddrOverlap(fieldsetIp, testIps[ipIndex]) ? testIps[ipIndex] : ip;
+	}
+
+
+	var usd = quotaUsed[quotaId][ip];
+	var pct = quotaPercents[quotaId][ip];
+	var lim = quotaLimits[quotaId][ip];
+
+	
+	var parentDiv = document.createElement("div");
+	if(quotaNumber > 0)
+	{
+		var nameSpan = document.createElement("span");
+		nameSpan.style.fontSize = usedFontParams[2];
+		nameSpan.style.display = "block";
+		nameSpan.style.fontStyle = "italic";
+		nameSpan.style.textDecoration = "underline";
+		nameSpan.appendChild( document.createTextNode("Quota" + quotaNumber + ":"));
+		parentDiv.appendChild(nameSpan);
+
+		var timeLines = timeParamsToLines(quotaTimes[quotaId]);
+		var timeSpan = document.createElement("span");
+		var timeActiveSpan = document.createElement("span");
+		var timeParamSpan = document.createElement("span");
+		
+		timeActiveSpan.appendChild(document.createTextNode("Active " + (quotaTimes[quotaId][3] == "only" ? "Only:" : "All Times Except:")));
+		timeActiveSpan.style.fontSize = normalFontParams[2];
+		timeActiveSpan.style.marginLeft="25px";
+		timeActiveSpan.style.display="block";
+		timeActiveSpan.style.width="150px";
+		timeActiveSpan.style.cssFloat="left";
+		timeActiveSpan.style.styleFloat="left";
+		
+		timeParamSpan.appendChild(document.createTextNode(timeLines.shift()));
+		timeParamSpan.style.fontSize = normalFontParams[2];
+		timeParamSpan.style.marginLeft = "25px";
+		timeParamSpan.style.display="inline";
+
+		timeSpan.appendChild(timeActiveSpan);
+		timeSpan.appendChild(timeParamSpan);
+		parentDiv.appendChild(timeSpan);
+
+		while(timeLines.length > 0)
+		{
+			var timeParamSpan = document.createElement("span");
+			timeParamSpan.appendChild(document.createTextNode(timeLines.shift()));
+			timeParamSpan.style.fontSize = normalFontParams[2];
+			timeParamSpan.style.marginLeft = "200px"; //25+150+25 = 175
+			timeParamSpan.style.display="block";
+			timeActiveSpan.style.clear="left";
+			timeActiveSpan.style.clear="left";
+			parentDiv.appendChild(timeParamSpan);
+		}
+
+
+
+
+	}
+
+	var names = ["total up+down", "download", "upload" ];
+	var typeIndex;
+	for(typeIndex=0; typeIndex < 3; typeIndex++)
+	{
+		if(lim[typeIndex] >= 0)
+		{
+			var name  = names[typeIndex];
+			var limit = parseBytes(lim[typeIndex]);
+			var unit  = limit.replace(/^.* /, "");
+			var used  = parseBytes(usd[typeIndex], unit).replace(/ .*$/, "");
+			var perc   = truncateDecimal( pct[typeIndex] );
+			used = usd[typeIndex] > lim[typeIndex] ? limit.replace(/ .*$/,"") : used;
+			var span = document.createElement("span");
+			var par = document.createElement("p");
+			if(quotaNumber > 0)
+			{
+				par.appendChild( document.createTextNode(perc + "% of " + name + " for Quota" + quotaNumber + " has been used (" + used + "/" + limit + ")"));
+			}
+			else
+			{
+				par.appendChild( document.createTextNode(perc + "% of " + name + " quota has been used (" + used + "/" + limit + ")"));
+			}
+			var fontParams = (pct[typeIndex] == 100) ? usedFontParams : normalFontParams;
+			par.style.color = fontParams[0];
+			par.style.fontWeight = fontParams[1] ? "bold" : "normal";
+			par.style.fontSize = fontParams[2];
+			span.appendChild(par);
+			span.style.display="block";
+			span.style.clear="left";
+			if(quotaNumber > 0)
+			{
+				span.style.marginLeft = quotaNumber > 0 ? "25px" : "0px";
+			}
+			parentDiv.appendChild(span);
+		}
+	}
+	return parentDiv;
+}
+
+function timeParamsToLines(timeParameters)
+{
+	var hours = timeParameters[0];
+       	var days = timeParameters[1];
+	var weekly = timeParameters[2];
+	var active = timeParameters[3];
+	
+	
+	var textList = [];
+	if(active == "always")
+	{
+		textList.unshift("Always");
+	}
+	else
+	{
+		if(weekly != "")
+		{
+			textList = weekly.match(",") ? weekly.split(/[\t ]*,[\t ]*/) : [ weekly ];
+		}
+		else
+		{
+			if(hours != ""){ textList = hours.match(",") ? hours.split(/[\t ]*,[\t ]*/) : [ hours ]; }
+			if(days  != ""){ textList.unshift(days); }
+		}
+	}
+	return textList;
+}
+
+

@@ -2,4 +2,582 @@
 	This program is copyright 2008,2009,2013 Eric Bishop and is distributed under the terms of the GNU GPL 
 	version 2.0. 
 	See http://gargoyle-router.com/faq.html#qfoss for more information
-*/function init(e){svgDoc=e.target.ownerDocument,topCoor=1,leftCoor=1,rightCoor=800,bottomCoor=600;var t=Math.floor(rightCoor*85/100),n=Math.floor(bottomCoor*85/100),r=n-topCoor+1,i=1,s=window.innerHeight;s!=null&&(i=s/bottomCoor);var o=Math.ceil(1/i);minStrokeWidth=Math.ceil(.005*r),minStrokeWidth=minStrokeWidth<o?o:minStrokeWidth}function plotAll(e,t,n,r,i,s){if(svgDoc==null)return;topCoor=1,leftCoor=1,rightCoor=800,bottomCoor=600,t=parseInt(t),r=parseInt(r),i=parseInt(i),s!=null&&(tzMinutes=parseInt(s));var o=Math.floor(rightCoor*85/100),u=Math.floor(bottomCoor*85/100),a=u-topCoor+1,f=o-leftCoor+1,l=svgDoc.getElementById("graph-border");l.setAttribute("width",o),l.setAttribute("height",u),l.setAttribute("stroke","black"),l.setAttribute("stroke-width",minStrokeWidth);var c=getNextTick(n,1,r,1)-r,h=i-r,p=[h],d=r;while(p.length<t+1){var v=getNextTick(n,1,d,-1);p.unshift(d-v),d=v}var m=0,g=[];for(plotIndex=0;plotIndex<3;plotIndex++)if(e[plotIndex]!=null){var y=e[plotIndex],b=[];for(pointIndex=y.length-1;pointIndex>=0;pointIndex--){var w=p.length-[y.length-pointIndex];b[pointIndex]=p[w]>0&&""+parseFloat(y[pointIndex])!="NaN"?parseFloat(y[pointIndex])/p[w]:0,m=b[pointIndex]>m?b[pointIndex]:m}while(b.length<t+1)b.unshift(0);g[plotIndex]=b}var E=p[0],S=E>h?d+h:d+Math.floor(h*.95);p[0]=E>h?E-h:E-Math.floor(h*.95);var x=getMinIntervalSeconds(n),T=createXTicks(t,x,S,i,topCoor,u,leftCoor,o),N=createYTicks(T,m,leftCoor,o,topCoor,u);for(plotIndex=0;plotIndex<3;plotIndex++)if(g[plotIndex]!=null){var b=g[plotIndex],C=[],k=0,w;for(w=0;w<p.length;w++){var L=b[w];L=L==null?b[w-1]:L;var A=Math.floor(a*L/N);A=A==null||A+""=="NaN"?0:A,A=u-A;if(w==0){C.push(leftCoor+","+u),C.push(leftCoor+","+A);if(p[0]>E/2){var O=d-S+E/2,M=Math.floor(f*(O/(i-S)));M!="NaN"&&C.push(leftCoor+M+","+A)}k=p.length>1?p[0]+p[1]/2:p[0]}else if(w==p.length-1){if(p[w]>c/2){var O=r-S+c/2,M=Math.floor(f*(O/(i-S)));C.push(leftCoor+M+","+A)}C.push(o+","+A),C.push(o+","+u),C.push(leftCoor+","+u)}else{var M=Math.floor(f*(k/(i-S)));C.push(leftCoor+M+","+A),k=k+p[w]/2+p[w+1]/2}}svgDoc.getElementById("plot"+(plotIndex+1)).setAttribute("points",C.join(" ")),svgDoc.getElementById("plot"+(plotIndex+1)).setAttribute("stroke-width",minStrokeWidth)}else svgDoc.getElementById("plot"+(plotIndex+1)).setAttribute("points","")}function getMinIntervalSeconds(e){var t=60;return e=="second"?t=1:e=="minute"?t=60:e=="hour"?t=3600:e=="day"?t=86400:e=="month"?t=2419200:t=e,t}function createYTicks(e,t,n,r,i,s){var o,u,a=1024;e=="minute"?u="s":e=="hour"?u="s":e=="day"?(a/=3600,u="hr"):e=="month"&&(a/=86400,u="day"),maxRate=t/a,maxLog=Math.floor(Math.log(maxRate)/Math.log(10)),maxLogMultiple=1+Math.floor(maxRate/Math.pow(10,maxLog)),maxLogMultiple==10?(maxLogMultiple=1,maxLog+=1):maxLogMultiple==2&&2-maxRate/Math.pow(10,maxLog)>=.5&&(maxLogMultiple=1.5),maxLog<1&&(maxLog<0||maxLogMultiple<5)&&(maxLog=0,maxLogMultiple=5);var f,l;maxLog<3?(f="KByte",l=1):maxLog<6?(f="MByte",l=Math.pow(10,3)):maxLog<9?(f="GByte",l=Math.pow(10,6)):(f="TByte",l=Math.pow(10,9)),f=f+" / "+u;var c;maxLogMultiple>5?c=2*Math.pow(10,maxLog):maxLogMultiple>2?c=Math.pow(10,maxLog):c=.5*Math.pow(10,maxLog),yMax=maxLogMultiple*Math.pow(10,maxLog);var h=s-i;svgDoc.getElementById("y-unit-container").setAttribute("font-size",.07*h),svgDoc.getElementById("y-unit-path").setAttribute("d"," M "+(r+.2*h)+" "+Math.floor(.6*h)+" L "+(r+.2*h)+" "+0),yUnitEl=svgDoc.getElementById("y-units"),yUnitEl.firstChild.data=" ",yUnitEl.firstChild.data=f,nextTick=0,tickNum=1,tickPath="";while(nextTick<yMax)yCoor=s-Math.floor((s-i)*nextTick/yMax),nextTick!=0&&(tickPath=tickPath+"M "+n+" "+yCoor+" L "+r+" "+yCoor+" "),tickLabel=nextTick/l,labelElement=svgDoc.getElementById("ytick-label"+tickNum),labelElement.style.display="block",labelElement.setAttribute("x",r+.02*h),labelElement.setAttribute("y",yCoor),labelElement.setAttribute("font-size",.05*h+"px"),labelElement.firstChild.data="",labelElement.firstChild.data=tickLabel,nextTick+=c,tickNum++;while(tickNum<=7)labelElement=svgDoc.getElementById("ytick-label"+tickNum),labelElement.style.display="none",tickNum++;return svgDoc.getElementById("yticks").setAttribute("d",tickPath),svgDoc.getElementById("yticks").setAttribute("stroke-width",minStrokeWidth),a*maxLogMultiple*Math.pow(10,maxLog)}function createXTicks(e,t,n,r,i,s,o,u){function c(e){var t=1;while(a/(t*e)>6)t++;return t}var a=t*e,f="minute",l;a<14400?(f="minute",l=c(60)):a<345600?(f="hour",l=c(3600)):a<9676800?(f="day",l=c(86400)):a<116121600&&(f="month",l=c(2419200));var h=1/3;l==2&&(h=1),l>=3&&(h=Math.floor(l/3));var p=s-i,d=getNextTick(f,h,n,1),v="";while(d<r)xCoor=o+Math.floor((u-o)*(d-n)/(r-n)),v=v+"M "+xCoor+" "+i+" L "+xCoor+" "+s+" ",d=getNextTick(f,h,d,1);svgDoc.getElementById("x-minor-ticks").setAttribute("d",v),svgDoc.getElementById("x-minor-ticks").setAttribute("stroke-width",minStrokeWidth),majorPathString="",tickNum=1;var m=getNextTick(f,l,n,1);while(m<r&&tickNum<=10){xCoor=o+Math.floor((u-o)*(m-n)/(r-n)),majorPathString=majorPathString+"M "+xCoor+" "+(s+1)+" L "+xCoor+" "+(s+Math.floor(.02*(s-i)))+" ",tickLabel="",tickDate=new Date,tickDate.setTime(m*1e3),tickDate.setUTCMinutes(tickDate.getUTCMinutes()+tzMinutes),monthAbbreviations=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],f=="minute"||f=="hour"?tickLabel=tickDate.getUTCHours()+":"+(tickDate.getUTCMinutes()>=10?tickDate.getUTCMinutes():"0"+tickDate.getUTCMinutes()):f=="day"?tickLabel=monthAbbreviations[tickDate.getUTCMonth()]+" "+tickDate.getUTCDate():tickLabel=monthAbbreviations[tickDate.getUTCMonth()],labelElement=svgDoc.getElementById("major-xtick-label"+tickNum),labelElement.style.display="block",labelElement.setAttribute("x",xCoor),labelElement.setAttribute("y",s+Math.ceil(.07*(s-i))),labelElement.setAttribute("font-size",Math.ceil(.05*p)+"px"),labelElement.firstChild.data="",labelElement.firstChild.data=tickLabel;var g=getNextTick(f,l,m,1);m=g,tickNum++}while(tickNum<=10)tickLabelId="major-xtick-label"+tickNum,svgDoc.getElementById(tickLabelId).style.display="none",svgDoc.getElementById(tickLabelId).firstChild.data="",tickNum++;return svgDoc.getElementById("x-major-ticks").setAttribute("d",majorPathString),svgDoc.getElementById("x-major-ticks").setAttribute("stroke-width",minStrokeWidth),f}function getNextTick(e,t,n,r){r=r!=-1?1:-1;var i=new Date,s=new Date;i.setTime(n*1e3);var o=n;s.setTime(o*1e3),s.setUTCMinutes(s.getUTCMinutes()+tzMinutes),i.setUTCMinutes(i.getUTCMinutes()+tzMinutes);var u=null,a=null;e=="second"?(u=function(e){var t=new Date;return t.setTime(e.getTime()),t.setUTCSeconds(e.getUTCSeconds()+1*r),t},a=function(e,t){return e.getUTCSeconds()%t==0?!0:!1}):e=="minute"?(s.setUTCSeconds(0),u=function(e){var t=new Date;return t.setTime(e.getTime()),t.setUTCMinutes(e.getUTCMinutes()+1*r),t},a=function(e,t){return Math.floor(e.getTime()/(60*1e3))%t==0?!0:!1}):e=="hour"?(s.setUTCSeconds(0),s.setUTCMinutes(0),u=function(e){var t=new Date;return t.setTime(e.getTime()),t.setUTCHours(e.getUTCHours()+1*r),t},a=function(e,t){return Math.floor(e.getTime()/(60*60*1e3))%t==0?!0:!1}):e=="day"?(s.setUTCSeconds(0),s.setUTCMinutes(0),s.setUTCHours(0),u=function(e){var t=new Date;return t.setTime(e.getTime()),t.setUTCDate(e.getUTCDate()+1*r),t},a=function(e,t){return Math.floor(e.getTime()/(24*60*60*1e3))%t==0?!0:!1}):e=="month"?(s.setUTCSeconds(0),s.setUTCMinutes(0),s.setUTCHours(0),s.setUTCDate(1),u=function(e){var t=new Date;return t.setTime(e.getTime()),t.setUTCMonth(e.getUTCMonth()+1*r),t},a=function(e,t){return(e.getUTCMonth()+12*parseInt(e.getUTCFullYear()))%t==0?!0:!1}):e=="year"?(s.setUTCSeconds(0),s.setUTCMinutes(0),s.setUTCHours(0),s.setUTCDate(1),s.setUTCMonth(0),u=function(e){var t=new Date;return t.setTime(e.getTime()),t.setUTCFullYear(e.getUTCFullYear()+1*r),t},a=function(e,t){return e.getUTCFullYear()%t==0?!0:!1}):parseInt(e)!="NaN"&&(u=function(t){var n=new Date;return n.setTime(t.getTime()+r*parseInt(e)*1e3),n},a=function(e,t){return!0});var f=0;while(s.getTime()<=i.getTime()&&r>0||s.getTime()>=i.getTime()&&r<0){if(t<1){var l=t*(u(s).getTime()-s.getTime());s.setTime(s.getTime()+Math.floor(l))}else{var c=Math.floor(t),h;s=u(s);for(h=0;h<c&&!a(s,t);h++)s=u(s)}f++;if(f>50+t)return alert("BAD BAD BAD!!!!!\nunit = "+e+"\ncurrentTime = "+n+", increment = "+l),s}return s.setUTCMinutes(s.getUTCMinutes()-tzMinutes),o=Math.floor(s.getTime()/1e3),o}var svgNs="http://www.w3.org/2000/svg",svgDoc,topCoor=1,leftCoor=1,rightCoor=800,bottomCoor=600,minStrokeWidth=1,tzMinutes=0;
+*/
+
+var svgNs = "http://www.w3.org/2000/svg"
+var svgDoc;
+var topCoor=1;
+var leftCoor=1;
+var rightCoor=800;
+var bottomCoor=600;
+var minStrokeWidth=1;
+
+
+var tzMinutes = 0;
+
+function init(evt)
+{
+	svgDoc = evt.target.ownerDocument;
+	topCoor=1;
+	leftCoor=1;
+	rightCoor=800;
+	bottomCoor=600;
+	
+	var graphRightCoor=Math.floor(rightCoor*85/100);
+	var graphBottomCoor=Math.floor(bottomCoor*85/100);
+	var graphHeight = (graphBottomCoor-topCoor)+1;
+
+	var scaleFraction = 1;
+	var inh = window.innerHeight;
+	if(inh != null)
+	{
+		scaleFraction = inh/bottomCoor;
+	}
+	var minDisplay = Math.ceil(1/scaleFraction);
+	minStrokeWidth = Math.ceil(.005*graphHeight);
+	minStrokeWidth = minStrokeWidth < minDisplay ? minDisplay : minStrokeWidth;
+}
+
+//note: numDisplay intervals does NOT include last point, which is not a complete interval, so (max) number
+//of points plotted is numDisplayIntervals+1
+function plotAll(pointSets, numDisplayIntervals, intervalLength, lastIntervalStart, lastTime, tzm)
+{
+	if(svgDoc == null)
+	{
+		return;
+	}
+	topCoor=1;
+	leftCoor=1;
+	rightCoor=800;
+	bottomCoor=600;
+	
+	numDisplayIntervals = parseInt(numDisplayIntervals);
+	lastIntervalStart = parseInt(lastIntervalStart);
+	lastTime = parseInt(lastTime);
+	if(tzm != null)
+	{
+		tzMinutes = parseInt(tzm);
+	}
+
+	var graphRightCoor=Math.floor(rightCoor*85/100);
+	var graphBottomCoor=Math.floor(bottomCoor*85/100);
+	var graphHeight = (graphBottomCoor-topCoor)+1;
+	var graphWidth = (graphRightCoor-leftCoor)+1;
+
+	var borderEl = svgDoc.getElementById("graph-border");
+	borderEl.setAttribute("width", graphRightCoor);
+	borderEl.setAttribute("height", graphBottomCoor);
+	borderEl.setAttribute("stroke", "black");
+	borderEl.setAttribute("stroke-width", minStrokeWidth )
+
+	
+	var maxLastIntervalSeconds = getNextTick(intervalLength, 1, lastIntervalStart, 1) - lastIntervalStart;
+	var lastIntervalSeconds = lastTime-lastIntervalStart;
+	var intervalLengths = [ lastIntervalSeconds ];
+	var firstIntervalStart = lastIntervalStart;
+
+	while(intervalLengths.length < numDisplayIntervals+1)
+	{
+		var previousTime = getNextTick(intervalLength, 1, firstIntervalStart, -1) ;
+		intervalLengths.unshift( firstIntervalStart - previousTime );
+		firstIntervalStart = previousTime;
+	}
+	
+	//convert everything into bytes/s and get max
+	//this solves problem of last interval being different length
+	//as well as problem when dealing with months -- they aren't all the same length!
+	var maxPoint=0;
+	var adjPointSets = [];
+	for(plotIndex=0; plotIndex < 3; plotIndex++)
+	{
+		if(pointSets[plotIndex] != null)
+		{
+			var points=pointSets[plotIndex];
+			var adjPoints = [];
+			for(pointIndex=points.length-1; pointIndex >= 0; pointIndex--)
+			{
+				var intervalIndex = intervalLengths.length-[points.length-pointIndex];
+				adjPoints[pointIndex] = (intervalLengths[intervalIndex] > 0 && ""+parseFloat(points[pointIndex]) != "NaN") ? parseFloat(points[pointIndex])/intervalLengths[intervalIndex] : 0;
+				maxPoint = adjPoints[pointIndex] > maxPoint ? adjPoints[pointIndex] : maxPoint;
+			}
+			while(adjPoints.length < numDisplayIntervals+1) { adjPoints.unshift(0); }
+			adjPointSets[plotIndex] = adjPoints;
+		}
+	}
+
+	//now that we've normalized y data by actual interval lengths, shorten first interval to amount we want to display
+	var realFirstIntervalLength = intervalLengths[0];
+	var firstTime = realFirstIntervalLength > lastIntervalSeconds ? firstIntervalStart + lastIntervalSeconds : firstIntervalStart + Math.floor(lastIntervalSeconds*.95);
+	intervalLengths[0] = realFirstIntervalLength > lastIntervalSeconds ? realFirstIntervalLength - lastIntervalSeconds : realFirstIntervalLength -  Math.floor(lastIntervalSeconds*.95);
+
+	var minIntervalSeconds = getMinIntervalSeconds(intervalLength);
+	var xTickUnit = createXTicks(numDisplayIntervals, minIntervalSeconds, firstTime, lastTime, topCoor, graphBottomCoor, leftCoor, graphRightCoor)
+	var graphYMax = createYTicks(xTickUnit, maxPoint, leftCoor, graphRightCoor, topCoor, graphBottomCoor)
+
+	for(plotIndex=0; plotIndex < 3; plotIndex++)
+	{
+		if(adjPointSets[plotIndex] != null)
+		{
+			var adjPoints= adjPointSets[plotIndex];
+			var plotPoints = [ ];
+			var cumulativeTime = 0;
+			var intervalIndex;
+			for(intervalIndex=0; intervalIndex < intervalLengths.length; intervalIndex++)
+			{
+				
+				var nextY = adjPoints[intervalIndex];
+				nextY = nextY == null ? adjPoints[intervalIndex-1] : nextY;
+				var yOffset = Math.floor(graphHeight*nextY/graphYMax);
+				yOffset = yOffset == null || yOffset+"" == "NaN" ? 0 : yOffset;
+				yOffset = graphBottomCoor - yOffset;
+
+				if(intervalIndex == 0)
+				{
+					plotPoints.push( leftCoor + "," + graphBottomCoor );
+					plotPoints.push( leftCoor + "," + yOffset );
+					if(intervalLengths[0] > realFirstIntervalLength/2)
+					{
+						var midpointTime = (firstIntervalStart-firstTime) + (realFirstIntervalLength/2);
+						var x = Math.floor(graphWidth*(midpointTime/(lastTime-firstTime)));
+						if(x != "NaN")
+						{
+							plotPoints.push( (leftCoor + x) + "," + yOffset );
+						}
+					}
+					cumulativeTime = intervalLengths.length > 1 ? intervalLengths[0] + (intervalLengths[1]/2) : intervalLengths[0];
+				}
+				else if(intervalIndex == intervalLengths.length-1)
+				{
+					if(intervalLengths[intervalIndex] > maxLastIntervalSeconds/2)
+					{
+						var midpointTime = (lastIntervalStart-firstTime) + (maxLastIntervalSeconds/2);
+						var x = Math.floor(graphWidth*(midpointTime/(lastTime-firstTime)));
+						plotPoints.push( (leftCoor + x) + "," + yOffset );
+					}
+					plotPoints.push( graphRightCoor + "," + yOffset );
+					plotPoints.push( graphRightCoor + "," + graphBottomCoor );
+					plotPoints.push( leftCoor + "," + graphBottomCoor );
+				}
+				else
+				{
+					var x = Math.floor(graphWidth*(cumulativeTime/(lastTime-firstTime)));
+					plotPoints.push( (leftCoor + x) + "," + yOffset );
+					cumulativeTime = cumulativeTime +  intervalLengths[intervalIndex]/2 + intervalLengths[intervalIndex+1]/2;
+				}
+			}
+			svgDoc.getElementById("plot" + (plotIndex+1)).setAttribute("points", plotPoints.join(" "));
+			svgDoc.getElementById("plot" + (plotIndex+1)).setAttribute("stroke-width", minStrokeWidth );
+		}
+		else
+		{
+			svgDoc.getElementById("plot" + (plotIndex+1)).setAttribute("points", "");
+		}
+	}
+}
+
+function getMinIntervalSeconds(intervalLength)
+{
+	var intervalSeconds = 60;
+	if(intervalLength == "second")
+	{
+		intervalSeconds = 1;
+	}
+	else if(intervalLength == "minute")
+	{
+		intervalSeconds = 60;
+	}
+	else if(intervalLength == "hour")
+	{
+		intervalSeconds = 60*60;
+	}
+	else if(intervalLength == "day")
+	{
+		intervalSeconds = 60*60*24;
+	}
+	else if(intervalLength == "month")
+	{
+		intervalSeconds = 60*60*24*28;
+	}
+	else
+	{
+		intervalSeconds = intervalLength;
+	}
+	return intervalSeconds;
+}
+
+//max point must be in bytes/s
+function createYTicks(xTickUnit, maxPoint, graphLeft, graphRight, graphTop, graphBottom)
+{
+	var timePoints;
+	var yTimeUnit;
+	var rateMultiple = 1024; //report in at least kilobytes
+
+	if(xTickUnit == "minute")
+	{
+		yTimeUnit="s"; //bytes/s
+	}
+	else if(xTickUnit == "hour") 
+	{
+		yTimeUnit="s";  //bytes/s
+	}
+	else if(xTickUnit == "day") 
+	{
+		rateMultiple=rateMultiple/(60*60);
+		yTimeUnit="hr"; //bytes/hr
+	}
+	else if(xTickUnit == "month") 
+	{
+		rateMultiple=rateMultiple/(60*60*24);
+		yTimeUnit="day"; //bytes/day
+	}
+
+	maxRate = maxPoint/rateMultiple;
+
+	maxLog = Math.floor(Math.log(maxRate)/Math.log(10));
+	maxLogMultiple = 1+Math.floor(maxRate/Math.pow(10, maxLog));
+	if(maxLogMultiple == 10)
+	{
+		maxLogMultiple = 1;
+		maxLog = maxLog+1;
+	}
+	else if( maxLogMultiple == 2 && (2 - (maxRate/Math.pow(10, maxLog))) >= 0.5)
+	{
+		maxLogMultiple = 1.5;
+	}
+	if(maxLog < 1 && (maxLog <0 || maxLogMultiple < 5))
+	{
+		maxLog = 0;
+		maxLogMultiple = 5;
+	}
+
+	var unit;
+	var unitScaleFactor;
+	if(maxLog < 3)
+	{
+		unit="KByte";
+		unitScaleFactor=1;
+	}
+	else if(maxLog < 6)
+	{
+		unit="MByte";
+		unitScaleFactor=Math.pow(10,3);
+	}
+	else if(maxLog < 9)
+	{
+		unit="GByte";
+		unitScaleFactor=Math.pow(10,6);
+	}
+	else
+	{
+		unit="TByte";
+		unitScaleFactor=Math.pow(10,9);
+	}
+	unit = unit + " / " + yTimeUnit;
+
+	var tickSize;
+	if(maxLogMultiple > 5)
+	{
+		tickSize = 2*Math.pow(10,maxLog);
+	}
+	else if(maxLogMultiple > 2)
+	{
+		tickSize = Math.pow(10,maxLog);
+	}
+	else
+	{
+		tickSize = 0.5 * Math.pow(10,maxLog);
+	}
+
+	yMax = 	maxLogMultiple * Math.pow(10,maxLog);
+
+	var graphHeight = graphBottom-graphTop;
+	svgDoc.getElementById("y-unit-container").setAttribute("font-size", .07*graphHeight);
+	svgDoc.getElementById("y-unit-path").setAttribute("d", " M " + (graphRight+(.20*graphHeight) ) + " " + (Math.floor(.6*graphHeight)) + " L " + (graphRight+(.20*graphHeight)) + " " + 0);
+
+	yUnitEl = svgDoc.getElementById("y-units")
+	yUnitEl.firstChild.data = " "
+	yUnitEl.firstChild.data = unit
+
+	nextTick=0;
+	tickNum=1;
+	tickPath = "";
+	while(nextTick < yMax)
+	{
+		yCoor= graphBottom - Math.floor((graphBottom-graphTop)*nextTick/yMax);
+		if(nextTick != 0)
+		{
+			tickPath = tickPath + "M " + graphLeft + " " + yCoor + " L " + graphRight + " " + yCoor + " ";
+		}
+
+		tickLabel = (nextTick/unitScaleFactor);
+		labelElement = svgDoc.getElementById("ytick-label" + tickNum);
+		labelElement.style.display = "block";
+		labelElement.setAttribute("x", graphRight+ (.02*graphHeight)   );
+		labelElement.setAttribute("y", yCoor);
+		labelElement.setAttribute("font-size", (.05*graphHeight) + "px" )
+		labelElement.firstChild.data = ""; //safari shits itself if label doesn't change
+		labelElement.firstChild.data = tickLabel;
+
+		nextTick = nextTick + tickSize;
+		tickNum++;
+	}
+	while(tickNum <= 7)
+	{
+		labelElement = svgDoc.getElementById("ytick-label" + tickNum);
+		labelElement.style.display = "none";
+		tickNum++
+	}
+
+	svgDoc.getElementById("yticks").setAttribute("d", tickPath);
+	svgDoc.getElementById("yticks").setAttribute("stroke-width", minStrokeWidth );
+
+	return rateMultiple * maxLogMultiple * Math.pow(10,maxLog); //return raw value of max value on graph
+}
+
+function createXTicks(numDisplayIntervals, intervalSeconds, firstTime, lastTime, graphTop, graphBottom, graphLeft, graphRight)
+{
+	var minTotalIntervalLength = intervalSeconds*numDisplayIntervals;
+	var timeUnit = "minute";
+	var majorTickMultiple;
+	function getMajorTickMultiple( unitSeconds )
+	{
+		var m=1;
+		while( minTotalIntervalLength/(m*unitSeconds) > 6 ) { m++; } 
+		return m;
+	}
+	if( minTotalIntervalLength < 4*60*60 )
+	{
+		timeUnit="minute";
+		majorTickMultiple = getMajorTickMultiple(60);
+	}
+	else if( minTotalIntervalLength < 4*60*60*24)
+	{
+		timeUnit="hour";
+		majorTickMultiple = getMajorTickMultiple(60*60);
+	}
+	else if( minTotalIntervalLength < 4*60*60*24*28)
+	{
+		timeUnit="day";
+		majorTickMultiple = getMajorTickMultiple(60*60*24);
+	}
+	else if( minTotalIntervalLength < 4*60*60*24*28*12)
+	{
+		timeUnit="month";
+		majorTickMultiple = getMajorTickMultiple(60*60*24*28);
+	}
+
+	var minorTickMultiple = (1/3);
+	if(majorTickMultiple == 2)
+	{
+		minorTickMultiple = 1;
+	}
+	if(majorTickMultiple >= 3)
+	{
+		minorTickMultiple = Math.floor(majorTickMultiple/3); 
+	}
+
+	var graphHeight = graphBottom-graphTop;
+	var nextMinorTick = getNextTick(timeUnit, minorTickMultiple, firstTime, 1);
+	var minorPathString= "";
+	while( nextMinorTick < lastTime )
+	{
+		xCoor = graphLeft + Math.floor((graphRight-graphLeft)*(nextMinorTick - firstTime)/( lastTime-firstTime ));
+		minorPathString= minorPathString + "M " + xCoor + " " + graphTop + " L " + xCoor + " " + graphBottom + " ";
+		nextMinorTick = getNextTick(timeUnit, minorTickMultiple, nextMinorTick, 1);
+	}
+	svgDoc.getElementById("x-minor-ticks").setAttribute("d", minorPathString);
+	svgDoc.getElementById("x-minor-ticks").setAttribute("stroke-width", minStrokeWidth );
+	
+
+	majorPathString= "";
+	tickNum = 1;
+	var nextMajorTick = getNextTick(timeUnit, majorTickMultiple, firstTime, 1);
+	while(nextMajorTick < lastTime && tickNum <= 10)
+	{
+		xCoor = graphLeft + Math.floor((graphRight-graphLeft)*(nextMajorTick - firstTime)/(lastTime - firstTime));
+		majorPathString= majorPathString + "M " + xCoor + " " + (graphBottom+1) + " L " + xCoor + " " + (graphBottom+Math.floor(.02*(graphBottom-graphTop))) + " ";
+
+		tickLabel = "";
+		tickDate = new Date();
+		tickDate.setTime(nextMajorTick*1000);
+		tickDate.setUTCMinutes( tickDate.getUTCMinutes()+tzMinutes )
+		monthAbbreviations=["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+		if(timeUnit == "minute" || timeUnit == "hour")
+		{
+			tickLabel = tickDate.getUTCHours() + ":" + (tickDate.getUTCMinutes() >= 10 ? tickDate.getUTCMinutes() : "0" + tickDate.getUTCMinutes());
+		}
+		else if(timeUnit == "day")
+		{
+			tickLabel = monthAbbreviations[ tickDate.getUTCMonth() ] + " " + tickDate.getUTCDate();
+		}
+		else
+		{
+			tickLabel = monthAbbreviations[ tickDate.getUTCMonth() ];
+		}
+		labelElement = svgDoc.getElementById("major-xtick-label" + tickNum);
+		labelElement.style.display = "block";
+		labelElement.setAttribute("x", xCoor);
+		labelElement.setAttribute("y", graphBottom + Math.ceil(.07*(graphBottom-graphTop))  );
+		labelElement.setAttribute("font-size", Math.ceil(.05*graphHeight) + "px" )
+		labelElement.firstChild.data = ""; //safari shits itself if label doesn't change
+		labelElement.firstChild.data = tickLabel;
+
+		var nt = getNextTick(timeUnit, majorTickMultiple, nextMajorTick, 1);
+		nextMajorTick = nt;
+		tickNum++;
+	}
+	while(tickNum <= 10)
+	{
+		tickLabelId = "major-xtick-label" + tickNum;
+		svgDoc.getElementById(tickLabelId).style.display = "none";
+		svgDoc.getElementById(tickLabelId).firstChild.data = "";
+		tickNum++;
+	}
+	svgDoc.getElementById("x-major-ticks").setAttribute("d", majorPathString);
+	svgDoc.getElementById("x-major-ticks").setAttribute("stroke-width", minStrokeWidth );
+
+	return timeUnit;
+}
+
+function getNextTick(unit, multiple, currentTime, incrementDirection)
+{
+	//direction is either -1 or 1, -1 for previous tick, 1 for next tick
+	incrementDirection = incrementDirection != -1 ? 1 : -1;
+
+	var currentDate = new Date();
+	var nextDate = new Date();
+	currentDate.setTime(currentTime*1000);
+	var nextTime = currentTime;
+	nextDate.setTime(nextTime*1000);
+	nextDate.setUTCMinutes(nextDate.getUTCMinutes()+tzMinutes)
+	currentDate.setUTCMinutes(currentDate.getUTCMinutes()+tzMinutes)
+	var incFunction = null;
+	var multMatchFunction = null;
+	if(unit == "second")
+	{
+		incFunction = function(nextDate)
+		{
+			var incDate = new Date();
+			incDate.setTime(nextDate.getTime());
+			incDate.setUTCSeconds( nextDate.getUTCSeconds() + 1*incrementDirection);
+			return incDate;
+		}
+		multMatchFunction = function(nextDate,multiple){ return (nextDate.getUTCSeconds() % multiple == 0) ? true : false; }
+	}
+	else if(unit == "minute")
+	{
+		nextDate.setUTCSeconds(0);
+		incFunction = function(nextDate)
+		{
+			var incDate = new Date();
+			incDate.setTime(nextDate.getTime());
+			incDate.setUTCMinutes( nextDate.getUTCMinutes()+1*incrementDirection);
+			return incDate;
+		}
+		multMatchFunction = function(nextDate,multiple){ return ( Math.floor(nextDate.getTime()/(60*1000)) % multiple == 0) ? true : false; }
+	}
+	else if(unit == "hour")
+	{
+		nextDate.setUTCSeconds(0);
+		nextDate.setUTCMinutes(0);
+		incFunction = function(nextDate)
+		{
+			var incDate = new Date();
+			incDate.setTime(nextDate.getTime());
+			incDate.setUTCHours(nextDate.getUTCHours()+1*incrementDirection);
+			return incDate;
+		}
+		multMatchFunction = function(nextDate,multiple){ return ( Math.floor(nextDate.getTime()/(60*60*1000)) % multiple == 0) ? true : false; }
+
+	}
+	else if(unit == "day")
+	{
+		nextDate.setUTCSeconds(0);
+		nextDate.setUTCMinutes(0);
+		nextDate.setUTCHours(0);
+		incFunction = function(nextDate)
+		{
+			var incDate = new Date();
+			incDate.setTime(nextDate.getTime());
+			incDate.setUTCDate(nextDate.getUTCDate()+1*incrementDirection);
+			return incDate;
+		}
+		multMatchFunction = function(nextDate,multiple){ return ( Math.floor(nextDate.getTime()/(24*60*60*1000)) % multiple == 0) ? true : false; }
+	}
+	else if(unit == "month")
+	{
+		nextDate.setUTCSeconds(0);
+		nextDate.setUTCMinutes(0);
+		nextDate.setUTCHours(0);
+		nextDate.setUTCDate(1);
+		incFunction = function(nextDate)
+		{
+			var incDate = new Date();
+			incDate.setTime(nextDate.getTime());
+			incDate.setUTCMonth(nextDate.getUTCMonth()+1*incrementDirection);
+			return incDate;
+		}
+		multMatchFunction = function(nextDate,multiple){  return ((nextDate.getUTCMonth() + (12*parseInt(nextDate.getUTCFullYear()))) % multiple == 0) ? true : false; }
+	}
+	else if (unit == "year")
+	{
+		nextDate.setUTCSeconds(0);
+		nextDate.setUTCMinutes(0);
+		nextDate.setUTCHours(0);
+		nextDate.setUTCDate(1);
+		nextDate.setUTCMonth(0);
+		
+		incFunction = function(nextDate)
+		{
+			var incDate = new Date();
+			incDate.setTime(nextDate.getTime());
+			incDate.setUTCFullYear(nextDate.getUTCFullYear()+1*incrementDirection);
+			return incDate;
+		}
+		multMatchFunction = function(nextDate,multiple){ return (nextDate.getUTCFullYear() % multiple == 0) ? true : false; }
+	}
+	else if(parseInt(unit) != "NaN")
+	{
+		incFunction = function(nextDate)
+		{
+			var incDate = new Date();
+			incDate.setTime( nextDate.getTime() + incrementDirection*(parseInt(unit)*1000));
+			return incDate;
+		}
+		multMatchFunction = function(nextDate,multiple){ return true; }
+	}
+
+	//var increment =  multiple*(incDate.getTime()-nextDate.getTime());
+
+	var iter = 0;	
+	while(	(nextDate.getTime() <= currentDate.getTime() && incrementDirection > 0) ||
+		(nextDate.getTime() >= currentDate.getTime() && incrementDirection < 0)
+		)
+	{
+		if(multiple < 1)
+		{
+			var increment =  multiple*((incFunction(nextDate)).getTime()-nextDate.getTime());
+			nextDate.setTime(nextDate.getTime() + Math.floor(increment))
+		}
+		else
+		{
+			var maxInc = Math.floor(multiple); //if multiple > 0, should always be an integer, but be sure
+			var incrementIndex;
+			nextDate = incFunction(nextDate);
+			for(incrementIndex=0;incrementIndex < maxInc && (!multMatchFunction(nextDate,multiple)); incrementIndex++)
+			{
+				nextDate = incFunction(nextDate);
+			}
+		}
+		
+		iter++;
+		if(iter > (50+multiple))
+		{
+			alert("BAD BAD BAD!!!!!\nunit = " + unit + "\ncurrentTime = " + currentTime + ", increment = " + increment)
+			return nextDate;
+		}
+	}
+	nextDate.setUTCMinutes( nextDate.getUTCMinutes()-tzMinutes)
+	nextTime = Math.floor(nextDate.getTime()/1000);
+	return nextTime;
+}

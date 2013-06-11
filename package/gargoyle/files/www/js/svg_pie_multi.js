@@ -2,4 +2,522 @@
 	This program is copyright 2008,2009,2013 Eric Bishop and is distributed under the terms of the GNU GPL 
 	version 2.0. 
 	See http://gargoyle-router.com/faq.html#qfoss for more information
-*/function init(e){svgDoc=e.target.ownerDocument}function addPercentsToLabel(e,t,n){var r=[],i;for(i=0;i<t.length;i++)pct=Math.floor(parseFloat(t[i])*1e3/n[i])/10,pctStr=""+pct+"%",r.push(pctStr);var s=e+" ( "+r.join(" / ")+" )";return s}function setPieChartData(e,t,n,r,i,s,o,u){if(svgDoc==null)return[];i=parseInt(i),s=parseInt(s),initialized||(o=!0);var a=e.length;numPies=r.length;var f=[],l=0;for(l=0;l<e.length;l++)f.push(l);var c=function(e,t){return r[i][t]-r[i][e]};f.sort(c);if(o){visibleIndividuals=[],otherIndividuals=[],unselectedColors=[],selectedColors=[],numVisible=0,selectedId=null;var h=e.length<=s?s:s+1,p=[255,0,0],d=0;for(d=0;d<h;d++){var v=incrementColor(p,d*Math.ceil(360/h)),m=getSelectedRgb(v);unselectedColors.push(getColorStr(v)),selectedColors.push(getColorStr(m));if(d<s||h<=s)f[d]!=null&&(visibleIndividuals[e[f[d]]]=[getColorStr(v),getColorStr(m)],numVisible++);else{var g;for(g=d;g<f.length;g++)otherIndividuals[e[f[g]]]=[getColorStr(v),getColorStr(m)]}}initialized=!0}orderedNames=[];var y=[],b=[],w=[],E=-1,S;for(S=0;S<r.length;S++)b.push([]);while(f.length>0){var x=f.shift(),T=e[x],N=n[x];if(otherIndividuals[T]!=null||numVisible==s&&visibleIndividuals[T]==null){var C=0;for(C=0;C<numPies;C++)w[C]=(w[C]==null?0:w[C])+parseFloat(r[C][x])}else if(visibleIndividuals[T]!=null){orderedNames.push(T),y.push(N);for(C=0;C<numPies;C++)b[C].push(parseFloat(r[C][x]));if(visibleIndividuals[T]==null){var k=visibleIndividuals.length;visibleIndividuals[T]=[unselectedColors[k],selectedColors[k]],numVisible++}}}if(w.length>0){for(S=0;S<r.length;S++)b[S].push(w[S]);n.length>e.length?y.push(n[n.length-1]):y.push("Others")}var L=bottomCoor-topCoor+1,A=Math.ceil((rightCoor-leftCoor+1)/4);numPies>1&&(vertRadius=Math.ceil((bottomCoor-topCoor+1)/(2*numPies)*.85),A=A<vertRadius?A:vertRadius);var O=Math.floor((L-A*2*numPies)/(2*numPies)),M=Math.ceil(O*.8),_=Math.ceil(O*.3),D=Math.ceil(.0015*L),P=[],H=[],B;for(B=0;B<y.length;B++)P.push([]);var j=[],F;for(F=0;F<unselectedColors.length;F++){var I=unselectedColors.length+1,q;for(q=0;q<unselectedColors.length;q++){var R=orderedNames[q]!=null?orderedNames[q]:"others",U=R=="others"?unselectedColors[unselectedColors.length-1]:visibleIndividuals[R][0];I=U==unselectedColors[F]?q:I}j.push(I)}var z=[],W=[],S;for(S=0;S<numPies;S++){var X=rightCoor-(A+O),V=A+O+S*2*(A+O),$=svgDoc.createElementNS(svgNs,"text");$.setAttribute("x",X-A),$.setAttribute("y",V-A-_),$.setAttribute("font-size",M+"px"),$.setAttribute("font-family","serif"),$.setAttribute("font-weight","bold"),$.appendChild(svgDoc.createTextNode(t[S])),$.setAttribute("id","pie_title_"+S),W.push($);var J=0,K=X+A*Math.cos(J),Q=V+ -1*A*Math.sin(J),G=b[S],Y=0;for(Z=0;Z<G.length;Z++)Y=parseFloat(G[Z])+Y;if(Y==0)for(Z=0;Z<G.length;Z++)G[Z]=1,Y++;H.push(Y);for(F=0;F<j.length;F++){var Z=j[F],et=P[Z];if(et!=null){et.push(G[Z]);var tt=orderedNames[Z]!=null?orderedNames[Z]:"others",nt=tt=="others"?unselectedColors[unselectedColors.length-1]:visibleIndividuals[tt][0],rt=tt=="others"?selectedColors[selectedColors.length-1]:visibleIndividuals[tt][1];if(parseFloat(G[Z])!=0){var it=J+2*Math.PI*parseFloat(G[Z])/Y,st=X+A*Math.cos(it),ot=V+ -1*A*Math.sin(it),ut=st-K,at=ot-Q,ft=it-J>Math.PI?1:0,lt="M "+X+","+V+" L "+K+","+Q+" a"+A+","+A+" 0 "+ft+",0 "+ut+","+at+" z",ct=svgDoc.createElementNS(svgNs,"path");ct.setAttribute("d",lt),ct.setAttribute("stroke-linejoin","round"),G[Z]==Y&&(ct=svgDoc.createElementNS(svgNs,"circle"),ct.setAttribute("r",A),ct.setAttribute("cx",X),ct.setAttribute("cy",V)),ct.setAttribute("fill",nt),ct.setAttribute("stroke","black"),ct.setAttribute("stroke-width",D),ct.setAttribute("id","slice_"+S+"_"+Z),selectedId==Z&&(ct.setAttribute("stroke-width",2*D),ct.setAttribute("fill",rt)),ct.onmouseover=piePieceSelected,ct.onmouseout=piePieceDeselected,W.push(ct),K=st,Q=ot,J=it}}}}var ht=.005*L,pt=O-_,dt=Math.floor(.07*L),vt=Math.floor(.03*L),mt,gt=[];for(mt=0;mt<y.length;mt++){var yt=orderedNames[mt]!=null?orderedNames[mt]:"others";u=u==null?addPercentsToLabel:u;var bt=y[mt];bt==null&&(bt=mt>0&&mt==y.length-1?"Others":"Unknown");var wt=u(bt,P[mt],H),nt=unselectedColors[unselectedColors.length-1],rt=selectedColors[selectedColors.length-1];yt!="others"&&(nt=visibleIndividuals[yt][0],rt=visibleIndividuals[yt][1]);var Et=svgDoc.createElementNS(svgNs,"rect");Et.setAttribute("x",ht),Et.setAttribute("y",pt),Et.setAttribute("width",vt),Et.setAttribute("height",vt),Et.setAttribute("stroke","black"),Et.setAttribute("stroke-width",D),Et.setAttribute("id","color_"+mt),Et.setAttribute("fill",nt);var St=svgDoc.createElementNS(svgNs,"text");St.setAttribute("x",ht+vt*1.25),St.setAttribute("y",pt+vt*.85),St.setAttribute("font-size",Math.floor(vt*.7)+"px"),St.setAttribute("font-family","serif"),St.appendChild(svgDoc.createTextNode(wt)),St.setAttribute("id","label_"+mt),St.setAttribute("font-weight","normal"),selectedId==mt&&(Et.setAttribute("stroke-width",2*D),St.setAttribute("font-weight","bold"),Et.setAttribute("fill",rt));var xt=svgDoc.createElementNS(svgNs,"g");xt.setAttribute("id","group_"+mt),xt.appendChild(Et),xt.appendChild(St),xt.onmouseover=piePieceSelected,xt.onmouseout=piePieceDeselected,gt.push(xt),pt+=dt}var Tt=svgDoc.getElementById("pie_container");while(Tt.firstChild!=null)Tt.removeChild(Tt.firstChild);while(gt.length>0)Tt.appendChild(gt.shift());while(W.length>0)Tt.appendChild(W.shift());return H}function piePieceSelected(){id=this.id.match(/_([^_]*)$/)[1];var e=bottomCoor-topCoor+1,t=Math.ceil(.0015*e),n=2*t;if(id==selectedId)return;selectedId=id;var r=orderedNames[id]!=null?orderedNames[id]:"others",i=r=="others"?unselectedColors[unselectedColors.length-1]:visibleIndividuals[r][0],s=r=="others"?selectedColors[selectedColors.length-1]:visibleIndividuals[r][1];svgDoc.getElementById("color_"+id).setAttribute("stroke-width",n),svgDoc.getElementById("color_"+id).setAttribute("fill",s);var o=svgDoc.getElementById("label_"+id),u=o.firstChild.data;o.setAttribute("font-weight","bold"),o.removeChild(o.firstChild),o.appendChild(svgDoc.createTextNode(u));var a=svgDoc.getElementById("pie_container"),f;for(f=0;f<numPies;f++){var l=svgDoc.getElementById("slice_"+f+"_"+id);l!=null&&(l.setAttribute("stroke-width",n),l.setAttribute("fill",s),a.removeChild(l),a.appendChild(l))}}function piePieceDeselected(){id=this.id.match(/_([^_]*)$/)[1];var e=bottomCoor-topCoor+1,t=Math.ceil(.0015*e),n=2*t;id==selectedId&&(selectedId=null);var r=orderedNames[id]!=null?orderedNames[id]:"others",i=r=="others"?unselectedColors[unselectedColors.length-1]:visibleIndividuals[r][0],s=r=="others"?selectedColors[selectedColors.length-1]:visibleIndividuals[r][1];svgDoc.getElementById("color_"+id).setAttribute("stroke-width",t),svgDoc.getElementById("color_"+id).setAttribute("fill",i);var o=svgDoc.getElementById("label_"+id),u=o.firstChild.data;o.setAttribute("font-weight","normal"),o.removeChild(o.firstChild),o.appendChild(svgDoc.createTextNode(u));var a=svgDoc.getElementById("pie_container"),f;for(f=0;f<numPies;f++){var l=svgDoc.getElementById("slice_"+f+"_"+id);l!=null&&(l.setAttribute("stroke-width",t),l.setAttribute("fill",i),a.removeChild(l),a.appendChild(l))}}function getSelectedRgb(e){var t=[],n=0;for(n=0;n<3;n++){var r=e[n];r=Math.ceil(r*.45),t[n]=r}return t}function incrementColor(e,t){function n(t,n){return e[t]==e[n]?n-t:e[t]-e[n]}indices=[0,1,2],indices.sort(n),max=e[indices[2]],min=e[indices[0]],middle=e[indices[1]],difference=max-min,t%=360,fullTurnDistance=6*difference,incrementDistance=t*fullTurnDistance/360,newRgb=[e[0],e[1],e[2]],lowIndex=indices[0],middleIndex=indices[1],highIndex=indices[2];while(incrementDistance>0)incrementDistance<newRgb[highIndex]-newRgb[middleIndex]?(newRgb[middleIndex]=middle+incrementDistance,incrementDistance=0):(incrementDistance-=newRgb[highIndex]-newRgb[middleIndex],newRgb[middleIndex]=max,subtractIncrement=incrementDistance<difference?incrementDistance:difference,newRgb[highIndex]=newRgb[highIndex]-subtractIncrement,incrementDistance-=subtractIncrement,oldHighIndex=highIndex,highIndex=middleIndex,middleIndex=lowIndex,lowIndex=oldHighIndex);return newRgb}function getColorStr(e){function t(e){return e<16?"0"+Math.floor(e).toString(16):Math.floor(e).toString(16)}return"#"+t(e[0])+t(e[1])+t(e[2])}var svgNs="http://www.w3.org/2000/svg",svgDoc,selectedId=null,topCoor=1,leftCoor=1,bottomCoor=1600,rightCoor=1600,initialized=!1,visibleIndividuals=[],otherIndividuals=[],unselectedColors=[],selectedColors=[],orderedNames=[],numVisible=0,numPies=0;
+*/
+
+var svgNs="http://www.w3.org/2000/svg";
+var svgDoc;
+var selectedId = null;
+
+var topCoor=1;
+var leftCoor=1;
+var bottomCoor=1600;
+var rightCoor=1600;
+
+var initialized = false;
+var visibleIndividuals = [];
+var otherIndividuals = [];
+var unselectedColors = [];
+var selectedColors = [];
+var orderedNames = [];
+var numVisible = 0;
+var numPies = 0;
+
+function init(evt)
+{
+	svgDoc = evt.target.ownerDocument;
+}
+
+function addPercentsToLabel(labelBase, pieValues, pieTotals)
+{
+	var pcts = [];
+	var pieIndex;
+	for(pieIndex = 0; pieIndex < pieValues.length; pieIndex++)
+	{
+		pct = Math.floor((parseFloat(pieValues[pieIndex])*1000)/pieTotals[pieIndex])/10;
+		pctStr = "" + pct + "%";
+		pcts.push(pctStr);
+	}
+	var labelStr = labelBase + " ( " + pcts.join(" / ") + " )";
+	return labelStr;
+}
+
+function setPieChartData(individualNames, pieNames, individualLabels, values, rankIndex, maxIndividualNames, recomputeColorsAndVisible, adjustLabelFunction)
+{
+	if(svgDoc == null)
+	{
+		return [];
+	}
+	rankIndex = parseInt(rankIndex);
+	maxIndividualNames = parseInt(maxIndividualNames);	
+
+	if(!initialized){ recomputeColorsAndVisible = true; }
+	
+	var numIndividuals = individualNames.length;
+	numPies = values.length;
+	
+	
+	//sort individualNames based on values[rankIndex]
+	var nameIndices = [];
+	var ni = 0;
+	for(ni=0; ni < individualNames.length; ni++){ nameIndices.push(ni); }
+	var sortIndices= function(a,b) { return values[rankIndex][b] - values[rankIndex][a]; }
+	nameIndices.sort(sortIndices);
+
+	if(recomputeColorsAndVisible)
+	{
+		visibleIndividuals = [];
+		otherIndividuals = [];
+		unselectedColors = [];
+		selectedColors = [];
+		numVisible = 0;
+		selectedId = null;
+
+		var numColors = individualNames.length <= maxIndividualNames ? maxIndividualNames : maxIndividualNames+1;
+		var color = [255,0,0];
+
+		var colorNum=0;
+		for(colorNum=0; colorNum < numColors; colorNum++)
+		{
+			var nextColor = incrementColor(color, colorNum*Math.ceil(360/numColors) );
+			var nextSelectedColor = getSelectedRgb(nextColor);
+			unselectedColors.push(getColorStr(nextColor));
+			selectedColors.push(getColorStr(nextSelectedColor));
+
+			if(colorNum <  maxIndividualNames || numColors <= maxIndividualNames)
+			{
+				if(nameIndices[colorNum] != null)
+				{
+					visibleIndividuals[ individualNames[nameIndices[colorNum]] ] = [getColorStr(nextColor), getColorStr(nextSelectedColor)];
+					numVisible++;
+
+				}
+			}
+			else
+			{
+				var nameIndex;
+				for(nameIndex=colorNum; nameIndex < nameIndices.length; nameIndex++)
+				{
+					otherIndividuals[ individualNames[nameIndices[nameIndex]] ] =  [getColorStr(nextColor), getColorStr(nextSelectedColor)];
+				}
+			}
+		}
+		initialized = true;
+	}
+
+	orderedNames = [];
+	var orderedLabels  = [];
+	var orderedValues  = [];
+	var otherValueSums = [];
+	var selectedIndex = -1;
+	var pieIndex;
+	for(pieIndex=0;pieIndex < values.length; pieIndex++)
+	{
+		orderedValues.push([]);
+	}
+
+	// we already have a list of sorted name indices
+	// so.. go through the list in order, 
+	// if it's an "other" name, add values to other sum(s)
+	// otherwise it add it to ordered names, and add necessary
+	// values to orderedValues
+	while(nameIndices.length > 0)
+	{
+		var nextNameIndex = nameIndices.shift();
+		var nextName = individualNames[nextNameIndex];
+		var nextLabel = individualLabels[nextNameIndex];
+		if(otherIndividuals[nextName] != null || (numVisible == maxIndividualNames && visibleIndividuals[nextName] == null) )
+		{
+			var valueIndex=0;
+			for(valueIndex=0; valueIndex < numPies; valueIndex++)
+			{
+				otherValueSums[valueIndex] = (otherValueSums[valueIndex] == null ? 0 : otherValueSums[valueIndex]) + parseFloat(values[valueIndex][nextNameIndex]) ;
+			}
+		}
+		else if(visibleIndividuals[nextName] != null  )
+		{
+			orderedNames.push(nextName);
+			orderedLabels.push(nextLabel);
+			for(valueIndex=0; valueIndex < numPies; valueIndex++)
+			{
+				(orderedValues[valueIndex]).push( parseFloat(values[valueIndex][nextNameIndex]) );
+			}
+			if(visibleIndividuals[nextName] == null )
+			{
+				var nextColorIndex = visibleIndividuals.length;
+				visibleIndividuals[nextName] = [ unselectedColors[nextColorIndex], selectedColors[nextColorIndex] ];
+				numVisible++;
+			}
+		}
+	}
+	if(otherValueSums.length > 0)
+	{
+		for(pieIndex=0; pieIndex < values.length; pieIndex++)
+		{
+			(orderedValues[pieIndex]).push( otherValueSums[pieIndex] );
+		}
+		if(individualLabels.length > individualNames.length)
+		{
+			orderedLabels.push( individualLabels[individualLabels.length-1] );
+		}
+		else
+		{
+			orderedLabels.push( "Others");
+		}
+	}
+
+	var totalHeight = (bottomCoor-topCoor)+1;
+	var radius = Math.ceil(((rightCoor-leftCoor)+1)/4); //diameter should never be bigger than 1/2 width
+	if(numPies > 1)
+	{
+		vertRadius = Math.ceil( (((bottomCoor-topCoor)+1)/(2*numPies))*.85   );
+		radius = radius < vertRadius ? radius : vertRadius;
+	}
+	var buffer =  Math.floor((totalHeight-(radius*2*numPies))/(2*numPies));
+	var titleHeight = Math.ceil(buffer*.80);
+	var titleOffset = Math.ceil(buffer*.30);	
+	var regularStrokeWidth=Math.ceil(.0015*totalHeight);
+
+
+
+	//construct pies
+	var idValues = [];
+	var pieTotals = [];
+	var idIndex;
+	for(idIndex=0; idIndex < orderedLabels.length; idIndex++){ idValues.push([]); }
+
+
+	//construct colorIndex=>orderedIndex hash, since we want to build
+	//pie in order of colors, not of decreasing percentage like labels
+	var colorIndexToOrderedIndex = [];
+	var colorIndex;
+	for(colorIndex=0; colorIndex < unselectedColors.length; colorIndex++)
+	{
+		var matchingId = unselectedColors.length+1;
+		var matchingIndex;
+		for(matchingIndex = 0; matchingIndex < unselectedColors.length; matchingIndex++)
+		{
+			var name = orderedNames[matchingIndex] != null ? orderedNames[matchingIndex] : "others";
+			var nameUnselectedColor = name == "others" ? unselectedColors[unselectedColors.length-1] : visibleIndividuals[name][0];
+			matchingId = (nameUnselectedColor == unselectedColors[colorIndex]) ? matchingIndex : matchingId;
+		}
+		colorIndexToOrderedIndex.push(matchingId);
+	}
+
+	var centerPoints = [];
+	var pieChartPaths = [];
+	var pieIndex;
+	for(pieIndex=0;pieIndex < numPies; pieIndex++)
+	{
+		var centerX = rightCoor-(radius+buffer);
+		var centerY = (radius+buffer) + (pieIndex*2*(radius+buffer));
+
+		var titleText = svgDoc.createElementNS(svgNs, "text");
+		titleText.setAttribute("x", centerX-radius);
+		titleText.setAttribute("y", centerY-radius-titleOffset );
+		titleText.setAttribute("font-size", titleHeight + "px");
+		titleText.setAttribute("font-family", "serif");
+		titleText.setAttribute("font-weight", "bold");
+		titleText.appendChild( svgDoc.createTextNode( pieNames[pieIndex] ));
+		titleText.setAttribute("id", "pie_title_" + pieIndex);
+		pieChartPaths.push(titleText);
+
+
+		var radiansPlotted = 0;
+		var previousX = centerX + (radius*Math.cos(radiansPlotted));
+		var previousY = centerY + (-1*radius*Math.sin(radiansPlotted));
+		var data = orderedValues[pieIndex];
+		var dataSum = 0;
+		for(dataIndex=0; dataIndex < data.length; dataIndex++) { dataSum = parseFloat(data[dataIndex]) + dataSum; }
+		if(dataSum == 0)
+		{
+			for(dataIndex=0; dataIndex < data.length; dataIndex++) { data[dataIndex] = 1; dataSum++; }
+		}
+		
+		pieTotals.push(dataSum);
+		for(colorIndex=0; colorIndex < colorIndexToOrderedIndex.length; colorIndex++)
+		{
+			var dataIndex = colorIndexToOrderedIndex[colorIndex];
+			var idValueList= idValues[dataIndex];
+			if(idValueList != null)
+			{
+				idValueList.push( data[dataIndex] );
+			
+				var sliceName = orderedNames[dataIndex] != null ? orderedNames[dataIndex] : "others" ;
+				var unselectedColor = sliceName == "others" ? unselectedColors[unselectedColors.length-1] : visibleIndividuals[sliceName][0];
+				var selectedColor = sliceName == "others" ? selectedColors[selectedColors.length-1] : visibleIndividuals[sliceName][1];
+		
+				if(parseFloat(data[dataIndex]) != 0)
+				{
+					var angle = radiansPlotted + ((2 * Math.PI * parseFloat(data[dataIndex]))/dataSum);
+					var x= centerX + (radius*Math.cos(angle));
+					var y= centerY + (-1*radius*Math.sin(angle));
+					var xDiff = x - previousX;
+					var yDiff = y - previousY;
+
+
+					var largeArc = angle-radiansPlotted > Math.PI ? 1 : 0;
+					var defaultPathData = "M " + centerX + "," + centerY + " L " + previousX + "," + previousY + " a" + radius + "," + radius + " 0 " + largeArc + ",0 " + xDiff + "," + yDiff + " z";
+
+
+					var newPath = svgDoc.createElementNS(svgNs, "path");
+					newPath.setAttribute("d", defaultPathData );
+					newPath.setAttribute("stroke-linejoin", "round");
+					
+					
+					//special case where we have one slice occupying the whole pie
+					if( data[dataIndex] == dataSum  )
+					{
+						newPath = svgDoc.createElementNS(svgNs, "circle");
+						newPath.setAttribute("r", radius);
+						newPath.setAttribute("cx", centerX);
+						newPath.setAttribute("cy", centerY);
+					}
+			
+					newPath.setAttribute("fill", unselectedColor);
+					newPath.setAttribute("stroke", "black");
+					newPath.setAttribute("stroke-width", regularStrokeWidth);
+					newPath.setAttribute("id", "slice_" + pieIndex + "_" + dataIndex);
+					if(selectedId == dataIndex)
+					{
+						newPath.setAttribute("stroke-width", 2*regularStrokeWidth);
+						newPath.setAttribute("fill", selectedColor);
+					}
+			
+					newPath.onmouseover=piePieceSelected;
+					newPath.onmouseout=piePieceDeselected;
+					pieChartPaths.push(newPath);
+					previousX = x;
+					previousY = y;
+					radiansPlotted = angle;	
+				}
+			}
+		}
+	}
+
+	//construct labels;
+	var labelX = .005*totalHeight;
+	var nextLabelY=buffer-titleOffset;
+	var labelYIncrement=Math.floor(.07*totalHeight);
+	var labelBoxWidth=Math.floor(.03*totalHeight);
+	var labelIndex;
+	var pieChartLabels = [];
+	for(labelIndex = 0; labelIndex < orderedLabels.length; labelIndex++)
+	{
+		var labelName = orderedNames[labelIndex] != null ? orderedNames[labelIndex] : "others" ;
+		
+		adjustLabelFunction = adjustLabelFunction == null ? addPercentsToLabel : adjustLabelFunction;
+		var baseLabel = orderedLabels[labelIndex];
+		if(baseLabel == null)
+		{
+			baseLabel = (labelIndex > 0 && labelIndex == orderedLabels.length-1) ? "Others" : "Unknown";	
+		}
+		var labelStr = adjustLabelFunction(baseLabel, idValues[labelIndex], pieTotals);
+		
+		var unselectedColor = unselectedColors[unselectedColors.length-1];
+		var selectedColor = selectedColors[selectedColors.length-1];
+		if(labelName != "others")
+		{
+			unselectedColor = visibleIndividuals[labelName][0];
+			selectedColor = visibleIndividuals[labelName][1];
+		}
+
+		var labelRect = svgDoc.createElementNS(svgNs, "rect");
+		labelRect.setAttribute("x", labelX);
+		labelRect.setAttribute("y", nextLabelY);
+		labelRect.setAttribute("width", labelBoxWidth);
+		labelRect.setAttribute("height", labelBoxWidth);
+		labelRect.setAttribute("stroke", "black");
+		labelRect.setAttribute("stroke-width", regularStrokeWidth);
+		labelRect.setAttribute("id", "color_" + labelIndex);
+		labelRect.setAttribute("fill",  unselectedColor);
+
+		var labelText = svgDoc.createElementNS(svgNs, "text");
+		labelText.setAttribute("x", labelX+(labelBoxWidth*1.25));
+		labelText.setAttribute("y", nextLabelY+(labelBoxWidth*.85) );
+		labelText.setAttribute("font-size", Math.floor(labelBoxWidth*.70) + "px");
+		labelText.setAttribute("font-family", "serif");
+		labelText.appendChild( svgDoc.createTextNode( labelStr ));
+		labelText.setAttribute("id", "label_" + labelIndex);
+		labelText.setAttribute("font-weight", "normal");
+
+		if(selectedId == labelIndex)
+		{
+			labelRect.setAttribute("stroke-width", 2*regularStrokeWidth);
+			labelText.setAttribute("font-weight", "bold");
+			labelRect.setAttribute("fill", selectedColor);
+		}
+
+		var labelGroup = svgDoc.createElementNS(svgNs, "g");
+		labelGroup.setAttribute("id", "group_" + labelIndex);
+		labelGroup.appendChild(labelRect);
+		labelGroup.appendChild(labelText);
+		labelGroup.onmouseover=piePieceSelected;
+		labelGroup.onmouseout=piePieceDeselected;
+		pieChartLabels.push(labelGroup);
+		nextLabelY = nextLabelY + labelYIncrement;
+	}
+
+	//finally, add labels & pie slices to svgDoc
+	var pieContainer = svgDoc.getElementById("pie_container");
+	while(pieContainer.firstChild != null)
+	{
+		pieContainer.removeChild(pieContainer.firstChild);
+	}	
+	while(pieChartLabels.length > 0)
+	{
+		pieContainer.appendChild(pieChartLabels.shift());
+	}
+	while(pieChartPaths.length > 0)
+	{
+		pieContainer.appendChild(pieChartPaths.shift());
+	}
+
+	//for convenience, return pie totals
+	return pieTotals;
+}
+
+function piePieceSelected()
+{
+	id = this.id.match(/_([^_]*)$/)[1];
+	var totalHeight = (bottomCoor-topCoor)+1;
+	var regularStroke = Math.ceil(.0015*totalHeight);
+	var selectedStroke = 2*regularStroke;
+	
+	if(id == selectedId) { return; }
+	selectedId = id;
+
+	var sliceName = orderedNames[id] != null ? orderedNames[id] : "others" ;
+	var unselectedColor = sliceName == "others" ? unselectedColors[unselectedColors.length-1] : visibleIndividuals[sliceName][0];
+	var selectedColor = sliceName == "others" ? selectedColors[selectedColors.length-1] : visibleIndividuals[sliceName][1];
+
+	svgDoc.getElementById("color_" + id).setAttribute("stroke-width", selectedStroke);
+	svgDoc.getElementById("color_" + id).setAttribute("fill", selectedColor);
+	var lab  = svgDoc.getElementById("label_" + id);
+
+	var oldText = lab.firstChild.data;
+	lab.setAttribute("font-weight", "bold");
+	lab.removeChild (lab.firstChild);
+	lab.appendChild ( svgDoc.createTextNode(oldText) );
+
+	var pieContainer = svgDoc.getElementById("pie_container");
+
+	var pieIndex;
+	for(pieIndex=0; pieIndex< numPies; pieIndex++)
+	{
+		var slice = svgDoc.getElementById("slice_" + pieIndex + "_" + id);
+		if(slice != null)
+		{
+			slice.setAttribute("stroke-width", selectedStroke);
+			slice.setAttribute("fill", selectedColor);
+	
+			pieContainer.removeChild(slice);
+			pieContainer.appendChild(slice);
+		}
+	}
+}
+function piePieceDeselected()
+{
+	id = this.id.match(/_([^_]*)$/)[1];
+	var totalHeight = (bottomCoor-topCoor)+1;
+	var regularStroke = Math.ceil(.0015*totalHeight);
+	var selectedStroke = 2*regularStroke;
+
+	if(id == selectedId) { selectedId = null; }
+	var sliceName = orderedNames[id] != null ? orderedNames[id] : "others" ;
+	var unselectedColor = sliceName == "others" ? unselectedColors[unselectedColors.length-1] : visibleIndividuals[sliceName][0];
+	var selectedColor = sliceName == "others" ? selectedColors[selectedColors.length-1] : visibleIndividuals[sliceName][1];
+
+	svgDoc.getElementById("color_" + id).setAttribute("stroke-width", regularStroke);
+	svgDoc.getElementById("color_" + id).setAttribute("fill", unselectedColor);
+	
+	var lab  = svgDoc.getElementById("label_" + id);
+	var oldText = lab.firstChild.data;
+	lab.setAttribute("font-weight", "normal");
+	lab.removeChild (lab.firstChild);
+	lab.appendChild ( svgDoc.createTextNode(oldText) );
+
+	
+	var pieContainer = svgDoc.getElementById("pie_container");
+
+	var pieIndex;
+	for(pieIndex=0; pieIndex< numPies; pieIndex++)
+	{
+		var slice = svgDoc.getElementById("slice_" + pieIndex + "_" + id);
+		if(slice != null)
+		{
+			slice.setAttribute("stroke-width", regularStroke);
+			slice.setAttribute("fill", unselectedColor);
+	
+			pieContainer.removeChild(slice);
+			pieContainer.appendChild(slice);
+		}
+	}
+}
+
+function getSelectedRgb(unselectedRgb)
+{
+	var selectedRgb = [];
+	var index=0;
+	for(index=0; index < 3; index++)
+	{
+		var c = unselectedRgb[index];
+		c = Math.ceil(c*.45)
+		selectedRgb[index] = c;
+	}
+	return selectedRgb;
+}
+
+// takes R,G,B, array & increment size (in degrees of the color wheel), returns rgb array
+//
+// Note: you can't iteratively call this function because, given different starting points
+// the function may increment in different directions.  Best to pick a single starting point 
+// and then iteratively increase the increment to call function with
+function incrementColor(rgb, increment)
+{
+	function sortRgb(num1, num2){ if(rgb[num1] == rgb[num2]){ return num2 - num1;} else {return rgb[num1] - rgb[num2]; }}
+	indices = [0,1,2];
+	indices.sort(sortRgb);
+	max= rgb[indices[2]];
+	min= rgb[indices[0]];
+	middle = rgb[indices[1]];
+	difference = max-min;
+
+	increment = increment % 360;
+	fullTurnDistance = 6*difference;
+	incrementDistance = increment*fullTurnDistance/360;
+	
+	newRgb= [ rgb[0], rgb[1], rgb[2] ];
+	lowIndex = indices[0];
+	middleIndex = indices[1];
+	highIndex = indices[2];
+
+
+	while(incrementDistance > 0)
+	{
+		if(incrementDistance < (newRgb[highIndex]-newRgb[middleIndex]))
+		{
+			newRgb[middleIndex] = middle + incrementDistance;
+			incrementDistance = 0;
+		}
+		else
+		{
+			incrementDistance = incrementDistance - (newRgb[highIndex]-newRgb[middleIndex]);
+			newRgb[middleIndex] = max;
+			subtractIncrement = incrementDistance < difference ? incrementDistance : difference ;
+			newRgb[highIndex] = newRgb[highIndex] - subtractIncrement;
+			incrementDistance = incrementDistance - subtractIncrement;
+			
+			oldHighIndex = highIndex;
+			highIndex = middleIndex;
+			middleIndex = lowIndex;
+			lowIndex = oldHighIndex;
+		}
+	}
+
+	return newRgb;
+}
+function getColorStr(rgb)
+{
+	function toHex(num) { return num < 16 ? "0" + Math.floor(num).toString(16) : Math.floor(num).toString(16) }
+	return "#" + toHex(rgb[0]) + toHex(rgb[1]) + toHex(rgb[2]);
+}
