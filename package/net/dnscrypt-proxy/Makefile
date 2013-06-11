@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2012 OpenWrt.org
+# Copyright (C) 2011-2013 Entware
 #
 # This is free software, licensed under the GNU General Public License v2.
 # See /LICENSE for more information.
@@ -8,12 +8,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=dnscrypt-proxy
-PKG_VERSION:=1.2.1
+PKG_VERSION:=1.3.0
 PKG_RELEASE:=1
 
-PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.bz2
+PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=http://download.dnscrypt.org/dnscrypt-proxy/
-PKG_MD5SUM:=6fc4098acf432bbc01fcd2fa6fa5a04a
+PKG_MD5SUM:=34ac17be24f64446599420e159cf794a
 
 PKG_INSTALL:=1
 PKG_FIXUP:=autoreconf
@@ -21,60 +21,56 @@ PKG_FIXUP:=autoreconf
 include $(INCLUDE_DIR)/package.mk
 
 define Package/dnscrypt-proxy/Default
-  SECTION:=net
-  CATEGORY:=Network
-  SUBMENU:=IP Addresses and Names
-  URL:=https://github.com/opendns/dnscrypt-proxy
-  MAINTAINER:=Black Roland https://forum.openwrt.org/profile.php?id=82621
+	SECTION:=net
+	CATEGORY:=Network
+	SUBMENU:=IP Addresses and Names
+	TITLE:=A tool for securing communications between a client and a DNS resolver
+	URL:=http://www.opendns.com/technology/dnscrypt
+	MAINTAINER:=Entware team, wl500g-repo.googlecode.com
 endef
 
 define Package/dnscrypt-proxy
-  $(call Package/dnscrypt-proxy/Default)
-  TITLE:=A tool for securing communications between a client and a DNS resolver
-  DEPENDS:=+hostip
+	$(call Package/dnscrypt-proxy/Default)
+endef
+
+define Package/dnscrypt-proxy-hostip
+	$(call Package/dnscrypt-proxy/Default)
+	TITLE+= (a resolver before dnscrypt-proxy start)
 endef
 
 define Package/dnscrypt-proxy/description
-	The DNSCrypt protocol is very similar to DNSCurve, but focuses on
-	securing communications between a client and its first-level resolver.
-	While not providing end-to-end security, it protects the local network
-	(which is often the weakest link in the chain) against
-	man-in-the-middle attacks. It also provides some confidentiality to
-	DNS queries.
+ dnscrypt-proxy is a slight variation on DNSCurve.
+ DNSCurve improves the confidentiality and integrity of DNS requests using
+ high-speed high-security elliptic-curve cryptography. Best of all, DNSCurve
+ has very low overhead and adds virtually no latency to queries.
 endef
 
-define Package/hostip
-  $(call Package/dnscrypt-proxy/Default)
-  TITLE:=A tool for resolving a name to IPv4 or IPv6 addresses
+define Package/dnscrypt-proxy-hostip/description
+ A tool for resolving a name before dnscrypt-proxy. It should help fighting
+ the chicken-and-egg issue seen on routers, where dnscrypt-proxy requires
+ a working NTP server, but the NTP server requires a working resolver.
 endef
 
-define Package/hostip/description
-	Sends a DNS query to a resolver, and prints the IP addresses for the given host name.
-endef
+CONFIGURE_ARGS += \
+	--disable-ssp
 
-define Build/Configure
-	$(call Build/Configure/Default, \
-		--prefix=/usr \
-	)
-endef
+TARGET_CFLAGS += \
+	-std=gnu99 \
+	-fPIC
 
 define Package/dnscrypt-proxy/install
 	$(INSTALL_DIR) $(1)/usr/sbin
-	$(CP) $(PKG_INSTALL_DIR)/usr/sbin/dnscrypt-proxy $(1)/usr/sbin/
+	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/sbin/dnscrypt-proxy $(1)/usr/sbin
 	$(INSTALL_DIR) $(1)/etc/init.d
 	$(INSTALL_BIN) ./files/dnscrypt-proxy.init $(1)/etc/init.d/dnscrypt-proxy
 	$(INSTALL_DIR) $(1)/etc/config
 	$(INSTALL_CONF) ./files/dnscrypt-proxy.config $(1)/etc/config/dnscrypt-proxy
 endef
 
-define Package/dnscrypt-proxy/conffiles
-/etc/config/dnscrypt-proxy
-endef
-
-define Package/hostip/install
-	$(INSTALL_DIR) $(1)/usr/bin
-	$(CP) $(PKG_INSTALL_DIR)/usr/bin/hostip $(1)/usr/bin/
+define Package/dnscrypt-proxy-hostip/install
+	$(INSTALL_DIR) $(1)/usr/sbin
+	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/bin/hostip $(1)/usr/sbin/dnscrypt-proxy-hostip
 endef
 
 $(eval $(call BuildPackage,dnscrypt-proxy))
-$(eval $(call BuildPackage,hostip))
+$(eval $(call BuildPackage,dnscrypt-proxy-hostip))

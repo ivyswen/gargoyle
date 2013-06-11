@@ -1,0 +1,32 @@
+--- ./src/libsodium/configure.ac.orig	2013-05-09 18:45:37.392889931 +0400
++++ ./src/libsodium/configure.ac	2013-05-09 18:45:55.628885279 +0400
+@@ -1,7 +1,6 @@
+ AC_PREREQ([2.61])
+ AC_INIT([libsodium],[0.4],[https://github.com/jedisct1/libsodium])
+ AC_CONFIG_MACRO_DIR([m4])
+-AC_CONFIG_AUX_DIR([libltdl/config])
+ AC_CONFIG_SRCDIR([src/libsodium/sodium/version.c])
+ AC_CANONICAL_HOST
+ AM_INIT_AUTOMAKE([1.11 dist-bzip2 tar-ustar])
+@@ -263,12 +262,6 @@
+ AC_SUBST([MAINT])
+ AC_SUBST([LIBTOOL_EXTRA_FLAGS])
+ 
+-dnl Libtool.
+-
+-LT_INIT([dlopen])
+-LT_CONFIG_LTDL_DIR([libltdl])
+-LTDL_INIT
+-
+ dnl Output.
+ 
+ AH_VERBATIM([NDEBUG], [/* Never ever ignore assertions */
+--- ./src/libsodium/Makefile.am.orig	2013-05-09 18:48:57.172883426 +0400
++++ ./src/libsodium/Makefile.am	2013-05-09 18:49:03.060887281 +0400
+@@ -7,6 +7,5 @@
+ 	THANKS
+ 
+ SUBDIRS = \
+-	libltdl \
+ 	src \
+ 	test

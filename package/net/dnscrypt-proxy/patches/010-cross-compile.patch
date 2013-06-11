@@ -1,0 +1,82 @@
+--- a/configure.ac
++++ b/configure.ac
+@@ -1,7 +1,6 @@
+ AC_PREREQ([2.61])
+ AC_INIT([dnscrypt-proxy],[1.3.0],[http://dnscrypt.org])
+ AC_CONFIG_MACRO_DIR([m4])
+-AC_CONFIG_AUX_DIR([libltdl/config])
+ AC_CONFIG_SRCDIR([src/proxy/app.c])
+ AC_CONFIG_HEADER([config.h])
+ AC_CONFIG_SUBDIRS([src/libevent-modified src/libsodium])
+@@ -17,7 +16,6 @@
+ LX_CFLAGS=${CFLAGS-NONE}
+ AC_PROG_CC_C99
+ AC_USE_SYSTEM_EXTENSIONS
+-CPPFLAGS="$CPPFLAGS -D_FORTIFY_SOURCE=2"
+ 
+ AS_IF([test "$cross_compiling" != no],
+   AC_DEFINE(CROSS_COMPILING,[1],[define if you are cross-compiling])
+@@ -43,27 +41,6 @@
+ AX_CHECK_COMPILE_FLAG([-fno-strict-aliasing], [CFLAGS="$CFLAGS -fno-strict-aliasing"])
+ AX_CHECK_COMPILE_FLAG([-fno-strict-overflow], [CFLAGS="$CFLAGS -fno-strict-overflow"])
+ 
+-case $host_os in
+-  cygwin* | mingw* | pw32* | cegcc*)
+-    AX_CHECK_LINK_FLAG([-Wl,--dynamicbase], [LDFLAGS="$LDFLAGS -Wl,--dynamicbase"])
+-    AX_CHECK_LINK_FLAG([-Wl,--nxcompat], [LDFLAGS="$LDFLAGS -Wl,--nxcompat"])
+-  ;;
+-  dragonfly*)
+-    AX_CHECK_COMPILE_FLAG([-fstack-protector], [
+-      AX_CHECK_LINK_FLAG([-fstack-protector],
+-        [CFLAGS="$CFLAGS -fstack-protector"]
+-      )
+-    ])
+-  ;;
+-  *)
+-    AX_CHECK_COMPILE_FLAG([-fstack-protector-all], [
+-      AX_CHECK_LINK_FLAG([-fstack-protector-all],
+-        [CFLAGS="$CFLAGS -fstack-protector-all"]
+-      )
+-    ])
+-  ;;
+-esac
+-
+ AX_CHECK_COMPILE_FLAG([-Wbounded], [CFLAGS="$CFLAGS -Wbounded"])
+ AX_CHECK_COMPILE_FLAG([-Winit-self], [CFLAGS="$CFLAGS -Winit-self"])
+ AX_CHECK_COMPILE_FLAG([-Wwrite-strings], [CFLAGS="$CFLAGS -Wwrite-strings"])
+@@ -139,14 +116,6 @@
+   PROBES_SOURCE="probes_no_dtrace.h"
+ ])
+ 
+-AS_IF([test -d /usr/local/include], [
+-  CPPFLAGS="$CPPFLAGS -I/usr/local/include"
+-])
+-
+-AS_IF([test -d /usr/local/lib], [
+-  LDFLAGS="$LDFLAGS -L/usr/local/lib"
+-])
+-
+ dnl Checks for header files.
+ 
+ AC_SYS_LARGEFILE
+@@ -348,7 +317,6 @@
+         *) AS_VAR_APPEND([nxflags], [" $flag"]) ;;
+       esac
+     done
+-    CFLAGS="$nxflags -O0 -g3"
+   ])
+   CPPFLAGS="$CPPFLAGS -DDEBUG=1"
+ ])
+@@ -367,12 +335,6 @@
+ AC_SUBST([MAINT])
+ AC_SUBST([PROBES_SOURCE])
+ 
+-dnl Libtool.
+-
+-LT_INIT([dlopen])
+-LT_CONFIG_LTDL_DIR([libltdl])
+-LTDL_INIT
+-
+ dnl Subconfig.
+ 
+ case $host_os in
